@@ -1,0 +1,14 @@
+
+@import "src/_variables.scss";
+
+.icon-end{
+    display: flex;
+    justify-content: flex-end !important;
+    align-items: flex-end !important;
+}
+
+.mat-toolbar{
+    background-color: $primary !important;
+    color: $text-white !important;
+
+}

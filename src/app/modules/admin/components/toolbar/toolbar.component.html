@@ -1,0 +1,60 @@
+<div class="container pt-7">
+    <div class="text-center">
+        <h4 class="fs-24 fw-600">
+            <i>
+                {{"Elevate client information management with our cutting-edge centralized application, 
+            revolutionizing data access, organization, and client engagement" | uppercase}}
+
+            </i>    
+        </h4>
+    </div>
+    <div class="row pt-4">
+        <div class="col-lg-6 col-md-6 col-sm-12 pt-5">
+            <mat-card class="admin-card">
+                <mat-card-header class="pb-5">
+                    <div class="row">
+                        <div class="col-7">
+                            <img width="300px" height="200px" src="../../../../../assets/admin/user.png">
+                        </div>
+                        <div class="col-5 text-center">
+                            <h4 class="fs-24 fw-600">New User?</h4>
+                        </div>
+                    </div>       
+                 </mat-card-header>
+                <mat-card-content>
+                  
+                  <mat-divider></mat-divider>
+                </mat-card-content>
+                <mat-card-actions>
+                  <button (click)="onRegisterUser()" mat-flat-button class="primary-bg">REGISTER</button>
+                </mat-card-actions>
+                <mat-card-footer>
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </mat-card-footer>
+              </mat-card>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12 pt-5">
+            <mat-card class="admin-card">
+                <mat-card-header class="pb-5">
+                    <div class="row">
+                        <div class="col-7">
+                            <img width="300px" height="200px" src="../../../../../assets/admin/app.png">
+                        </div>
+                        <div class="col-5 text-center">
+                            <h4 class="fs-24 fw-600">New Client App?</h4>
+                        </div>
+                    </div>
+                </mat-card-header>
+                <mat-card-content>
+                  <mat-divider></mat-divider>
+                </mat-card-content>
+                <mat-card-actions>
+                  <button mat-flat-button class="primary-bg">CREATE</button>
+                </mat-card-actions>
+                <mat-card-footer>
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                </mat-card-footer>
+              </mat-card>
+        </div>
+    </div>
+</div>

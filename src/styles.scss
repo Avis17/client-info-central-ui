@@ -1,0 +1,73 @@
+
+@import "src/_variables.scss";
+
+$spacingSizes : 1 2 3 4 5 6 7 8 9 10;
+$cardWidth: 40 60 80 100;
+$fontSizes: 18 20 22 24 26 28;
+$fontWeights: 400 600 700 800;
+
+
+@each $size in $spacingSizes{
+    .mt-#{$size}{
+        margin-top: #{$size}rem !important;
+    }
+    .mb-#{$size}{
+        margin-bottom: #{$size}rem !important;
+    }
+    .ml-#{$size}{
+        margin-left: #{$size}rem !important;
+    }
+    .mr-#{$size}{
+        margin-right: #{$size}rem !important;
+    }
+    .m-#{$size}{
+        margin: #{$size}rem !important;
+    }
+    .p-#{$size}{
+        padding: #{$size}rem !important;
+    }
+    .pt-#{$size}{
+        padding-top: #{$size}rem !important;
+    }
+    .pb-#{$size}{
+        padding-bottom: #{$size}rem !important;
+    }
+    .pl-#{$size}{
+        padding-left: #{$size}rem !important;
+    }
+    .pr-#{$size}{
+        padding-right: #{$size}rem !important;
+    }
+}
+
+@each $size in $cardWidth{
+    .card-width-#{$size}{
+        width: #{$size}+'%';
+    }
+}
+@each $size in $fontSizes{
+    .fs-#{$size}{
+        font-size: #{$size}+'px' !important;
+    }
+}
+@each $size in $fontWeights{
+    .fw-#{$size}{
+        font-weight: #{$size} !important;
+    }
+}
+.primary-bg{
+    background-color: $primary !important;
+    color: $text-white !important;
+}
+.card-container{
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center;
+    margin : 10%;
+    flex-direction: column;
+}
+
+.card-header{
+    background-color: $primary !important;
+    color: $text-white !important;
+}

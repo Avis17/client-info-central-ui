@@ -1,0 +1,20 @@
+
+@import "src/_variables.scss";
+
+.admin-card{
+    background-color: $card-bg;
+}
+
+h4{
+    color: $secondary;
+}
+
+.row{
+    width: 100% !important;
+}
+
+.text-center{
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
