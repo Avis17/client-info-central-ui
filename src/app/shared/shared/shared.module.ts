@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { HttpClientModule } from '@angular/common/http'
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
@@ -12,9 +12,12 @@ import { SkipLocationChangeDirective } from 'src/app/directives/skip-location-ch
 import {MatRadioModule} from '@angular/material/radio';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import {MatSelectModule} from '@angular/material/select';
+import {MatStepperModule} from '@angular/material/stepper';
+
 @NgModule({
   declarations: [
-    SkipLocationChangeDirective
+    SkipLocationChangeDirective,
   ],
   imports: [
     CommonModule,
@@ -29,6 +32,9 @@ import { MatInputModule } from '@angular/material/input';
     MatRadioModule,
     MatFormFieldModule,
     MatInputModule,
+    ReactiveFormsModule,
+    MatSelectModule,
+    MatStepperModule
   ],
   exports: [
     CommonModule,
@@ -44,6 +50,9 @@ import { MatInputModule } from '@angular/material/input';
     SkipLocationChangeDirective,
     MatFormFieldModule,
     MatInputModule,
+    ReactiveFormsModule,
+    MatSelectModule,
+    MatStepperModule,
   ]
 })
 export class SharedModule { }

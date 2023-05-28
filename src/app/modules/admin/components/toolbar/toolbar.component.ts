@@ -12,8 +12,8 @@ export class ToolbarComponent {
 
   }
 
-  onRegisterUser(){
-    const commands = ['/admin/register-user'];
+  onClickNavigation(path:string){
+    const commands = ['/admin/'+path];
     this.navigationService.navigateWithoutLocationChange(commands);
   }
 }

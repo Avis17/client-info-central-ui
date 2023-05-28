@@ -24,7 +24,11 @@ export class CreateUserAccessComponent {
   isHideConfirmPassword = true;
   isDisableBtn = false;
 
-  constructor(private navigationService :NavigationService, private authGuardService:AuthGuardService, private toastr: ToastrService){
+  constructor(
+    private navigationService :NavigationService,
+    private authGuardService:AuthGuardService, 
+    private toastr: ToastrService
+    ){
     this.userDetails = {
       email : '',
       password : '',
@@ -41,6 +45,10 @@ export class CreateUserAccessComponent {
     }
   }
 
+  onPreviousPage(){
+    const commands = ['/admin/tools'];
+    this.navigationService.navigateWithoutLocationChange(commands);
+  }
 
   onRegisterBtnClick(){
     this.authGuardService.register(this.userDetails).subscribe((res:any)=>{

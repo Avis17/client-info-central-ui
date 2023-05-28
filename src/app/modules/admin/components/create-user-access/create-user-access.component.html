@@ -1,18 +1,20 @@
-
-<div class="card-container mt-8">
-    <div class="card card-width-80">
+<div class="pt-5 pl-3">
+    <mat-icon (click)="onPreviousPage()">arrow_back</mat-icon>
+</div>
+<div class="card-container mt-4 mb-5">
+    <div class="card card-width-100">
         <div class="card-header">
           Create New User
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-6 mt-2">
+                <div class="col-sm-12 col-md-12 col-lg-6 mt-2">
                     <mat-form-field>
                         <mat-label>Enter your email</mat-label>
                         <input [(ngModel)]="userDetails.email" matInput type="text">
                     </mat-form-field>
                 </div>
-                <div class="col-6 mt-2">
+                <div class="col-sm-12 col-md-12 col-lg-6 mt-2">
                     <mat-form-field>
                         <mat-label>Enter your password</mat-label>
                         <input [(ngModel)]="userDetails.password" matInput [type]="isHidePassword ? 'password' : 'text'">
@@ -21,7 +23,7 @@
                         </button>
                     </mat-form-field>
                 </div>
-                <div class="col-12 mt-3">
+                <div class="col-sm-12 col-md-12 col-lg-12 mt-3">
                     <mat-form-field>
                         <mat-label>Enter confirm password</mat-label>
                         <input (change)="onChangePassword($event)" matInput [type]="isHideConfirmPassword ? 'password' : 'text'">
@@ -30,15 +32,15 @@
                         </button>
                     </mat-form-field>
                 </div>
-                <div class="col-12 mt-2 mb-4">
+                <div class="col-sm-12 col-md-12 col-lg-12 mt-2 mb-4">
                     <mat-label>User Type </mat-label><br>
-                    <mat-radio-group aria-label="Select an option" [(ngModel)]='userDetails.authorizeTo'>
+                    <mat-radio-group aria-label="Select an option" class="pl-1" [(ngModel)]='userDetails.authorizeTo'>
                         <mat-radio-button value="developer">Developer</mat-radio-button>
                         <mat-radio-button value="admin">Admin</mat-radio-button>
                         <mat-radio-button value="client">Client</mat-radio-button>
                     </mat-radio-group>
                 </div>
-                <div class="col-6">
+                <div class="col-sm-12 col-md-12 col-lg-6">
                     <button [disabled]="vaidateUser()" (click)="onRegisterBtnClick()" mat-flat-button class="primary-bg">{{'Register' | uppercase}}</button>
                 </div>
             </div>

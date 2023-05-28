@@ -1,0 +1,26 @@
+@import "src/_variables.scss";
+
+.mh-200{
+    min-height: 200px;
+}
+
+.mat-mdc-form-field{
+    width: 90% !important;
+}
+
+.box{
+    background-color: lavender;
+    border: 3px solid $primary;
+    border-radius: 15px;
+}
+
+.mat-mdc-form-field {
+    margin-top: 16px;
+  }
+
+.card-body{
+    padding: 0 !important;
+}
+::ng-deep .cdk-overlay-container {
+    z-index: 9999;
+}

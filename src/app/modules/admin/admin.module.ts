@@ -6,6 +6,8 @@ import { CreateUserAccessComponent } from './components/create-user-access/creat
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { NavbarComponent } from './components/navbar/navbar.component'
 import { SharedModule } from 'src/app/shared/shared/shared.module';
+import { CreateApplicationMetaComponent } from './components/create-application-meta/create-application-meta.component';
+import { ModalComponent } from 'src/app/common/components/modal/modal.component';
 
 
 
@@ -15,11 +17,15 @@ import { SharedModule } from 'src/app/shared/shared/shared.module';
     CreateUserAccessComponent,
     ToolbarComponent,
     NavbarComponent,
+    CreateApplicationMetaComponent,
+    ModalComponent
   ],
   imports: [
     CommonModule,
     AdminRoutingModule,
     SharedModule
+  ],
+  providers : [
   ]
 })
 export class AdminModule { }

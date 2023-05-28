@@ -3,7 +3,7 @@
 
 $spacingSizes : 1 2 3 4 5 6 7 8 9 10;
 $cardWidth: 40 60 80 100;
-$fontSizes: 18 20 22 24 26 28;
+$fontSizes: 16 18 20 22 24 26 28;
 $fontWeights: 400 600 700 800;
 
 
@@ -44,6 +44,12 @@ $fontWeights: 400 600 700 800;
     .card-width-#{$size}{
         width: #{$size}+'%';
     }
+    
+    @media only screen and (max-width: 768px) {
+        .card-width-sm-#{$size}{
+            width: #{$size}+'%';
+        }
+    }
 }
 @each $size in $fontSizes{
     .fs-#{$size}{
@@ -59,15 +65,25 @@ $fontWeights: 400 600 700 800;
     background-color: $primary !important;
     color: $text-white !important;
 }
+.secondary-bg{
+    background-color: $secondary !important;
+    color: $text-white !important;
+}
 .card-container{
     display: flex !important;
     justify-content: center !important;
-    align-items: center;
-    margin : 10%;
-    flex-direction: column;
+    align-items: center !important;
+    flex-direction: column !important;
+    margin:0 10%;
 }
 
 .card-header{
     background-color: $primary !important;
     color: $text-white !important;
 }
+
+.mdc-text-field--filled:not(.mdc-text-field--disabled) {
+    background-color: white !important;
+}
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';
