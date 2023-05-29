@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AuthGuardService } from 'src/app/services/auth-guard.service';
 import { ToastrService } from 'ngx-toastr';
 import { NavigationService } from 'src/app/services/navigation.service';
+import { ErrorHandlingService } from 'src/app/services/error-handling.service';
 
 
 export interface user {
@@ -27,6 +28,7 @@ export class CreateUserAccessComponent {
   constructor(
     private navigationService :NavigationService,
     private authGuardService:AuthGuardService, 
+    private errorHandlingService:ErrorHandlingService,
     private toastr: ToastrService
     ){
     this.userDetails = {
@@ -53,20 +55,10 @@ export class CreateUserAccessComponent {
   onRegisterBtnClick(){
     this.authGuardService.register(this.userDetails).subscribe((res:any)=>{
       if(res){
-        if( res.status == 200 ){
-          this.toastr.success("User created successfully !!", "Notification");
-          const commands = ['/admin/tools'];
-          this.navigationService.navigateWithoutLocationChange(commands);
-        } else if( res.status == 400 ){
-          this.toastr.info("Email already exists, try login!", 'Notification')
-        } else if( res.status == 500 ){
-          this.toastr.error("Server error, try creating again!", 'Error')
-        }
-      }else{
-        this.toastr.error("Server error, try creating again!", 'Error')
+        this.errorHandlingService.errorAlertMsg(res.status, ['/admin/tools'])
       }
     }, (err)=>{
-      this.toastr.error("Server error, try creating again!", 'Error')
+      this.errorHandlingService.errorAlertMsg(err.status, ['/admin/tools'])
     })
   }
 

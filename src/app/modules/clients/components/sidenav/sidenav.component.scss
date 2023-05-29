@@ -1,0 +1,27 @@
+@import "src/_variables.scss";
+
+.sb-sidenav {
+    height: 100vH !important;
+}
+
+@media only screen and (max-width: 768px) {}
+@media screen and (min-width: 200px) and (max-device-width: 600px) {
+    #layoutSidenav_nav{
+        position: fixed !important;
+        z-index: 1038 !important;
+    }
+}
+
+@media screen and (min-device-width: 992px) and (max-device-width: 1600px) {
+    .sb-sidenav {
+        width: 250px !important;
+    }
+}
+
+.sb-sidenav-dark .sb-sidenav-footer, .sb-sidenav-menu {
+    background-color: $primary !important;
+}
+
+.text-color{
+    color: #A5D8DD !important;
+}

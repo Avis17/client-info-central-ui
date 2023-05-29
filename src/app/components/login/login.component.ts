@@ -18,6 +18,8 @@ export class LoginComponent {
     let userDetails:any = authService.getSessionUserDetails()
     if(userDetails){
       userDetails = JSON.parse(cryptService.decrypt(userDetails));
+      this.authService.setUserDetails(userDetails);
+      console.log(userDetails)
       this.navigateToAuthorizeModule(userDetails.authorizeTo)
     }
   }
@@ -27,7 +29,7 @@ export class LoginComponent {
       const commands = ['/admin/tools'];
       this.navigationService.navigateWithoutLocationChange(commands);        
     }else if(authorizeTo == "client"){
-      const commands = ['/client'];
+      const commands = ['/client/home'];
       this.navigationService.navigateWithoutLocationChange(commands);        
     }else{
       this.toastr.warning("No Access", 'Warning');

@@ -1,0 +1,38 @@
+<div class="container m-3">
+	<mat-card>
+		<mat-card-header>
+			<h3>Add New User</h3>
+		</mat-card-header>
+		<mat-card-content>
+			<form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+				<div *ngFor="let field of userDetails?.app_meta_details?.table_fileds">
+					<label>{{ field.field_name }}</label>
+					<ng-container [ngSwitch]="field.field_type">
+						<input class="mb-3 form-control" *ngSwitchCase="'text'" type="text" [formControlName]="field.field_key">
+						<input class="mb-3form-control" *ngSwitchCase="'email'" type="email" [formControlName]="field.field_key">
+						<input class="mb-3 form-control" *ngSwitchCase="'number'" type="number" [formControlName]="field.field_key">
+						<div class="mb-3" *ngSwitchCase="'radio'">
+							<div *ngFor="let option of field.field_options">
+								<input type="radio" [formControlName]="field.field_key" [value]="option"> {{ option }}
+							</div>
+						</div>
+						<input class="mb-3 form-control" *ngSwitchCase="'date'" type="date" [formControlName]="field.field_key">
+						<div class="mb-3" *ngSwitchCase="'checkbox'">
+							<input  type="checkbox" *ngFor="let option of field.field_options" [formControlName]="field.field_key">
+						</div>
+						<select class="mb-3 form-control" *ngSwitchCase="'dropdown'" [formControlName]="field.field_key"
+							[disabled]="!field.isMutable">
+							<option *ngFor="let option of field.field_options" [value]="option">{{ option }}</option>
+						</select>
+						<!-- Add cases for other field types -->
+						<input class="mb-3 form-control" *ngSwitchDefault type="text" [formControlName]="field.field_key">
+					</ng-container>
+				</div>
+				<div class="mb-3">
+					<button class="btn btn-primary" [disabled]="!formGroup.valid" type="submit">Submit</button>
+				</div>
+			</form>
+		</mat-card-content>
+
+	</mat-card>
+</div>

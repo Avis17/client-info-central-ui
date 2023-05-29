@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ModalComponent } from 'src/app/common/components/modal/modal.component';
 import { ModalConfig }  from "../../../../utils/modal.config"
+import { ErrorHandlingService } from 'src/app/services/error-handling.service';
 @Component({
   selector: 'app-create-application-meta',
   templateUrl: './create-application-meta.component.html',
@@ -28,6 +29,7 @@ export class CreateApplicationMetaComponent implements OnInit {
     "file",
     "checkbox",
     "radio",
+    "select",
     "email",
     "password",
     "submit",
@@ -48,11 +50,12 @@ export class CreateApplicationMetaComponent implements OnInit {
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
   thirdFormGroup:FormGroup;
+  furthFormGroup:FormGroup;
   isSecondFormValid = false;
   @ViewChild('modal') private modalComponent: ModalComponent
   modalConfig:ModalConfig = {
     modalTitle: "Add New Form Field",
-    closeButtonLabel: 'Add Field',
+    closeButtonLabel: 'Add',
     hideDismissButton() {
       return true
     },
@@ -65,11 +68,16 @@ export class CreateApplicationMetaComponent implements OnInit {
     return await this.modalComponent.open();
   }
 
+  async closeModal(){
+    return await this.modalComponent.close()
+  }
+
   constructor(
     private _formBuilder: FormBuilder,
     private navigationService: NavigationService,
     private authGuardService: AuthGuardService,
     private toastr: ToastrService,
+    private errorHandlingService:ErrorHandlingService,
     private appMetaService: AppMetaCreationService,
     breakpointObserver: BreakpointObserver
   ) {
@@ -97,6 +105,7 @@ export class CreateApplicationMetaComponent implements OnInit {
       "company_email": ["", Validators.required],
       "application_name": ["", Validators.required],
       "application_category": ["", Validators.required],
+      "client_name" : ["", Validators.required],
     });
 
     // second stepper
@@ -107,6 +116,10 @@ export class CreateApplicationMetaComponent implements OnInit {
     // third stepper
     this.thirdFormGroup = this._formBuilder.group({
       "application_charts_required": ["", Validators.required],
+    });
+    this.furthFormGroup = this._formBuilder.group({
+        "dbName":["", Validators.required],
+        "customerCollectionName" : ["", Validators.required]
     });
   }
 
@@ -125,10 +138,13 @@ export class CreateApplicationMetaComponent implements OnInit {
       "field_key": ["", Validators.required],
       "field_type": ["", Validators.required],
       "field_value": ["", Validators.required],
-      "isField_table_show": ["", Validators.required],
-      "isField_detailed_show": ["", Validators.required],
-      "isMutable": ["", Validators.required],
-      "isUnique": ["", Validators.required],
+      "isField_table_show": [null, Validators.required],
+      "isField_detailed_show": [null, Validators.required],
+      "isMutable": [null, Validators.required],
+      "isRequired" : [null, Validators.required],
+      "isUnique": [null, Validators.required],
+      "isField_table_sorting" : [null, Validators.required],
+      "field_options" :  new FormControl<string[] | null>(null)
     }
   }
   onFieldAdd() {
@@ -141,9 +157,12 @@ export class CreateApplicationMetaComponent implements OnInit {
     return arr.controls
   }
 
-  onFieldRemove(index: number) {
+  onFieldRemove(index: number, option?:string) {
     const control = this.secondFormGroup.get('table_fileds') as FormArray;
-    control.removeAt(index)
+    control.removeAt(index);
+    if(option == 'modal-close'){
+      this.closeModal()
+    }
   }
 
   getLengthOfArr(){
@@ -159,7 +178,6 @@ export class CreateApplicationMetaComponent implements OnInit {
     this.appMetaService.getAppCategories().subscribe((res) => {
       if (res) {
         this.appCategories = res.data;
-        console.log(this.appCategories)
         return;
       }
       this.appCategories = []
@@ -170,24 +188,13 @@ export class CreateApplicationMetaComponent implements OnInit {
   }
 
   onSaveFormDetails(){
-    let data = {...this.firstFormGroup.value, ...this.secondFormGroup.value, ...this.thirdFormGroup.value }
+    let data = {...this.firstFormGroup.value, ...this.secondFormGroup.value, ...this.thirdFormGroup.value, db_details:this.furthFormGroup.value }
     this.appMetaService.createNewAppMeta(data).subscribe((res:any)=>{
       if(res){
-        if( res.status == 200 ){
-          this.toastr.success("New App Meta Created !!", "Notification");
-          const commands = ['/admin/tools'];
-          this.navigationService.navigateWithoutLocationChange(commands);
-        } else if( res.status == 400 ){
-          this.toastr.info("App meta details dublicate found, try new data!", 'Notification')
-        } else if( res.status == 500 ){
-          this.toastr.error("Server error, try creating again!", 'Error')
-        }
-      }else{
-        this.toastr.error("Server error, try creating again!", 'Error')
+        this.errorHandlingService.errorAlertMsg(res.status, ['/admin/tools'])
       }
     }, (err:any)=>{
-      this.toastr.error("Server error, try creating again!", 'Error');
-      console.log(err)
+      this.errorHandlingService.errorAlertMsg(err.status)
     })
   }
 }

@@ -1,5 +1,5 @@
 <div class="pt-5 pl-3">
-    <mat-icon (click)="onPreviousPage()">arrow_back</mat-icon>
+    <mat-icon class="cursor-pointer" (click)="onPreviousPage()">arrow_back</mat-icon>
 </div>
 
 
@@ -14,7 +14,6 @@
                     <mat-step [stepControl]="firstFormGroup">
                         <ng-template matStepLabel>Basic Details</ng-template>
                         <form [formGroup]="firstFormGroup">
-
                             <div class="row">
                                 <div class="col-lg-6 col-sm-12">
                                     <mat-form-field>
@@ -41,6 +40,13 @@
                                             <mat-option *ngFor="let category of appCategories"
                                                 [value]="category?.application_category">{{category?.application_category}}</mat-option>
                                         </mat-select>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-lg-6 col-sm-12">
+                                    <mat-form-field>
+                                        <mat-label>How do you want call your client/customer ?</mat-label>
+                                        <input required placeholder="Customers, Clients, Students ..,"
+                                            formControlName="client_name" matInput type="text">
                                     </mat-form-field>
                                 </div>
                             </div>
@@ -75,9 +81,9 @@
                                             formArrayName="table_fileds">
                                             <div class="row box p-3 mb-2" [formGroupName]="i"
                                                 *ngIf="getLengthOfArr() == (i+1)">
-                                                <!-- <div class="text-end m-1">
-                                                    <button type="button" (click)="onFieldRemove(i)" class="btn-close" aria-label="Close"></button>
-                                                </div> -->
+                                                <div class="text-end m-1">
+                                                    <button type="button" (click)="onFieldRemove(i, 'modal-close')" class="btn-close" aria-label="Close"></button>
+                                                </div>
                                                 <div class="col-lg-6 col-sm-12">
                                                     <mat-form-field>
                                                         <mat-label>Enter Form Field Name</mat-label>
@@ -92,7 +98,7 @@
                                                             matInput type="text">
                                                     </mat-form-field>
                                                 </div>
-                                                <div class="col-lg-6 col-sm-12">
+                                                <div class="col-lg-12 col-sm-12">
                                                     <mat-form-field>
                                                         <mat-label>Enter Form Field Type</mat-label>
                                                         <mat-select required formControlName="field_type">
@@ -101,7 +107,13 @@
                                                         </mat-select>
                                                     </mat-form-field>
                                                 </div>
-                                                <div class="col-lg-6 col-sm-12">
+                                                <div class="col-lg-12 col-sm-12" *ngIf="field.get('field_type')?.value == 'radio' || field.get('field_type')?.value == 'checkbox' || field.get('field_type')?.value == 'select'">
+                                                    <label>Add Options - (After typed option name click enter :-)</label>
+                                                    <div class="card p-fluid">
+                                                            <p-chips formControlName="field_options" placeholder="Hint: Male, Female, Others"></p-chips>
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-12 col-sm-12">
                                                     <mat-form-field>
                                                         <mat-label>Enter Form Field Value</mat-label>
                                                         <mat-select required formControlName="field_value">
@@ -113,6 +125,14 @@
                                                 <div class="col-lg-6 col-sm-12">
                                                     <mat-label>Do you need this field in table?</mat-label><br>
                                                     <mat-radio-group formControlName="isField_table_show"
+                                                        aria-label="Select an option">
+                                                        <mat-radio-button [value]="true">yes</mat-radio-button>
+                                                        <mat-radio-button [value]="false">No</mat-radio-button>
+                                                    </mat-radio-group>
+                                                </div>
+                                                <div class="col-lg-6 col-sm-12" *ngIf="field.get('isField_table_show')?.value">
+                                                    <mat-label>Do you need sorting option in table?</mat-label><br>
+                                                    <mat-radio-group formControlName="isField_table_sorting"
                                                         aria-label="Select an option">
                                                         <mat-radio-button [value]="true">yes</mat-radio-button>
                                                         <mat-radio-button [value]="false">No</mat-radio-button>
@@ -142,6 +162,15 @@
                                                         <mat-radio-button [value]="false">No</mat-radio-button>
                                                     </mat-radio-group>
                                                 </div>
+                                                <div class="col-lg-6 col-sm-12">
+                                                    <mat-label>Is this field Required?</mat-label>
+                                                    <mat-radio-group formControlName="isRequired"
+                                                        aria-label="Select an option"><br>
+                                                        <mat-radio-button [value]="true">yes</mat-radio-button>
+                                                        <mat-radio-button [value]="false">No</mat-radio-button>
+                                                    </mat-radio-group>
+                                                </div>
+
                                             </div>
                                         </div>
                                     </app-modal>
@@ -195,6 +224,30 @@
                             </div>
                             <div>
                                 <button mat-flat-button class="secondary-bg" matStepperPrevious>Back</button>&nbsp;
+                                <button mat-flat-button class="primary-bg" matStepperNext>Next</button>
+                            </div>
+                        </form>
+                    </mat-step>
+                    <mat-step [stepControl]="furthFormGroup">
+                        <ng-template matStepLabel>DB Details</ng-template>
+                        <form [formGroup]="furthFormGroup">
+
+                            <div class="row">
+                                <div class="col-lg-6 col-sm-12">
+                                    <mat-form-field>
+                                        <mat-label>Enter Databse Name</mat-label>
+                                        <input required formControlName="dbName" matInput type="text">
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-lg-6 col-sm-12">
+                                    <mat-form-field>
+                                        <mat-label>Enter Customer Collection Name</mat-label>
+                                        <input required formControlName="customerCollectionName" matInput type="text">
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div>
+                                <button mat-flat-button class="secondary-bg" matStepperPrevious>Back</button> &nbsp;
                                 <button mat-flat-button class="primary-bg" matStepperNext>Next</button>
                             </div>
                         </form>

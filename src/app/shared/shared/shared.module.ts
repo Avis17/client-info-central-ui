@@ -14,6 +14,11 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import {MatStepperModule} from '@angular/material/stepper';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { ChipsModule } from 'primeng/chips';
+import { ToolbarModule } from 'primeng/toolbar';
 
 @NgModule({
   declarations: [
@@ -34,7 +39,12 @@ import {MatStepperModule} from '@angular/material/stepper';
     MatInputModule,
     ReactiveFormsModule,
     MatSelectModule,
-    MatStepperModule
+    MatStepperModule,
+    TableModule,
+    ButtonModule,
+    InputTextModule,
+    ChipsModule,
+    ToolbarModule
   ],
   exports: [
     CommonModule,
@@ -53,6 +63,11 @@ import {MatStepperModule} from '@angular/material/stepper';
     ReactiveFormsModule,
     MatSelectModule,
     MatStepperModule,
+    TableModule,
+    ButtonModule,
+    InputTextModule,
+    ChipsModule,
+    ToolbarModule
   ]
 })
 export class SharedModule { }
