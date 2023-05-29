@@ -1,1 +1,43 @@
-<p>home works!</p>
+
+<div>
+    <p-toolbar>
+        <div class="p-toolbar-group-start">
+        </div>
+        <div class="p-toolbar-group-end">
+            <p-button [label]="Add User" icon="pi pi-plus" class="mr-2" (click)="onAddUSer()"></p-button>    
+        </div>
+    </p-toolbar>
+</div>
+<div class="card mt-3" *ngIf="customers.length > 0">
+    <p-table
+        [value]="customers"
+        [paginator]="true"
+        [columns]="cols"
+        [rows]="5"
+        [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '50rem' }"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [rowsPerPageOptions]="[10, 25, 50]"
+    >
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th *ngFor="let col of columns">
+                    {{ col.header }}
+                </th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns">
+            <tr>
+                <td *ngFor="let col of columns">
+                    {{ rowData[col.field] }}
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="paginatorleft">
+            <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
+        </ng-template>
+        <ng-template pTemplate="paginatorright">
+            <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
+        </ng-template>
+    </p-table>
+</div>
