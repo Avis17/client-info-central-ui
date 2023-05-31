@@ -1,34 +1,79 @@
+<div class="pt-5 pl-3">
+    <mat-icon class="cursor-pointer" (click)="onPreviousPage()">arrow_back</mat-icon>
+</div>
 <div class="container m-3">
 	<mat-card>
 		<mat-card-header>
 			<h3>Add New User</h3>
 		</mat-card-header>
 		<mat-card-content>
-			<form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-				<div *ngFor="let field of userDetails?.app_meta_details?.table_fileds">
-					<label>{{ field.field_name }}</label>
+			<form class="row" [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+
+				<div class="col-md-12 col-lg-6 mt-3" *ngFor="let field of userDetails?.app_meta_details?.table_fileds">
 					<ng-container [ngSwitch]="field.field_type">
-						<input class="mb-3 form-control" *ngSwitchCase="'text'" type="text" [formControlName]="field.field_key">
-						<input class="mb-3form-control" *ngSwitchCase="'email'" type="email" [formControlName]="field.field_key">
-						<input class="mb-3 form-control" *ngSwitchCase="'number'" type="number" [formControlName]="field.field_key">
-						<div class="mb-3" *ngSwitchCase="'radio'">
-							<div *ngFor="let option of field.field_options">
-								<input type="radio" [formControlName]="field.field_key" [value]="option"> {{ option }}
+						<div  *ngSwitchCase="'text'">
+							<mat-form-field class="" >
+								<mat-label>{{ field.field_name }}</mat-label>
+								<input matInput type="text" [formControlName]="field.field_key">
+							</mat-form-field>
+						</div>
+
+						<div *ngSwitchCase="'email'">
+							<mat-form-field class="">
+								<mat-label>{{ field.field_name }}</mat-label>
+								<input matInput type="email" [formControlName]="field.field_key">
+							</mat-form-field>
+						</div>
+
+						<div *ngSwitchCase="'number'">
+							<mat-form-field class="" >
+								<mat-label>{{ field.field_name }}</mat-label>
+								<input matInput type="number" [formControlName]="field.field_key">
+							</mat-form-field>
+						</div>
+
+						<div class="" *ngSwitchCase="'radio'">
+							<label>{{ field.field_name }}</label>
+							<div class="w-100" *ngFor="let option of field.field_options">
+								<input class="form-check-input" type="radio" [formControlName]="field.field_key" [value]="option"> {{ option }}
 							</div>
 						</div>
-						<input class="mb-3 form-control" *ngSwitchCase="'date'" type="date" [formControlName]="field.field_key">
-						<div class="mb-3" *ngSwitchCase="'checkbox'">
-							<input  type="checkbox" *ngFor="let option of field.field_options" [formControlName]="field.field_key">
+
+						<div *ngSwitchCase="'date'">
+							<input class="w-100" class="form-control" type="date"
+							[formControlName]="field.field_key">
 						</div>
-						<select class="mb-3 form-control" *ngSwitchCase="'dropdown'" [formControlName]="field.field_key"
-							[disabled]="!field.isMutable">
-							<option *ngFor="let option of field.field_options" [value]="option">{{ option }}</option>
-						</select>
+
+						<div  *ngSwitchCase="'checkbox'">
+							<label>{{ field.field_name }}</label>
+							<ng-container [formArrayName]="field.field_key">
+								<div *ngFor="let option of field.field_options; let j = index" [formGroupName]="j">
+									<label>
+										<input class="form-check-input" type="checkbox" formControlName="fieldValue">
+										{{ option }}
+									</label>
+								</div>
+							</ng-container>
+						</div>
+						<div  *ngSwitchCase="'select'">
+							<label>{{ field.field_name }}</label>
+							<mat-form-field >
+								<mat-label>Choose an option</mat-label>
+								<mat-select [formControlName]="field.field_key">
+								  <mat-option *ngFor="let option of field.field_options" [value]="option">{{ option }}</mat-option>
+								</mat-select>
+							  </mat-form-field>
+						</div>
+
 						<!-- Add cases for other field types -->
-						<input class="mb-3 form-control" *ngSwitchDefault type="text" [formControlName]="field.field_key">
+						<div *ngSwitchDefault>
+							<input class="form-control"  type="text"
+							[formControlName]="field.field_key">
+						</div>
+
 					</ng-container>
 				</div>
-				<div class="mb-3">
+				<div class="mt-4 mb-3">
 					<button class="btn btn-primary" [disabled]="!formGroup.valid" type="submit">Submit</button>
 				</div>
 			</form>

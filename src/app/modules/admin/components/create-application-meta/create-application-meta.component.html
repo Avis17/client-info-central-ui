@@ -70,19 +70,20 @@
 
                                 <div *ngIf="secondFormGroup.get('application_table_required')?.value">
                                     <div class="text-end m-1">
-                                        <button mat-flat-button class="secondary-bg" (click)="onFieldAdd()"
-                                            aria-label="Close">Add
-                                            Field</button>
+
+                                        <p-button label="Add Field" icon="pi pi-plus" class="mr-2"
+                                            (click)="onFieldAdd()"></p-button>
                                     </div>
                                     <app-modal (formDataSaved)="onFormDataSaved($event)" #modal
                                         [modalConfig]="modalConfig">
                                         <div class="col-lg-12 col-sm-12"
-                                            *ngFor="let field of getFormControls();let i=index"
+                                            *ngFor="let field of getFormControls('table_fileds', 'second');let i=index"
                                             formArrayName="table_fileds">
                                             <div class="row box p-3 mb-2" [formGroupName]="i"
-                                                *ngIf="getLengthOfArr() == (i+1)">
+                                                *ngIf="getLengthOfArr('table_fileds', 'second') == (i+1)">
                                                 <div class="text-end m-1">
-                                                    <button type="button" (click)="onFieldRemove(i, 'modal-close')" class="btn-close" aria-label="Close"></button>
+                                                    <button type="button" (click)="onFieldRemove(i, 'table_fileds', 'modal', 'modal-close')"
+                                                        class="btn-close" aria-label="Close"></button>
                                                 </div>
                                                 <div class="col-lg-6 col-sm-12">
                                                     <mat-form-field>
@@ -107,10 +108,13 @@
                                                         </mat-select>
                                                     </mat-form-field>
                                                 </div>
-                                                <div class="col-lg-12 col-sm-12" *ngIf="field.get('field_type')?.value == 'radio' || field.get('field_type')?.value == 'checkbox' || field.get('field_type')?.value == 'select'">
-                                                    <label>Add Options - (After typed option name click enter :-)</label>
+                                                <div class="col-lg-12 col-sm-12"
+                                                    *ngIf="field.get('field_type')?.value == 'radio' || field.get('field_type')?.value == 'checkbox' || field.get('field_type')?.value == 'select'">
+                                                    <label>Add Options - (After typed option name click enter
+                                                        :-)</label>
                                                     <div class="card p-fluid">
-                                                            <p-chips formControlName="field_options" placeholder="Hint: Male, Female, Others"></p-chips>
+                                                        <p-chips formControlName="field_options"
+                                                            placeholder="Hint: Male, Female, Others"></p-chips>
                                                     </div>
                                                 </div>
                                                 <div class="col-lg-12 col-sm-12">
@@ -130,7 +134,8 @@
                                                         <mat-radio-button [value]="false">No</mat-radio-button>
                                                     </mat-radio-group>
                                                 </div>
-                                                <div class="col-lg-6 col-sm-12" *ngIf="field.get('isField_table_show')?.value">
+                                                <div class="col-lg-6 col-sm-12"
+                                                    *ngIf="field.get('isField_table_show')?.value">
                                                     <mat-label>Do you need sorting option in table?</mat-label><br>
                                                     <mat-radio-group formControlName="isField_table_sorting"
                                                         aria-label="Select an option">
@@ -174,7 +179,6 @@
                                             </div>
                                         </div>
                                     </app-modal>
-
                                     <div>
                                         <table class="table">
                                             <thead>
@@ -187,13 +191,13 @@
                                             </thead>
                                             <tbody>
                                                 <tr
-                                                    *ngFor="let field of getFormControls();let i=index">
+                                                    *ngFor="let field of getFormControls('table_fileds', 'second');let i=index">
                                                     <td>{{field.get('field_name')?.value}}</td>
                                                     <td>{{ field.get('field_key')?.value }}</td>
                                                     <td>{{ field.get('field_type')?.value }}</td>
                                                     <td>
                                                         <button class="btn btn-danger"
-                                                            (click)="onFieldRemove(i)">Delete</button>
+                                                            (click)="onFieldRemove(i, 'table_fileds', 'modal')">Delete</button>
                                                     </td>
 
                                                 </tr>
@@ -203,7 +207,7 @@
                                 </div>
                             </div>
 
-                            <div>
+                            <div class="mt-4">
                                 <button mat-flat-button class="secondary-bg" matStepperPrevious>Back</button>&nbsp;
                                 <button mat-flat-button class="primary-bg" matStepperNext>Next</button>
                             </div>
@@ -220,6 +224,70 @@
                                         <mat-radio-button [value]="true">yes</mat-radio-button>
                                         <mat-radio-button [value]="false">No</mat-radio-button>
                                     </mat-radio-group>
+                                </div>
+
+                                <div *ngIf="thirdFormGroup.get('application_charts_required')?.value">
+                                    <div class="text-end m-1">
+                                        <p-button label="Add Chart" icon="pi pi-plus" class="mr-2"
+                                            (click)="onChartAdd()"></p-button>
+
+                                        <app-modal (formDataSaved)="onFormDataSaved($event)" #modal1
+                                            [modalConfig]="modalConfigChart">
+                                            <div class="col-lg-12 col-sm-12"
+                                                *ngFor="let field of getFormControls('charts_details', 'third');let i=index"
+                                                formArrayName="charts_details">
+                                                <div class="row box p-3 mb-2" [formGroupName]="i"
+                                                    *ngIf="getLengthOfArr('charts_details', 'third') == (i+1)">
+                                                    <div class="text-end m-1">
+                                                        <button type="button" (click)="onFieldRemove(i, 'charts_details', 'modal1', 'modal-close')"
+                                                            class="btn-close" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="col-lg-6 col-sm-12">
+                                                        <mat-form-field>
+                                                            <mat-label>Choose Chart Type</mat-label>
+                                                            <mat-select required formControlName="chart_type">
+                                                                <mat-option *ngFor="let value of chartTypes"
+                                                                    [value]="value">{{value}}</mat-option>
+                                                            </mat-select>
+                                                        </mat-form-field>
+                                                    </div>
+                                                    <div class="col-lg-6 col-sm-12">
+                                                        <mat-form-field>
+                                                            <mat-label>Choose Chart Field</mat-label>
+                                                            <mat-select required formControlName="chart_field_name">
+                                                                <mat-option *ngFor="let field of fieldsList"
+                                                                    [value]="field.field_key">
+                                                                    {{field.field_key }}</mat-option>
+                                                            </mat-select>
+                                                        </mat-form-field>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </app-modal>
+                                        <div>
+                                            <table class="table" style="width:75%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Chart Type</th>
+                                                        <th>Chart Field Name</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr
+                                                        *ngFor="let field of getFormControls('charts_details', 'third');let i=index">
+                                                        <td>{{field.get('chart_type')?.value}}</td>
+                                                        <td>{{ field.get('chart_field_name')?.value }}</td>
+                                                        <td>
+                                                            <button class="btn btn-danger"
+                                                                (click)="onFieldRemove(i, 'charts_details', 'modal1')">Delete</button>
+                                                        </td>
+    
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div>

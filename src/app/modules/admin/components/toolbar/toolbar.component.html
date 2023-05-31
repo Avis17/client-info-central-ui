@@ -32,7 +32,7 @@
                 </mat-card-footer>
               </mat-card>
         </div>
-        <div class="col-lg-6 col-md-6 col-sm-12 pt-5">
+        <div class="col-lg-6 col-md-6 col-sm-12 pt-5 mb-4">
             <mat-card class="admin-card">
                 <mat-card-header class="pb-5">
                     <div class="row">
@@ -48,7 +48,8 @@
                   <mat-divider></mat-divider>
                 </mat-card-content>
                 <mat-card-actions>
-                  <button (click)="onClickNavigation('create-app-meta')" mat-flat-button class="primary-bg">CREATE</button>
+                  <button (click)="onClickNavigation('create-app-meta')" mat-flat-button class="primary-bg mr-3">CREATE</button> &nbsp;
+                  <button (click)="onClickNavigation('view-app-metas')" mat-flat-button class="secondary-bg">VIEW METAS</button>
                 </mat-card-actions>
                 <mat-card-footer>
                   <mat-progress-bar mode="indeterminate"></mat-progress-bar>

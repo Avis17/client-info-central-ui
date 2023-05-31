@@ -6,7 +6,7 @@ import { Router, NavigationExtras } from '@angular/router';
 })
 export class SkipLocationChangeDirective {
 
-  @Input('skipLocationChange') commands: any;
+  @Input('commands') commands: any;
   // <a skipLocationChange [commands]="['/product']">Go to Product</a>
 
   constructor(private router: Router) { }

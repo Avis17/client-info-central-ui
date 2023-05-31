@@ -1,0 +1,125 @@
+<div class="pt-5 pl-3">
+    <mat-icon class="cursor-pointer" (click)="onPreviousPage()">arrow_back</mat-icon>
+</div>
+<div class="container mt-5">
+    <p-accordion class="mt-1" [multiple]="true" [activeIndex]="[0]">
+        <p-accordionTab header="App Basic Details">
+           <div class="table-responsive">
+            <table class="table mb-3">
+                <thead>
+                    <tr style="text-align: center;">
+                        <th>S No</th>
+                        <th>Company Name</th>
+                        <th>Company Email</th>
+                        <th>App Name</th>
+                        <th>App Category</th>
+                        <th>Client Name</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let app of allAppMetas;let i=index" style="text-align: center;">
+                        <td>{{i+1}}</td>
+                        <td>
+                            <span *ngIf="!app.isEdit">{{app.company_name}}</span>
+                            <input class="form-control" *ngIf="app.isEdit" [(ngModel)]="app.company_name" type="text">
+                        </td>
+                        <td>
+                            <span *ngIf="!app.isEdit">{{app.company_email}}</span>
+                            <input class="form-control" *ngIf="app.isEdit" [(ngModel)]="app.company_email" type="text">
+                        </td>
+                        <td>
+                            <span *ngIf="!app.isEdit">{{app.application_name}}</span>
+                            <input class="form-control" *ngIf="app.isEdit" [(ngModel)]="app.application_name" type="text">
+                        </td>
+                        <td>
+                            <span *ngIf="!app.isEdit">{{app.application_category}}</span>
+                            <input class="form-control" *ngIf="app.isEdit" [(ngModel)]="app.application_category" type="text">
+                        </td>
+                        <td>
+                            <span *ngIf="!app.isEdit">{{app.client_name}}</span>
+                            <input class="form-control" *ngIf="app.isEdit" [(ngModel)]="app.client_name" type="text">
+                        </td>
+                        <td>
+                            <!-- <p-splitButton label="Edit" icon="pi pi-user-edit" (onClick)="onEdit(app)" (onDropdownClick)="onDropDownClick(app)" styleClass="p-button-outlined-sm mr-2 mb-2" 
+                            [model]="items"></p-splitButton> -->
+                            <a appSkipLocationChange [commands]="['/admin/view-meta-details/'+app._id]" class="btn btn-primary">View Details</a>
+                                
+                            <button class="btn btn-danger mt-2" (click)="onDelete(app._id)">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+           </div>
+        </p-accordionTab>
+        <!-- <p-accordionTab header="Table Details">
+            <div class="table-responsive">
+                <table class="table mb-10">
+                    <thead>
+                        <tr>
+                            <th>S No</th>
+                            <th>Field Key</th>
+                            <th>Field Name</th>
+                            <th>Field Type</th>
+                            <th>Field Value</th>
+                            <th>Field Options</th>
+                            <th>Detailed Show</th>
+                            <th>Table Show</th>
+                            <th>Table Sorting</th>
+                            <th>Editable</th>
+                            <th>Required</th>
+                            <th>Unique</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let app of allAppMetas;let i=index">
+                            <td>{{i+1}}</td>
+                            <td>
+                                <span *ngIf="!app.table_fileds.isEdit">{{app.field_key}}</span>
+                                <input class="form-control" *ngIf="app.table_fileds.isEdit" [(ngModel)]="app.table_fileds.field_key" type="text">
+                            </td>
+                            <td>
+                                <span *ngIf="!app.table_fileds.isEdit">{{app.field_name}}</span>
+                                <input class="form-control" *ngIf="app.table_fileds.isEdit" [(ngModel)]="app.table_fileds.field_name" type="text">
+                            </td>
+                            <td>
+                                <span *ngIf="!app.table_fileds.isEdit">{{app.field_type}}</span>
+                                <input class="form-control" *ngIf="app.table_fileds.isEdit" [(ngModel)]="app.table_fileds.field_type" type="text">
+                            </td>
+                            <td>
+                                <span *ngIf="!app.table_fileds.isEdit">{{app.field_value}}</span>
+                                <input class="form-control" *ngIf="app.table_fileds.isEdit" [(ngModel)]="app.table_fileds.field_value" type="text">
+                            </td>
+                            <td>
+                                <ng-container *ngIf="!app.table_fileds.isEdit">
+                                    <p-chips [(ngModel)]="app.table_fileds.field_options"></p-chips>
+                                </ng-container>
+                                <ng-container *ngIf="app.table_fileds.isEdit">
+                                    <p-chips [(ngModel)]="app.table_fileds.field_options"
+                                                            placeholder="Hint: Male, Female, Others"></p-chips>
+                                </ng-container>
+                            </td>
+                            <td>
+                                <p-splitButton label="Edit" icon="pi pi-user-edit" (onClick)="onEdit(app.table_fileds)" (onDropdownClick)="onDropDownClick(app.table_fileds)" styleClass="p-button-outlined-sm mr-2 mb-2" 
+                                [model]="items"></p-splitButton>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+               </div>
+        </p-accordionTab>
+        <p-accordionTab header="Chart Details">
+            <p>
+                At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa
+                qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
+            </p>
+        </p-accordionTab>
+        <p-accordionTab header="DB Details">
+            <p>
+                At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa
+                qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus.
+            </p>
+        </p-accordionTab> -->
+    </p-accordion>
+</div>

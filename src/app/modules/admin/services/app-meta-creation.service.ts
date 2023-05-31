@@ -24,6 +24,7 @@ export class AppMetaCreationService {
     );
   }
 
+  
   createNewAppMeta(data:any){
     return this.http.post(this.URL+"create-new-app-meta", data).pipe(
       map((response:any) => {
@@ -38,6 +39,37 @@ export class AppMetaCreationService {
      })
     );
   }
+
+  deleteAppMeta(_id:string){
+    return this.http.post(this.URL+"delete-app-meta", {_id}).pipe(
+      map((response:any) => {
+       if(response.status == 200){
+        let decryptRes = {
+          ...response,
+          data : JSON.parse(this.cryptoService.decrypt(response.data))
+         }
+         return decryptRes;
+       }
+       return response
+     })
+    );
+  }
+
+  getAllAppMetas(query:any){
+    return this.http.post(this.URL+"get-app-metas", {query}).pipe(
+      map((response:any) => {
+       if(response.status == 200){
+        let decryptRes = {
+          ...response,
+          data : JSON.parse(this.cryptoService.decrypt(response.data))
+         }
+         return decryptRes;
+       }
+       return response
+     })
+    );
+  }
+
 }
 
 

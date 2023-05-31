@@ -55,10 +55,10 @@ export class CreateUserAccessComponent {
   onRegisterBtnClick(){
     this.authGuardService.register(this.userDetails).subscribe((res:any)=>{
       if(res){
-        this.errorHandlingService.errorAlertMsg(res.status, ['/admin/tools'])
+        this.errorHandlingService.errorAlertMsg(res, ['/admin/tools'])
       }
     }, (err)=>{
-      this.errorHandlingService.errorAlertMsg(err.status, ['/admin/tools'])
+      this.errorHandlingService.errorAlertMsg(err, ['/admin/tools'])
     })
   }
 

@@ -81,7 +81,7 @@ export class AuthGuardService {
   }
 
   canAdminActivate(){
-    console.log(this.userDetails)
+    // console.log(this.userDetails)
     if(this.userDetails.authorizeTo == 'admin' || this.userDetails.authorizeTo == 'developer'){
       return true
     }
@@ -89,7 +89,7 @@ export class AuthGuardService {
     return false;
   }
   canClientActivate(){
-    console.log(this.userDetails)
+    // console.log(this.userDetails)
     if(this.userDetails.authorizeTo == 'client'){
       return true
     }

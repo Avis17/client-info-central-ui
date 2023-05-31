@@ -9,7 +9,7 @@ import { BreakpointObserver } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ModalComponent } from 'src/app/common/components/modal/modal.component';
-import { ModalConfig }  from "../../../../utils/modal.config"
+import { ModalConfig } from "../../../../utils/modal.config"
 import { ErrorHandlingService } from 'src/app/services/error-handling.service';
 @Component({
   selector: 'app-create-application-meta',
@@ -47,29 +47,67 @@ export class CreateApplicationMetaComponent implements OnInit {
     "array",
     "any"
   ]
+
+  chartTypes: string[] = [
+    "pie",
+    "doughnut",
+    "bar"
+  ]
+
+  fieldsList: any = [
+    {
+      field_key : "createdAt"
+    }
+  ];
+
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
-  thirdFormGroup:FormGroup;
-  furthFormGroup:FormGroup;
+  thirdFormGroup: FormGroup;
+  furthFormGroup: FormGroup;
   isSecondFormValid = false;
-  @ViewChild('modal') private modalComponent: ModalComponent
-  modalConfig:ModalConfig = {
+  isThirdFormValid = false;
+
+  @ViewChild('modal') private fieldModalComponent: ModalComponent
+  @ViewChild('modal1') private chartModalComponent: ModalComponent
+
+  modalConfig: ModalConfig = {
     modalTitle: "Add New Form Field",
     closeButtonLabel: 'Add',
     hideDismissButton() {
       return true
     },
-    disableCloseButton : ()=>{
+    disableCloseButton: () => {
       return !this.isSecondFormValid;
     },
   }
- 
-  async openModal() {
-    return await this.modalComponent.open();
+
+  modalConfigChart: ModalConfig = {
+    modalTitle: "Add New Chart Details",
+    closeButtonLabel: 'Add',
+    hideDismissButton() {
+      return true
+    },
+    disableCloseButton: () => {
+      return !this.isThirdFormValid;
+    },
   }
 
-  async closeModal(){
-    return await this.modalComponent.close()
+  async openModal(modelName: string) {
+    if (modelName == 'modal') {
+      return await this.fieldModalComponent.open();
+    } else if (modelName == 'modal1') {
+      return await this.chartModalComponent.open();
+    } else {
+      return await this.fieldModalComponent.open();
+    }
+  }
+
+  async closeModal(modelName: string) {
+    if (modelName == 'modal') {
+      return await this.fieldModalComponent.close();
+    } else {
+      return await this.chartModalComponent.close();
+    }
   }
 
   constructor(
@@ -77,7 +115,7 @@ export class CreateApplicationMetaComponent implements OnInit {
     private navigationService: NavigationService,
     private authGuardService: AuthGuardService,
     private toastr: ToastrService,
-    private errorHandlingService:ErrorHandlingService,
+    private errorHandlingService: ErrorHandlingService,
     private appMetaService: AppMetaCreationService,
     breakpointObserver: BreakpointObserver
   ) {
@@ -85,27 +123,30 @@ export class CreateApplicationMetaComponent implements OnInit {
       .observe('(min-width: 800px)')
       .pipe(map(({ matches }) => (matches ? 'horizontal' : 'vertical')));
 
-      this.formFieldsCreate();
-      this.secondFormGroup.statusChanges.subscribe((status)=>{
-        this.isSecondFormValid = status === 'VALID';
-      })
+    this.formFieldsCreate();
+    this.secondFormGroup.statusChanges.subscribe((status) => {
+      this.isSecondFormValid = status === 'VALID';
+    })
+    this.thirdFormGroup.statusChanges.subscribe((status) => {
+      this.isThirdFormValid = status === 'VALID';
+    })
   }
 
 
   onFormDataSaved(formData: any): void {
     // Access the form data here
-    console.log(formData);
+    // console.log(formData);
   }
-  
 
-  formFieldsCreate(){
+
+  formFieldsCreate() {
     //first stepper
     this.firstFormGroup = this._formBuilder.group({
       "company_name": ["", Validators.required],
       "company_email": ["", Validators.required],
       "application_name": ["", Validators.required],
       "application_category": ["", Validators.required],
-      "client_name" : ["", Validators.required],
+      "client_name": ["", Validators.required],
     });
 
     // second stepper
@@ -116,10 +157,11 @@ export class CreateApplicationMetaComponent implements OnInit {
     // third stepper
     this.thirdFormGroup = this._formBuilder.group({
       "application_charts_required": ["", Validators.required],
+      "charts_details": this._formBuilder.array([])
     });
     this.furthFormGroup = this._formBuilder.group({
-        "dbName":["", Validators.required],
-        "customerCollectionName" : ["", Validators.required]
+      "dbName": ["", Validators.required],
+      "customerCollectionName": ["", Validators.required]
     });
   }
 
@@ -132,42 +174,88 @@ export class CreateApplicationMetaComponent implements OnInit {
     control.push(this._formBuilder.group(this.getListOfFields()))
   }
 
+  addChartobj() {
+    const control = this.thirdFormGroup.get('charts_details') as FormArray;
+    control.push(this._formBuilder.group(this.getChartsDetailsObj()))
+  }
+
   getListOfFields() {
     return {
       "field_name": ["", Validators.required],
       "field_key": ["", Validators.required],
       "field_type": ["", Validators.required],
       "field_value": ["", Validators.required],
-      "isField_table_show": [null, Validators.required],
-      "isField_detailed_show": [null, Validators.required],
-      "isMutable": [null, Validators.required],
-      "isRequired" : [null, Validators.required],
-      "isUnique": [null, Validators.required],
-      "isField_table_sorting" : [null, Validators.required],
-      "field_options" :  new FormControl<string[] | null>(null)
+      "isField_table_show": [true, Validators.required],
+      "isField_detailed_show": [true, Validators.required],
+      "isMutable": [true, Validators.required],
+      "isRequired": [true, Validators.required],
+      "isUnique": [false, Validators.required],
+      "isField_table_sorting": [true, Validators.required],
+      "field_options": new FormControl<string[] | null>(null)
     }
   }
+
+  getChartsDetailsObj() {
+    return {
+      "chart_type": ["", Validators.required],
+      "chart_field_name": ["", Validators.required]
+    }
+
+  }
+
   onFieldAdd() {
-    this.openModal();
+    this.openModal('modal');
     this.addFieldsObj();
   }
 
-  getFormControls(){
-    let arr = this.secondFormGroup.get('table_fileds') as FormArray;
-    return arr.controls
+  onChartAdd() {
+    this.addChartobj();
+    this.fieldsList = [...this.fieldsList,...this.secondFormGroup.get('table_fileds')?.value];
+    this.openModal("modal1");
   }
 
-  onFieldRemove(index: number, option?:string) {
-    const control = this.secondFormGroup.get('table_fileds') as FormArray;
-    control.removeAt(index);
-    if(option == 'modal-close'){
-      this.closeModal()
+  getFormControls(fieldName: string, groupName: string) {
+    if (groupName == 'second') {
+      let arr = this.secondFormGroup.get(fieldName) as FormArray;
+      return arr.controls
+    } else if (groupName == 'third') {
+      let arr = this.thirdFormGroup.get(fieldName) as FormArray;
+      return arr.controls
+    } else {
+      let arr = this.secondFormGroup.get(fieldName) as FormArray;
+      return arr.controls
+    }
+
+  }
+
+  onFieldRemove(index: number, fieldName:string, modalName: string, option?: string) {
+    // console.log(index, fieldName, modalName)
+    if (modalName == 'modal') {
+      const control = this.secondFormGroup.get(fieldName) as FormArray;
+      control.removeAt(index);
+      if (option == 'modal-close') {
+        this.closeModal('modal')
+      }
+    }
+    if (modalName == 'modal1') {
+      const control = this.thirdFormGroup.get(fieldName) as FormArray;
+      control.removeAt(index);
+      if (option == 'modal-close') {
+        this.closeModal('modal1')
+      }
     }
   }
 
-  getLengthOfArr(){
-    let arr = this.secondFormGroup.get('table_fileds') as FormArray;
-    return arr.length;
+  getLengthOfArr(fieldName: string, groupName: string) {
+    if (groupName == 'second') {
+      let arr = this.secondFormGroup.get(fieldName) as FormArray;
+      return arr.length
+    } else if (groupName == 'third') {
+      let arr = this.thirdFormGroup.get(fieldName) as FormArray;
+      return arr.length
+    } else {
+      return 0
+    }
   }
   onPreviousPage() {
     const commands = ['/admin/tools'];
@@ -183,18 +271,18 @@ export class CreateApplicationMetaComponent implements OnInit {
       this.appCategories = []
     }, (err) => {
       this.appCategories = []
-      console.log(err)
+      // console.log(err)
     })
   }
 
-  onSaveFormDetails(){
-    let data = {...this.firstFormGroup.value, ...this.secondFormGroup.value, ...this.thirdFormGroup.value, db_details:this.furthFormGroup.value }
-    this.appMetaService.createNewAppMeta(data).subscribe((res:any)=>{
-      if(res){
-        this.errorHandlingService.errorAlertMsg(res.status, ['/admin/tools'])
+  onSaveFormDetails() {
+    let data = { ...this.firstFormGroup.value, ...this.secondFormGroup.value, ...this.thirdFormGroup.value, db_details: this.furthFormGroup.value }
+    this.appMetaService.createNewAppMeta(data).subscribe((res: any) => {
+      if (res) {
+        this.errorHandlingService.errorAlertMsg(res, ['/admin/tools'])
       }
-    }, (err:any)=>{
-      this.errorHandlingService.errorAlertMsg(err.status)
+    }, (err: any) => {
+      this.errorHandlingService.errorAlertMsg(err)
     })
   }
 }

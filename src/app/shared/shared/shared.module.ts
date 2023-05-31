@@ -19,10 +19,14 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { ChipsModule } from 'primeng/chips';
 import { ToolbarModule } from 'primeng/toolbar';
+import { ChartModule } from 'primeng/chart';
+import { ArrayDestructurePipe } from 'src/app/pipes/array-destructure.pipe';
+import {MatDatepickerModule} from '@angular/material/datepicker';
 
 @NgModule({
   declarations: [
-    SkipLocationChangeDirective,
+    ArrayDestructurePipe,
+    SkipLocationChangeDirective
   ],
   imports: [
     CommonModule,
@@ -44,7 +48,9 @@ import { ToolbarModule } from 'primeng/toolbar';
     ButtonModule,
     InputTextModule,
     ChipsModule,
-    ToolbarModule
+    ToolbarModule,
+    ChartModule,
+    MatDatepickerModule
   ],
   exports: [
     CommonModule,
@@ -57,7 +63,6 @@ import { ToolbarModule } from 'primeng/toolbar';
     MatToolbarModule,
     MatIconModule,
     MatRadioModule,
-    SkipLocationChangeDirective,
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
@@ -67,7 +72,11 @@ import { ToolbarModule } from 'primeng/toolbar';
     ButtonModule,
     InputTextModule,
     ChipsModule,
-    ToolbarModule
+    ToolbarModule,
+    ChartModule,
+    ArrayDestructurePipe,
+    MatDatepickerModule,
+    SkipLocationChangeDirective
   ]
 })
 export class SharedModule { }

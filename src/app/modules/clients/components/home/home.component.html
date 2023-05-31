@@ -1,43 +1,73 @@
+<div class="m-4">
+    <div class="row">
+        <!-- <div class="col-12 lg:col-6 xl:col-3">
+            <div class="card mb-0">
+                <div class="flex justify-content-between mb-3">
+                    <div><span class="block text-500 font-medium mb-3">Customers</span>
+                        <div class="text-900 font-medium text-xl">152</div>
+                    </div>
+                    <div class="flex align-items-center justify-content-center bg-blue-100 border-round"
+                        style="width: 2.5rem; height: 2.5rem;"><i class="pi pi-shopping-cart text-blue-500 text-xl"></i>
+                    </div>
+                </div><span class="text-green-500 font-medium">24 new </span><span class="text-500">since last visit</span>
+            </div>
+        </div> -->
+    </div>
+    <div class="row flex-wrap justify-content-center">
+        <div class="col-md-12 col-lg-6" *ngFor="let chart of dynamicChartDetails; let i=index">
+            <div class="card p-5 mb-3" *ngIf="entities.length > 0">
+                <div class="text-end mb-3">
+                    <h3>{{chart.chartName | uppercase}}</h3>
+                </div>
+                <p-chart [type]="chart.chartType" height="400" type="pie" [data]="chart.chartData"
+                    [options]="chart.chartOptions"></p-chart>
+            </div>
+        </div>
+    </div>
 
-<div>
-    <p-toolbar>
+    <p-toolbar class="mt-4">
         <div class="p-toolbar-group-start">
+            <input type="text" pInputText placeholder="Search Fields" (input)="applyFilterGlobal($event, 'contains')" />
         </div>
         <div class="p-toolbar-group-end">
-            <p-button [label]="Add User" icon="pi pi-plus" class="mr-2" (click)="onAddUSer()"></p-button>    
+            <p-button [label]="userDetails?.app_meta_details?.client_name || 'Add User'" icon="pi pi-plus" class="mr-2"
+                (click)="onAddUSer()"></p-button>
         </div>
     </p-toolbar>
 </div>
-<div class="card mt-3" *ngIf="customers.length > 0">
-    <p-table
-        [value]="customers"
-        [paginator]="true"
-        [columns]="cols"
-        [rows]="5"
-        [showCurrentPageReport]="true"
-        [tableStyle]="{ 'min-width': '50rem' }"
+<div class="card m-4" *ngIf="entities.length > 0">
+    <p-table #tableref [value]="entities" [paginator]="true" [columns]="cols" [rows]="5" [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '60rem' }"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-        [rowsPerPageOptions]="[10, 25, 50]"
-    >
+        [rowsPerPageOptions]="[5, 10, 25, 50]">
+
         <ng-template pTemplate="header" let-columns>
             <tr>
-                <th *ngFor="let col of columns">
+                <th *ngFor="let col of cols" [pSortableColumn]="col.field"
+                    style="width:20%;text-align: center !important;">
                     {{ col.header }}
+                    <p-sortIcon [field]="col.field"></p-sortIcon>
                 </th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-rowData let-columns="columns">
             <tr>
-                <td *ngFor="let col of columns">
-                    {{ rowData[col.field] }}
+                <td style="text-align: center;" *ngFor="let col of columns">
+                    <ng-container *ngIf="!isArrayCheck(rowData[col.field]) && col.field == 'createdAt'">{{
+                        rowData[col.field] | date:'shortDate' }}</ng-container>
+                    <ng-container *ngIf="!isArrayCheck(rowData[col.field]) && col.field != 'createdAt'">{{
+                        rowData[col.field] }}</ng-container>
+                    <ng-container *ngIf="isArrayCheck(rowData[col.field])">{{ rowData[col.field] | arrayDestructure
+                        }}</ng-container>
+
                 </td>
             </tr>
         </ng-template>
-        <ng-template pTemplate="paginatorleft">
+        <!-- <ng-template pTemplate="paginatorleft">
             <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
-        </ng-template>
-        <ng-template pTemplate="paginatorright">
+        </ng-template> -->
+        <!-- <ng-template pTemplate="paginatorright">
             <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
-        </ng-template>
+        </ng-template> -->
     </p-table>
 </div>

@@ -10,12 +10,13 @@ import { ToastrModule } from 'ngx-toastr';
 import {  HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptorInterceptor } from './interceptor/token-interceptor.interceptor';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ModalComponent } from './common/components/modal/modal.component';
+import { SearchPipe } from './pipes/search.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
+    SearchPipe,
   ],
   imports: [
     BrowserModule,

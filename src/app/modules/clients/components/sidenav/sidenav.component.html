@@ -3,9 +3,14 @@
         <div class="sb-sidenav-menu">
             <div class="nav">
                 <!-- <div class="sb-sidenav-menu-heading">Core</div> -->
-                <a class="nav-link" routerLink="/client/home" routerLinkActive="text-color">
-                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                <a (click)="onClickLink('dashboard')" appSkipLocationChange [commands]="['/client/home']" [ngClass]="linkActive['dashboard'] ? 'text-color nav-link' : 'nav-link'">
+                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div> 
                     Dashboard
+                </a>
+
+                <a (click)="onClickLink('billing')" appSkipLocationChange [commands]="['/client/billing']" [ngClass]="linkActive['billing'] ? 'text-color nav-link' : 'nav-link'">
+                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                    Billing
                 </a>
             </div> 
         </div>

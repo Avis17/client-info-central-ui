@@ -8,7 +8,10 @@ import { NavbarComponent } from './components/navbar/navbar.component'
 import { SharedModule } from 'src/app/shared/shared/shared.module';
 import { CreateApplicationMetaComponent } from './components/create-application-meta/create-application-meta.component';
 import { ModalComponent } from 'src/app/common/components/modal/modal.component';
-
+import { ViewAppMetasComponent } from './components/view-app-metas/view-app-metas.component';
+import { AccordionModule } from 'primeng/accordion';
+import { SplitButtonModule } from 'primeng/splitbutton';
+import { ViewDetailedMetaComponent } from './components/view-detailed-meta/view-detailed-meta.component';
 
 
 @NgModule({
@@ -18,12 +21,16 @@ import { ModalComponent } from 'src/app/common/components/modal/modal.component'
     ToolbarComponent,
     NavbarComponent,
     CreateApplicationMetaComponent,
-    ModalComponent
+    ModalComponent,
+    ViewAppMetasComponent,
+    ViewDetailedMetaComponent,
   ],
   imports: [
     CommonModule,
     AdminRoutingModule,
-    SharedModule
+    SharedModule,
+    AccordionModule,
+    SplitButtonModule
   ],
   providers : [
   ]

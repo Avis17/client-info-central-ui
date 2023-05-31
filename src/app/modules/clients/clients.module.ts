@@ -7,6 +7,7 @@ import { SidenavComponent } from './components/sidenav/sidenav.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { SharedModule } from 'src/app/shared/shared/shared.module';
 import { DynamicFormCreationComponent } from './components/dynamic-form-creation/dynamic-form-creation.component';
+import { BillingComponent } from './components/billing/billing.component';
 
 
 
@@ -16,12 +17,13 @@ import { DynamicFormCreationComponent } from './components/dynamic-form-creation
   NavbarComponent,
   SidenavComponent,
   DashboardComponent,
-  DynamicFormCreationComponent
+  DynamicFormCreationComponent,
+  BillingComponent
   ],
   imports: [
     CommonModule,
     ClientsRoutingModule,
-    SharedModule
+    SharedModule,
   ]
 })
 export class ClientsModule { }
