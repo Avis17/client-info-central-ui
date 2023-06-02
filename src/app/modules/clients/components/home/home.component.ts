@@ -8,6 +8,7 @@ import { CommonService } from 'src/app/services/common.service';
 import { EntityService } from '../../services/entity.service';
 import { ErrorHandlingService } from 'src/app/services/error-handling.service';
 import { Table } from 'primeng/table'
+import { CryptoService } from 'src/app/services/crypto.service';
 
 @Component({
   selector: 'app-home',
@@ -18,38 +19,30 @@ import { Table } from 'primeng/table'
 export class HomeComponent implements OnInit {
 
   entities: any = [];
-  cols: any = [];
   ref: DynamicDialogRef;
   userDetails: any;
   entitySchema: any = [];
   dynamicChartDetails: any = [];
   pieChartData: any;
   pieChartOptions: any;
-  @ViewChild('tableref') dt: Table | any;
 
   chartBackgroundColors = ['#EA6A47', '#1C4E80', "#0091D5", "#A5D8DD", '#7E909A', '#202020'];
   chartHoverBackgroundColors = ["#EF886C", "#256687", "#0AB1FF", "#C4E6E9", "#8D9DA5", "#3D3D3D"]
   constructor(
     private entityService: EntityService,
     private authService: AuthGuardService,
-    private router: Router,
     private commonService: CommonService,
     private errorHandlingService: ErrorHandlingService,
-    private navigationService: NavigationService
+    private navigationService: NavigationService,
+    private cryptoService:CryptoService
   ) {
     // console.log(this.authService.getUserDetails())
     this.userDetails = this.authService.getUserDetails();
-    console.log(this.userDetails)
   }
 
   ngOnInit() {
     this.iterateTableFields();
     this.getAllEntity();
-  }
-
-  onAddUSer() {
-    const commands = ['/client/dynamic-forms'];
-    this.navigationService.navigateWithoutLocationChange(commands);
   }
 
   getAllEntity() {
@@ -61,14 +54,11 @@ export class HomeComponent implements OnInit {
     }
     this.entityService.getAllEntities(formData).subscribe((res: any) => {
       if (res) {
-        // console.log(res)
+        console.log(res)
         this.entities = res.data;
-        this.createCols();
-        // this.loadChartsData();
         this.createDynamicChartArr()
-        // console.log(this.cols)
       }
-    }, (err) => {
+    }, (err:any) => {
       this.errorHandlingService.errorAlertMsg(err);
     })
   }
@@ -90,9 +80,6 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  getRandomInt(max: number) {
-    return Math.floor(Math.random() * max);
-  }
 
   createDynamicChartArr() {
     // Iterate over the charts_details array in the configuration object
@@ -144,12 +131,12 @@ export class HomeComponent implements OnInit {
           };
           break;
         case 'bar':
-          let barDetails:any = this.getDestructuredBarChart(chart.chart_field_name)
+          let barDetails: any = this.getDestructuredBarChart(chart.chart_field_name)
           chartDetail.chartData = {
             labels: barDetails.labels,
             datasets: [
               {
-                label : "Users",
+                label: chart.chart_field_name == 'createdAt' ? "Users" : chart.chart_field_name.toUpperCase(),
                 data: barDetails.data,
                 backgroundColor: this.chartBackgroundColors,
                 hoverBackgroundColor: this.chartHoverBackgroundColors
@@ -169,29 +156,35 @@ export class HomeComponent implements OnInit {
     })
   }
 
-  applyFilterGlobal($event:any, stringVal:string) {
-    this.dt.filterGlobal(($event.target as HTMLInputElement).value, stringVal);
-  }
 
-  getDestructuredBarChart(fieldName:string){
-    const labels = this.entities.map((item:any) => item[fieldName]);
+  getDestructuredBarChart(fieldName: string) {
+    const labels = this.entities.map((item: any) => item[fieldName]);
     // Counting the occurrences of each createdAt value
-    const counts:any = {};
-    labels.forEach((label:any) => {
+    const counts: any = {};
+    labels.forEach((label: any) => {
       // console.log(label)
-      if(fieldName == 'createdAt'){
-        label = new Date(label);
-        label  = label.getDate() + '/' + (label.getMonth()+1) + '/' + label.getFullYear()
+      if (!Array.isArray(label)) {
+        if (fieldName == 'createdAt') {
+          label = new Date(label);
+          label = label.getDate() + '/' + (label.getMonth() + 1) + '/' + label.getFullYear();
+          counts[label] = (counts[label] || 0) + 1;
+        } else {
+          counts[label] = (counts[label] || 0) + 1;
+        }
+      }else{
+        label = this.destructureArray(label, 'array');
+        label.forEach((child:any)=>{
+          counts[label] = (counts[label] || 0) + 1;
+        })
       }
-      counts[label] = (counts[label] || 0) + 1;
     });
     // Converting counts object to an array of data values
     const dataValues = Object.values(counts);
 
     // console.log(counts)
     return {
-      "data" : dataValues,
-      "labels" : Object.keys(counts)
+      "data": dataValues,
+      "labels": Object.keys(counts)
     }
   }
 
@@ -229,18 +222,6 @@ export class HomeComponent implements OnInit {
   }
 
 
-  createCols() {
-    this.cols = this.userDetails?.app_meta_details?.table_fileds.map((obj: any) => {
-      return {
-        header: obj.field_name,
-        field: obj.field_key
-      }
-    })
-    this.cols.push({
-      header: "Created At",
-      field: 'createdAt'
-    })
-  }
 
   iterateTableFields() {
     for (const field of this.userDetails?.app_meta_details?.table_fileds) {
@@ -259,18 +240,16 @@ export class HomeComponent implements OnInit {
     this.entitySchema.push(schema);
   }
 
-  isArrayCheck(data: any) {
-    if (Array.isArray(data)) {
+  isArrayCheck(field: any) {
+    if (Array.isArray(this.entities[0][field])) {
       return true;
-    } else {
-      return false;
     }
+      return false;
   }
+  
 
   destructureArray(data: any, type: any) {
-    let arr = data.map((value: any) => {
-      return value[0]
-    }).filter((obj: any) => {
+    let arr = data.filter((obj: any) => {
       return obj.fieldValue == true
     });
     if (type == 'string') {
@@ -285,21 +264,6 @@ export class HomeComponent implements OnInit {
 
     return arr
   }
-
-  // countFieldTypes(arr: any, fieldname: any) {
-  //   const counts: any = {};
-  //   arr.forEach((item: any) => {
-  //     const value = item[fieldname];
-  //     counts[value] = (counts[value] || 0) + 1;
-  //   });
-
-  //   const result = [];
-  //   for (const value in counts) {
-  //     result.push({ value, count: counts[value] });
-  //   }
-
-  //   return result;
-  // }
 
 }
 

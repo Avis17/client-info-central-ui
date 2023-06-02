@@ -34,7 +34,7 @@ export class ErrorHandlingService {
         break;
       case 409:
         console.log(status.message)
-        this.toastr.info("Dublicate Entity found, try new data!", 'Notification')
+        this.toastr.error("Dublicate Entity found, try new data!", 'Notification')
         break;
       case 500:
         console.log(status.message)

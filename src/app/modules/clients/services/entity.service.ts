@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import {map} from 'rxjs/operators';
+import {delay, map} from 'rxjs/operators';
 import { CryptoService } from 'src/app/services/crypto.service';
+import { Schema } from 'mongoose';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +11,8 @@ export class EntityService {
 
   constructor(private http:HttpClient, private cryptoService:CryptoService) { }
 
-  URL : string = 'http://localhost:2000/entities/'
+  URL : string = 'http://localhost:2000/entities/';
+  entitySchema :any = {}
   addNewEntity(data:any){
     return this.http.post(this.URL, data).pipe(
       map((response:any) => {
@@ -69,5 +71,13 @@ export class EntityService {
        return response
      })
     );
+  }
+
+  getEntitySchema(){
+    return this.entitySchema
+  }
+
+  setEntitySchema(schema:any){
+    this.entitySchema = schema
   }
 }

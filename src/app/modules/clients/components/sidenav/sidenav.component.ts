@@ -12,6 +12,7 @@ export class SidenavComponent {
   linkActive : any = {
     "dashboard" : true,
     "billing" : false,
+    "clients" : false,
   }
   constructor(private authService:AuthGuardService){
     this.userDetails = this.authService.getUserDetails();

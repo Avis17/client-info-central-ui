@@ -18,6 +18,7 @@ export class DynamicFormCreationComponent {
   formGroup: any;
   userDetails: any;
   entitySchema: any = [];
+  isUniqueArr:any = []
   ngOnInit() {
     this.formGroup = this.formBuilder.group({});
     this.createFormGroup();
@@ -77,6 +78,9 @@ export class DynamicFormCreationComponent {
     private formBuilder: FormBuilder
   ) {
     this.userDetails = authService.getUserDetails();
+    this.isUniqueArr = this.userDetails.app_meta_details.table_fileds.filter((data:any)=>{
+      return data.isUnique == true
+    })
   }
 
   createEntitySchema(field: any) {
@@ -101,7 +105,7 @@ export class DynamicFormCreationComponent {
         "schema": this.entitySchema,
         "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.db_details?.dbName) || '',
         "collectionName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.db_details?.customerCollectionName) || '',
-        "collectionData": this.formGroup.value
+        "collectionData": {...this.formGroup.value, isUniqueField : this.isUniqueArr[0]?.field_key}
       }
       if (formData.dbName == '' || formData.collectionName == '') {
         this.toastr.error("invalid DB details! contact your application provider immediately.", "Error")

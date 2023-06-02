@@ -4,12 +4,21 @@
             <div class="nav">
                 <!-- <div class="sb-sidenav-menu-heading">Core</div> -->
                 <a (click)="onClickLink('dashboard')" appSkipLocationChange [commands]="['/client/home']" [ngClass]="linkActive['dashboard'] ? 'text-color nav-link' : 'nav-link'">
-                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div> 
+                    <div class="sb-nav-link-icon">
+                        <img src="../../../../../assets/clients/png/dashboard.png">
+                    </div> 
                     Dashboard
                 </a>
-
+                <a (click)="onClickLink('clients')" appSkipLocationChange [commands]="['/client/clients']" [ngClass]="linkActive['clients'] ? 'text-color nav-link' : 'nav-link'">
+                    <div class="sb-nav-link-icon">
+                        <img src="../../../../../assets/clients/png/customers.png">
+                    </div>
+                    Clients View
+                </a>
                 <a (click)="onClickLink('billing')" appSkipLocationChange [commands]="['/client/billing']" [ngClass]="linkActive['billing'] ? 'text-color nav-link' : 'nav-link'">
-                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                    <div class="sb-nav-link-icon">
+                        <img src="../../../../../assets/clients/png/billing.png">
+                    </div>
                     Billing
                 </a>
             </div> 

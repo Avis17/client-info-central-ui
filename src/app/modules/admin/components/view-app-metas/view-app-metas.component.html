@@ -43,9 +43,9 @@
                         <td>
                             <!-- <p-splitButton label="Edit" icon="pi pi-user-edit" (onClick)="onEdit(app)" (onDropdownClick)="onDropDownClick(app)" styleClass="p-button-outlined-sm mr-2 mb-2" 
                             [model]="items"></p-splitButton> -->
-                            <a appSkipLocationChange [commands]="['/admin/view-meta-details/'+app._id]" class="btn btn-primary">View Details</a>
+                            <a appSkipLocationChange [commands]="['/admin/view-meta-details/'+app._id]" class="btn btn-primary mr-2">View Details</a>
                                 
-                            <button class="btn btn-danger mt-2" (click)="onDelete(app._id)">Delete</button>
+                            <button class="btn btn-danger" (click)="onDelete(app._id)">Delete</button>
                         </td>
                     </tr>
                 </tbody>

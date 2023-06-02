@@ -1,2 +1,13 @@
 
 
+.centre-container{
+    height: 100vH;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-image: url('https://clipart-library.com/images_k/people-with-transparent-background/people-with-transparent-background-10.png');
+}

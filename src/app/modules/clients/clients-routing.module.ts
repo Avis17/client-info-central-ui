@@ -4,6 +4,8 @@ import { HomeComponent } from './components/home/home.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { DynamicFormCreationComponent } from './components/dynamic-form-creation/dynamic-form-creation.component';
 import { BillingComponent } from './components/billing/billing.component';
+import { UserDetailsComponent } from './components/user-details/user-details.component';
+import { UserTableComponent } from './components/user-table/user-table.component';
 
 const routes:Routes = [
   {
@@ -19,8 +21,16 @@ const routes:Routes = [
         component : BillingComponent
       },
       {
+        path : 'clients',
+        component : UserTableComponent
+      },
+      {
         path : 'dynamic-forms',
         component : DynamicFormCreationComponent
+      }, 
+      {
+        path : 'user-details/:id',
+        component : UserDetailsComponent
       }
     ]
   }

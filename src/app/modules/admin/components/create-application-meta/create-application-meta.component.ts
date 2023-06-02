@@ -22,6 +22,7 @@ export class CreateApplicationMetaComponent implements OnInit {
   dynamicAppMetaForm: any;
   appCategories: any = [];
   stepperOrientation: Observable<StepperOrientation>;
+
   fieldsType: string[] = [
     "text",
     "number",
@@ -54,11 +55,7 @@ export class CreateApplicationMetaComponent implements OnInit {
     "bar"
   ]
 
-  fieldsList: any = [
-    {
-      field_key : "createdAt"
-    }
-  ];
+  fieldsList: any = [];
 
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
@@ -210,7 +207,10 @@ export class CreateApplicationMetaComponent implements OnInit {
 
   onChartAdd() {
     this.addChartobj();
-    this.fieldsList = [...this.fieldsList,...this.secondFormGroup.get('table_fileds')?.value];
+    this.fieldsList = []
+    this.fieldsList = [{
+      field_key : "createdAt"
+    }, ...this.secondFormGroup.get('table_fileds')?.value];
     this.openModal("modal1");
   }
 
@@ -276,13 +276,22 @@ export class CreateApplicationMetaComponent implements OnInit {
   }
 
   onSaveFormDetails() {
-    let data = { ...this.firstFormGroup.value, ...this.secondFormGroup.value, ...this.thirdFormGroup.value, db_details: this.furthFormGroup.value }
-    this.appMetaService.createNewAppMeta(data).subscribe((res: any) => {
-      if (res) {
-        this.errorHandlingService.errorAlertMsg(res, ['/admin/tools'])
-      }
-    }, (err: any) => {
-      this.errorHandlingService.errorAlertMsg(err)
+    let isUniqueThere = this.secondFormGroup.get('table_fileds')?.value.filter((data:any)=>{
+      return data.isUnique == true
     })
+    console.log(isUniqueThere)
+    if(isUniqueThere.length > 1){
+      let data = { ...this.firstFormGroup.value, ...this.secondFormGroup.value, ...this.thirdFormGroup.value, db_details: this.furthFormGroup.value }
+      this.appMetaService.createNewAppMeta(data).subscribe((res: any) => {
+        if (res) {
+          this.errorHandlingService.errorAlertMsg(res, ['/admin/tools'])
+        }
+      }, (err: any) => {
+        this.errorHandlingService.errorAlertMsg(err)
+      })
+    }else{
+      this.toastr.warning("Add Atleast one unique field in table..!", "Warning")
+    }
+   
   }
 }
