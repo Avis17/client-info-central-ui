@@ -1,3 +1,4 @@
+@import "src/_variables.scss";
 
 label{
     font-weight: 500;
@@ -5,4 +6,15 @@ label{
 
 mat-form-field, .w-100{
     width: 100% !important;
+}
+
+.btn-primary {
+    background-color: $card-bg !important;
+    border-color: $card-bg !important;
+    color: $primary !important;
+}
+
+label{
+    color: $secondary;
+    font-weight: 500;
 }

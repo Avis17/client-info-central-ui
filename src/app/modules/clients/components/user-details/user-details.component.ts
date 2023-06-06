@@ -19,6 +19,10 @@ export class UserDetailsComponent {
   userDetails : any = {}
   clientInfo:any = {};
   clientInfoKeys:any = []
+  inVoicesList : any = []
+  listOfServices : any = []
+  newInvoice  = false;
+  searchItem : string = ''
   constructor(
     private activatedRoute: ActivatedRoute,
     private cryptoService: CryptoService,
@@ -37,13 +41,14 @@ export class UserDetailsComponent {
       this.userId = JSON.parse(this.userId)
     }
     this.getUserDetails();
+    this.getInvoiceDetails();
   }
 
   getUserDetails() {
     const formData = {
-      "schema": this.entitySchema,
-      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.db_details?.dbName) || '',
-      "collectionName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.db_details?.customerCollectionName) || '',
+      "schema": {},
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'customers',
       "queryData": this.userId
     }
     this.entityService.getAllEntities(formData).subscribe((res: any) => {
@@ -53,6 +58,23 @@ export class UserDetailsComponent {
         this.clientInfoKeys = this.userDetails?.app_meta_details?.table_fileds?.map((data:any)=>{
           return {field_name:data.field_name, field_key:data.field_key}
         })
+      }
+    }, (err: any) => {
+      this.errorHandlingService.errorAlertMsg(err);
+    })
+  }
+
+  getInvoiceDetails(queryData?:any){
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'invoices',
+      "queryData": this.userId
+    }
+    this.entityService.getAllEntities(formData).subscribe((res: any) => {
+      if (res) {
+       this.inVoicesList = res.data;
+       console.log(this.inVoicesList)
       }
     }, (err: any) => {
       this.errorHandlingService.errorAlertMsg(err);
@@ -69,5 +91,20 @@ export class UserDetailsComponent {
       return true;
     }
       return false;
+  }
+
+  onAddNewInvoice(){
+    this.entityService.setinvoiceDetails({...this.clientInfo, services : this.listOfServices})
+    this.navigationService.navigateWithoutLocationChange(['client/billing']);
+  }
+
+  onServiceOptionChange(event:any, selectedObj:any){
+    if(event.target.checked){
+      this.listOfServices.push({...selectedObj, createdAt : new Date()})
+    }else{
+      this.listOfServices = this.listOfServices.filter((data:any)=>{
+        return data.service_name != selectedObj.service_name
+      })
+    }
   }
 }

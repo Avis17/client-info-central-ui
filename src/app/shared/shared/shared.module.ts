@@ -22,11 +22,14 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { ChartModule } from 'primeng/chart';
 import { ArrayDestructurePipe } from 'src/app/pipes/array-destructure.pipe';
 import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material/core';
+import { SearchPipe } from 'src/app/pipes/search.pipe';
 
 @NgModule({
   declarations: [
     ArrayDestructurePipe,
-    SkipLocationChangeDirective
+    SkipLocationChangeDirective,
+    SearchPipe
   ],
   imports: [
     CommonModule,
@@ -50,7 +53,7 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
     ChipsModule,
     ToolbarModule,
     ChartModule,
-    MatDatepickerModule
+    MatDatepickerModule,
   ],
   exports: [
     CommonModule,
@@ -76,7 +79,8 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
     ChartModule,
     ArrayDestructurePipe,
     MatDatepickerModule,
-    SkipLocationChangeDirective
+    SkipLocationChangeDirective,
+    SearchPipe
   ]
 })
 export class SharedModule { }

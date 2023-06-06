@@ -1,1 +1,192 @@
-<p>billing works!</p>
+<nav class="navbar navbar-expand-sm navbar-dark bg-secondary d-flex justify-content-between">
+    <a class="navbar-brand" href="#">INVOICE GENERATOR</a>
+    <div>
+        <!-- <button type="button" class="btn btn-secondary btn-block mb-3 ml-3"
+            (click)="generatePDF('download')">Download Invoice</button>
+        <button type="button" class="btn btn-secondary btn-block mb-3 ml-3"
+            (click)="generatePDF('print')">Print
+            Invoice</button> -->
+        <button type="submit" class="btn btn-secondary btn-block ml-3" [disabled]="checkDatas()"
+            (click)="generatePDF()">Open
+            Invoice</button>
+    </div>
+</nav>
+<form #invoiceForm="ngForm">
+    <div class="container-fluid pt-2 mb-5">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card border-secondary">
+                    <div class="card-body">
+                        <h4 class="card-title">Customer Details</h4>
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-12 mb-3">
+                                <label for="email">Bill No</label>
+                                <input type="number" class="form-control" name="billNo" id="billNo"
+                                    [(ngModel)]="invoice.billNo" required>
+                            </div>
+                            <div class="col-lg-6 col-sm-12 mb-3">
+                                <label for="email">GST No (If any)</label>
+                                <input type="text" class="form-control" name="billNo" id="billNo"
+                                    [(ngModel)]="invoice.gstNo">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="name">Name</label>
+                                    <input type="text" class="form-control" name="name" id="name"
+                                        [(ngModel)]="invoice.customerName" #CustName="ngModel" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="address">Address</label>
+                                    <textarea class="form-control" name="address" id="address" row="3"
+                                        [(ngModel)]="invoice.address" #Address="ngModel" required></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="email">Email ID</label>
+                                    <input type="email" class="form-control" name="email" id="email"
+                                        [(ngModel)]="invoice.email" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="phone">Contact No.</label>
+                                    <input type="number" class="form-control" name="phone" id="phone"
+                                        [(ngModel)]="invoice.phone" #phone="ngModel" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card border-secondary mt-2">
+                    <div class="card-body">
+                        <h4 class="card-title d-flex justify-content-between">Order Details <button type="button"
+                                class="btn btn-secondary" (click)="addProduct()">+</button></h4>
+                        <div class="row table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th width="25%">Product</th>
+                                        <th width="25%">Price</th>
+                                        <th width="25%">Quantity</th>
+                                        <th width="25%">Amount</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let product of invoice.products; let i=index">
+                                        <td scope="row">
+                                            <input type="text" class="form-control" name="productName{{i}}"
+                                                [ngClass]="{'is-invalid': invoiceForm.submitted && ProductName.invalid}"
+                                                id="productName" [(ngModel)]="product.name" #ProductName="ngModel"
+                                                required>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control" name="price{{i}}" id="price"
+                                                [ngClass]="{'is-invalid': invoiceForm.submitted && ProductPrice.invalid}"
+                                                [(ngModel)]="product.price" #ProductPrice="ngModel" required>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control" name="quantity{{i}}" id="quantity"
+                                                [ngClass]="{'is-invalid': invoiceForm.submitted && ProductQty.invalid}"
+                                                [(ngModel)]="product.qty" #ProductQty="ngModel" required>
+                                        </td>
+                                        <td>
+                                            {{product.price * product.qty || ''}}
+                                        </td>
+                                        <td>
+                                            <button class="btn-close" (click)="onProductRemove(i)"></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="card border-secondary mt-2 mb-5" *ngIf="invoice.products.length >= 1">
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-md-6" >
+                                <button class="btn btn-info" style="float: right;" (click)="onCalculateSubTotal()">Calculate SubTotal</button>
+                            </div>
+                            <div class="col-md-6">
+                                <input  class="form-control float-right"   name="subtotal" *ngIf="invoice.subTotal > 0" [(ngModel)]="invoice.subTotal">
+                            </div>
+                           
+                        </div>
+        
+                        <div class="row mb-3" *ngIf="invoice.subTotal > 0">
+                            <div class="col-md-6">
+                                <span class="float-right mt-2">Tax CGST</span>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" name="name" [(ngModel)]="invoice.cgst" >
+                                    <option *ngFor="let gst of gstList" [value]="gst" >{{gst}} %</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <input  class="form-control" [attr.disabled]="true" name="cgst"   [value]="(invoice.subTotal * invoice.cgst)/100">
+                            </div>
+                        </div>
+                        <div class="row mb-3" *ngIf="invoice.subTotal > 0">
+                            <div class="col-md-6">
+                                <span class="float-right mt-2">Tax SGST</span>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" name="name" [(ngModel)]="invoice.sgst" >
+                                    <option *ngFor="let gst of gstList" [value]="gst" >{{gst}} %</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <input  class="form-control" [attr.disabled]="true"  name="sgst" [value]="(invoice.subTotal * invoice.sgst)/100">
+                            </div>
+                        </div>
+        
+                        <div class="row mb-3" *ngIf="invoice.subTotal > 0">
+                            <div class="col-md-6">
+                                <span class="float-right mt-2">Tax IGST</span>
+                            </div>
+                            <div class="col-md-3">
+                                <select class="form-select" name="name" [(ngModel)]="invoice.igst" >
+                                    <option *ngFor="let gst of gstList" [value]="gst" >{{gst}} %</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <input  class="form-control" [attr.disabled]="true"  name="igst"  [value]="(invoice.subTotal * invoice.igst)/100">
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6" >
+                                <button class="btn btn-primary" style="float: right;" (click)="onCalculateTotal()" *ngIf="isSubTotalClicked && invoice.subTotal > 0">Calculate Total</button>
+                            </div>
+                            <div class="col-md-6">
+                                <input  class="form-control float-right"   name="finaltotal" *ngIf="isSubTotalClicked && invoice.finalTotal>0"  [(ngModel)]="invoice.finalTotal">
+                            </div>
+                           
+                        </div>
+                    </div>
+                </div>
+                <div class="card border-secondary mt-2">
+                    <div class="card-body">
+                        <h4 class="card-title">Terms And Conditions</h4>
+                        <div class="row m-3" *ngFor="let term of termsList;let i = index">
+                            <textarea [name]="'term'+i" [(ngModel)]="term.terms" type="text" class="form-control col-10"></textarea>
+                            <div class="text-center col-2">
+                                <button class="btn-close" (click)="onRemoveTerms(i)"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<footer class="fixed-bottom">
+    <div class="bg-light text-center p-2">
+        <h6>Developed by Kuat Technologies.
+            <!-- <a class="nav-link" href="" target="_blank"> <i class="fa fa-twitter"
+                    aria-hidden="true"></i>Kuat Technologies</a>. -->
+        </h6>
+    </div>
+</footer>

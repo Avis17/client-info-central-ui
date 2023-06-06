@@ -12,7 +12,7 @@
             <div class="card-body">
                 <mat-stepper linear [orientation]="(stepperOrientation | async)!" labelPosition="bottom" #stepper>
                     <mat-step [stepControl]="firstFormGroup">
-                        <ng-template matStepLabel>Basic Details</ng-template>
+                        <ng-template matStepLabel>App Details</ng-template>
                         <form [formGroup]="firstFormGroup">
                             <div class="row">
                                 <div class="col-lg-6 col-sm-12">
@@ -82,10 +82,11 @@
                                             <div class="row box p-3 mb-2" [formGroupName]="i"
                                                 *ngIf="getLengthOfArr('table_fileds', 'second') == (i+1)">
                                                 <div class="text-end m-1">
-                                                    <button type="button" (click)="onFieldRemove(i, 'table_fileds', 'modal', 'modal-close')"
+                                                    <button type="button"
+                                                        (click)="onFieldRemove(i, 'table_fileds', 'modal', 'modal-close')"
                                                         class="btn-close" aria-label="Close"></button>
                                                 </div>
-                                                <div class="col-lg-6 col-sm-12">
+                                                <div class="col-lg-6 col-sm-12 mt-2">
                                                     <mat-form-field>
                                                         <mat-label>Enter Form Field Name</mat-label>
                                                         <input required placeholder="Customer Name"
@@ -95,9 +96,28 @@
                                                 <div class="col-lg-6 col-sm-12">
                                                     <mat-form-field>
                                                         <mat-label>Enter Form Field Key</mat-label>
+                                                        <mat-select formControlName="field_key" name="regime-input"
+                                                            #regimeWidget>
+                                                            <mat-option *ngFor="let type of fieldsKeyList"
+                                                                [value]="type">{{type}}</mat-option>
+                                                            <mat-option value="other">other</mat-option>
+                                                        </mat-select>
+                                                    </mat-form-field>
+
+                                                    <ng-container *ngIf="regimeWidget.value == 'other'">
+                                                        <mat-form-field>
+                                                            <input required placeholder="name"
+                                                                formControlName="field_key" matInput type="text">
+                                                        </mat-form-field>
+                                                        <!-- <span>You selected "Other"</span> -->
+                                                    </ng-container>
+
+                                                    <!-- <mat-form-field>
+                                                    <mat-label>Enter Form Field Key</mat-label>
+                                                    <mat-label>Enter Form Field Key</mat-label>
                                                         <input required placeholder="name" formControlName="field_key"
                                                             matInput type="text">
-                                                    </mat-form-field>
+                                                    </mat-form-field> -->
                                                 </div>
                                                 <div class="col-lg-12 col-sm-12">
                                                     <mat-form-field>
@@ -126,15 +146,23 @@
                                                         </mat-select>
                                                     </mat-form-field>
                                                 </div>
-                                                <div class="col-lg-6 col-sm-12">
+                                                <!-- <div class="col-lg-6 col-sm-12">
+                                                    <mat-label>is this Your services?</mat-label><br>
+                                                    <mat-radio-group formControlName="isField_services"
+                                                        aria-label="Select an option">
+                                                        <mat-radio-button [value]="true">yes</mat-radio-button>
+                                                        <mat-radio-button [value]="false">No</mat-radio-button>
+                                                    </mat-radio-group>
+                                                </div> -->
+                                                <!-- <div class="col-lg-6 col-sm-12">
                                                     <mat-label>Do you need this field in table?</mat-label><br>
                                                     <mat-radio-group formControlName="isField_table_show"
                                                         aria-label="Select an option">
                                                         <mat-radio-button [value]="true">yes</mat-radio-button>
                                                         <mat-radio-button [value]="false">No</mat-radio-button>
                                                     </mat-radio-group>
-                                                </div>
-                                                <div class="col-lg-6 col-sm-12"
+                                                </div> -->
+                                                <!-- <div class="col-lg-6 col-sm-12"
                                                     *ngIf="field.get('isField_table_show')?.value">
                                                     <mat-label>Do you need sorting option in table?</mat-label><br>
                                                     <mat-radio-group formControlName="isField_table_sorting"
@@ -142,15 +170,15 @@
                                                         <mat-radio-button [value]="true">yes</mat-radio-button>
                                                         <mat-radio-button [value]="false">No</mat-radio-button>
                                                     </mat-radio-group>
-                                                </div>
-                                                <div class="col-lg-6 col-sm-12">
+                                                </div> -->
+                                                <!-- <div class="col-lg-6 col-sm-12">
                                                     <mat-label>Do you need this field in detailed view?</mat-label><br>
                                                     <mat-radio-group formControlName="isField_detailed_show"
                                                         aria-label="Select an option">
                                                         <mat-radio-button [value]="true">yes</mat-radio-button>
                                                         <mat-radio-button [value]="false">No</mat-radio-button>
                                                     </mat-radio-group>
-                                                </div>
+                                                </div> -->
                                                 <div class="col-lg-6 col-sm-12">
                                                     <mat-label>Is this field Editable?</mat-label>
                                                     <mat-radio-group formControlName="isMutable"
@@ -167,14 +195,14 @@
                                                         <mat-radio-button [value]="false">No</mat-radio-button>
                                                     </mat-radio-group>
                                                 </div>
-                                                <div class="col-lg-6 col-sm-12">
+                                                <!-- <div class="col-lg-6 col-sm-12">
                                                     <mat-label>Is this field Required?</mat-label>
                                                     <mat-radio-group formControlName="isRequired"
                                                         aria-label="Select an option"><br>
                                                         <mat-radio-button [value]="true">yes</mat-radio-button>
                                                         <mat-radio-button [value]="false">No</mat-radio-button>
                                                     </mat-radio-group>
-                                                </div>
+                                                </div> -->
 
                                             </div>
                                         </div>
@@ -213,6 +241,48 @@
                             </div>
                         </form>
                     </mat-step>
+
+                    <mat-step [stepControl]="servicesFormGroup">
+                        <ng-template matStepLabel>List of Services</ng-template>
+                        <form [formGroup]="servicesFormGroup">
+                            <div class="mt-3">
+                                <div class="text-end mb-3">
+                                    <button (click)="onAddService()" class="btn btn-primary">+</button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>S No</th>
+                                                <th>Service Name</th>
+                                                <th>Service Price</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let service of servicesFormGroup.get('servicesList')?.controls; let i =index;" formArrayName="servicesList">
+                                                <td>{{i+1}}</td>
+                                                <td [formGroupName]="i">
+                                                    <input formControlName="service_name" type="text" class="form-control" placeholder="Ex- Hair-cut">
+                                                </td>
+                                                <td [formGroupName]="i">
+                                                    <input formControlName="service_price"  type="text" class="form-control" placeholder="Ex- 150">
+                                                </td>
+                                                <td>
+                                                    <button (click)="onRemoveService(i)" class="btn-close btn btn-danger"></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div>
+                                <button mat-flat-button class="secondary-bg" matStepperPrevious>Back</button>&nbsp;
+                                <button mat-flat-button class="primary-bg" matStepperNext>Next</button>
+                            </div>
+                        </form>
+                    </mat-step>
+
                     <mat-step [stepControl]="thirdFormGroup">
                         <ng-template matStepLabel>Chart Details</ng-template>
                         <form [formGroup]="thirdFormGroup">
@@ -239,7 +309,8 @@
                                                 <div class="row box p-3 mb-2" [formGroupName]="i"
                                                     *ngIf="getLengthOfArr('charts_details', 'third') == (i+1)">
                                                     <div class="text-end m-1">
-                                                        <button type="button" (click)="onFieldRemove(i, 'charts_details', 'modal1', 'modal-close')"
+                                                        <button type="button"
+                                                            (click)="onFieldRemove(i, 'charts_details', 'modal1', 'modal-close')"
                                                             class="btn-close" aria-label="Close"></button>
                                                     </div>
                                                     <div class="col-lg-6 col-sm-12">
@@ -282,7 +353,7 @@
                                                             <button class="btn btn-danger"
                                                                 (click)="onFieldRemove(i, 'charts_details', 'modal1')">Delete</button>
                                                         </td>
-    
+
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -297,22 +368,24 @@
                         </form>
                     </mat-step>
                     <mat-step [stepControl]="furthFormGroup">
-                        <ng-template matStepLabel>DB Details</ng-template>
+                        <ng-template matStepLabel>Billing Details</ng-template>
                         <form [formGroup]="furthFormGroup">
-
                             <div class="row">
-                                <div class="col-lg-6 col-sm-12">
+                                <div class="col-lg-12 col-sm-12">
                                     <mat-form-field>
-                                        <mat-label>Enter Databse Name</mat-label>
-                                        <input required formControlName="dbName" matInput type="text">
+                                        <mat-label>Enter Signature Image String</mat-label>
+                                        <textarea required formControlName="signature" matInput></textarea>
                                     </mat-form-field>
+
+                                    <div class="m-5">
+                                        <a href="https://www.base64-image.de/" target="_blank">Click here to convert image to base64 string. </a>
+                                    </div>
+                                    <div class="m-5">
+                                        <a href="https://signaturely.com/online-signature/type/" target="_blank">Click here to create digital signature. </a>
+                                    </div>
+                                    
                                 </div>
-                                <div class="col-lg-6 col-sm-12">
-                                    <mat-form-field>
-                                        <mat-label>Enter Customer Collection Name</mat-label>
-                                        <input required formControlName="customerCollectionName" matInput type="text">
-                                    </mat-form-field>
-                                </div>
+                                
                             </div>
                             <div>
                                 <button mat-flat-button class="secondary-bg" matStepperPrevious>Back</button> &nbsp;
@@ -329,36 +402,7 @@
                         </div>
                     </mat-step>
                 </mat-stepper>
-
-
-                <!-- <div class="col-lg-6 col-sm-12">
-                                <mat-label>Charts Required:</mat-label>
-                                <mat-radio-group formControlName="application_charts_required" aria-label="Select an option">
-                                    <mat-radio-button [value]="true">yes</mat-radio-button>
-                                    <mat-radio-button [value]="false">No</mat-radio-button>
-                                </mat-radio-group>
-                            </div>
-                        <div *ngIf="dynamicAppMetaForm.get('application_table_required').value">
-                            <div class="text-end m-1">
-                                <button mat-flat-button class="secondary-bg" (click)="onFieldAdd()" aria-label="Close">Add
-                                    Field</button>
-                            </div>
-                            
-                        </div> -->
             </div>
         </div>
     </div>
-    <!-- <div class="col-lg-3 col-sm-12 mt-4 mb-5">
-            <div class="card card-width-100 mh-200">
-                <div class="card-body">
-                    <div class="box-default">
-                        <code>
-                                <pre class="fs-16">
-                                    {{dynamicAppMetaForm.value |json}}
-                                </pre>
-                            </code>
-                    </div>
-                </div>
-            </div>
-        </div> -->
 </div>

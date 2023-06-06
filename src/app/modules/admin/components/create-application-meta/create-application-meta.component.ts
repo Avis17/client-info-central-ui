@@ -26,12 +26,14 @@ export class CreateApplicationMetaComponent implements OnInit {
   fieldsType: string[] = [
     "text",
     "number",
+    "email",
+    "textarea",
+    "multipleValues",
     "date",
     "file",
     "checkbox",
     "radio",
     "select",
-    "email",
     "password",
     "submit",
     "button",
@@ -49,6 +51,22 @@ export class CreateApplicationMetaComponent implements OnInit {
     "any"
   ]
 
+  fieldsKeyList = [
+    "name",
+    "email",
+    "phone",
+    "gender",
+    "address",
+    "profession",
+    "isMarried",
+    "age",
+    "place",
+    "interestedIn",
+    "isFutureUpdateRequired",
+    "whatsappNumber",
+    "referFriends"
+  ]
+
   chartTypes: string[] = [
     "pie",
     "doughnut",
@@ -61,8 +79,10 @@ export class CreateApplicationMetaComponent implements OnInit {
   secondFormGroup: FormGroup;
   thirdFormGroup: FormGroup;
   furthFormGroup: FormGroup;
+  servicesFormGroup : any;
   isSecondFormValid = false;
   isThirdFormValid = false;
+  isServiceFormValid = false;
 
   @ViewChild('modal') private fieldModalComponent: ModalComponent
   @ViewChild('modal1') private chartModalComponent: ModalComponent
@@ -135,6 +155,13 @@ export class CreateApplicationMetaComponent implements OnInit {
     // console.log(formData);
   }
 
+  onAddService(){
+    this.addServiceListGroup();
+  }
+
+  onRemoveService(index:any){
+    this.servicesFormGroup.get('servicesList').removeAt(index);
+  }
 
   formFieldsCreate() {
     //first stepper
@@ -151,19 +178,31 @@ export class CreateApplicationMetaComponent implements OnInit {
       "application_table_required": ["", Validators.required],
       "table_fileds": this._formBuilder.array([])
     });
+    
+    this.servicesFormGroup = this._formBuilder.group({
+      "servicesList": this._formBuilder.array([])
+    });
+    this.addServiceListGroup();
     // third stepper
     this.thirdFormGroup = this._formBuilder.group({
       "application_charts_required": ["", Validators.required],
       "charts_details": this._formBuilder.array([])
     });
     this.furthFormGroup = this._formBuilder.group({
-      "dbName": ["", Validators.required],
-      "customerCollectionName": ["", Validators.required]
+      "signature": ["", Validators.required],
     });
   }
 
   ngOnInit() {
     this.getAppCategories();
+  }
+
+  addServiceListGroup(){
+    const control = this.servicesFormGroup.get('servicesList') as FormArray;
+    control.push(this._formBuilder.group({
+      "service_name": ["", Validators.required],
+      "service_price": ["", Validators.required],
+    }))
   }
 
   addFieldsObj() {
@@ -182,12 +221,13 @@ export class CreateApplicationMetaComponent implements OnInit {
       "field_key": ["", Validators.required],
       "field_type": ["", Validators.required],
       "field_value": ["", Validators.required],
-      "isField_table_show": [true, Validators.required],
-      "isField_detailed_show": [true, Validators.required],
+      // "isField_table_show": [true, Validators.required],
+      // "isField_services" : [false, Validators.required],
+      // "isField_detailed_show": [true, Validators.required],
       "isMutable": [true, Validators.required],
-      "isRequired": [true, Validators.required],
+      // "isRequired": [true, Validators.required],
       "isUnique": [false, Validators.required],
-      "isField_table_sorting": [true, Validators.required],
+      // "isField_table_sorting": [true, Validators.required],
       "field_options": new FormControl<string[] | null>(null)
     }
   }
@@ -257,6 +297,7 @@ export class CreateApplicationMetaComponent implements OnInit {
       return 0
     }
   }
+
   onPreviousPage() {
     const commands = ['/admin/tools'];
     this.navigationService.navigateWithoutLocationChange(commands);
@@ -272,6 +313,7 @@ export class CreateApplicationMetaComponent implements OnInit {
     }, (err) => {
       this.appCategories = []
       // console.log(err)
+      this.errorHandlingService.errorAlertMsg(err)
     })
   }
 
@@ -280,8 +322,8 @@ export class CreateApplicationMetaComponent implements OnInit {
       return data.isUnique == true
     })
     console.log(isUniqueThere)
-    if(isUniqueThere.length > 1){
-      let data = { ...this.firstFormGroup.value, ...this.secondFormGroup.value, ...this.thirdFormGroup.value, db_details: this.furthFormGroup.value }
+    if(isUniqueThere.length >= 1){
+      let data = { ...this.firstFormGroup.value, ...this.secondFormGroup.value, ...this.servicesFormGroup.value , ...this.thirdFormGroup.value, billingdetails: this.furthFormGroup.value }
       this.appMetaService.createNewAppMeta(data).subscribe((res: any) => {
         if (res) {
           this.errorHandlingService.errorAlertMsg(res, ['/admin/tools'])

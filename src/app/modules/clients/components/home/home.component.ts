@@ -1,14 +1,12 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AuthGuardService } from 'src/app/services/auth-guard.service';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
-import { MessageService } from 'primeng/api';
-import { Router } from '@angular/router';
 import { NavigationService } from 'src/app/services/navigation.service';
 import { CommonService } from 'src/app/services/common.service';
 import { EntityService } from '../../services/entity.service';
 import { ErrorHandlingService } from 'src/app/services/error-handling.service';
-import { Table } from 'primeng/table'
 import { CryptoService } from 'src/app/services/crypto.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-home',
@@ -25,42 +23,124 @@ export class HomeComponent implements OnInit {
   dynamicChartDetails: any = [];
   pieChartData: any;
   pieChartOptions: any;
-
+  tableQuery: string = ''
   chartBackgroundColors = ['#EA6A47', '#1C4E80', "#0091D5", "#A5D8DD", '#7E909A', '#202020'];
   chartHoverBackgroundColors = ["#EF886C", "#256687", "#0AB1FF", "#C4E6E9", "#8D9DA5", "#3D3D3D"]
+  inVoicesList: any;
+  totalRevenue = 0
+  selectedDates: { startDate: moment.Moment, endDate: moment.Moment };
+  alwaysShowCalendars: boolean;
+  ranges: any = {
+    'Today': [moment(), moment()],
+    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+    'This Month': [moment().startOf('month'), moment().endOf('month')],
+    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+    'Last 3 Month': [
+      moment()
+        .subtract(3, 'month')
+        .startOf('month'),
+      moment()
+        .subtract(1, 'month')
+        .endOf('month')
+    ]
+  }
+
+  invalidDates: moment.Moment[] = [moment().add(2, 'days'), moment().add(3, 'days'), moment().add(5, 'days')];
+
+  isInvalidDate = (m: moment.Moment) => {
+    return this.invalidDates.some(d => d.isSame(m, 'day'))
+  }
+
   constructor(
     private entityService: EntityService,
     private authService: AuthGuardService,
     private commonService: CommonService,
     private errorHandlingService: ErrorHandlingService,
-    private navigationService: NavigationService,
-    private cryptoService:CryptoService
   ) {
-    // console.log(this.authService.getUserDetails())
     this.userDetails = this.authService.getUserDetails();
+    this.alwaysShowCalendars = true;
   }
 
   ngOnInit() {
-    this.iterateTableFields();
-    this.getAllEntity();
+    // this.iterateTableFields();
   }
 
-  getAllEntity() {
+  getInvoiceDetails(queryData?: any) {
     const formData = {
-      "schema": this.entitySchema,
-      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.db_details?.dbName) || 'kuat-technologies',
-      "collectionName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.db_details?.customerCollectionName) || 'students',
-      "queryData": {}
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'invoices',
+      "queryData": queryData || {}
     }
     this.entityService.getAllEntities(formData).subscribe((res: any) => {
       if (res) {
-        console.log(res)
+        this.inVoicesList = res.data;
+        this.totalRevenue = 0;
+        let products:any = []
+        this.inVoicesList.forEach((data:any)=>{
+          products.push(
+            ...data.products.map((value:any)=>value)
+          )
+          this.totalRevenue = this.totalRevenue+data.finalTotal;
+        })
+        let barDetails: any = this.getDestructuredBarChart(products, 'name');
+        let serviceChartData = {
+          labels: barDetails.labels,
+          datasets: [
+            {
+              label: "Services",
+              data: barDetails.data,
+              backgroundColor: this.chartBackgroundColors,
+              hoverBackgroundColor: this.chartHoverBackgroundColors
+            }
+          ]
+        };
+        let serviceChartOptions = {
+          plugins: {
+            legend: {
+              labels: {
+                usePointStyle: true,
+                color: '#000'
+              }
+            }
+          }
+        }
+        this.dynamicChartDetails.push({
+          chartType: 'bar',
+          chartFieldName: 'services',
+          chartName: "Services",
+          chartData: serviceChartData,
+          chartOptions: serviceChartOptions
+        })
+      }
+    }, (err: any) => {
+      this.errorHandlingService.errorAlertMsg(err);
+    })
+  }
+
+  getAllEntity(queryData?: any) {
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'customers',
+      "queryData": queryData || {}
+    }
+    this.entityService.getAllEntities(formData).subscribe((res: any) => {
+      if (res) {
+        this.dynamicChartDetails = []
+        this.entities = []
         this.entities = res.data;
         this.createDynamicChartArr()
       }
-    }, (err:any) => {
+    }, (err: any) => {
       this.errorHandlingService.errorAlertMsg(err);
     })
+  }
+
+  getStringfiyData(data: any) {
+    return JSON.stringify(data);
   }
 
   loadChartsData() {
@@ -80,8 +160,26 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  ngModelDateChange(event: any) {
+    console.log(event)
+    if (this.selectedDates?.startDate && this.selectedDates?.endDate) {
+      this.tableQuery = JSON.stringify({
+        createdAt: {
+          $gte: this.selectedDates.startDate.toISOString(),
+          $lte: this.selectedDates.endDate.toISOString()
+        }
+      })
+      this.getAllEntity(JSON.parse(this.tableQuery))
+      this.getInvoiceDetails(JSON.parse(this.tableQuery))
+    } else {
+      this.getAllEntity();
+      this.getInvoiceDetails();
+      this.tableQuery = JSON.stringify({})
+    }
+  }
 
-  createDynamicChartArr() {
+
+  createDynamicChartArr(type: any = 'services') {
     // Iterate over the charts_details array in the configuration object
     this.userDetails?.app_meta_details?.charts_details.forEach((chart: any) => {
       // Create chart detail object
@@ -103,7 +201,7 @@ export class HomeComponent implements OnInit {
           }
         }
       }
-      let details = this.getDestructuredChartOutput(chart.chart_field_name);
+      let details = this.getDestructuredChartOutput(this.entities, chart.chart_field_name);
       // Process chart data based on the chart type
       switch (chart.chart_type) {
         case 'pie':
@@ -131,7 +229,7 @@ export class HomeComponent implements OnInit {
           };
           break;
         case 'bar':
-          let barDetails: any = this.getDestructuredBarChart(chart.chart_field_name)
+          let barDetails: any = this.getDestructuredBarChart(this.entities, chart.chart_field_name)
           chartDetail.chartData = {
             labels: barDetails.labels,
             datasets: [
@@ -157,8 +255,8 @@ export class HomeComponent implements OnInit {
   }
 
 
-  getDestructuredBarChart(fieldName: string) {
-    const labels = this.entities.map((item: any) => item[fieldName]);
+  getDestructuredBarChart(dataArr: any, fieldName: string) {
+    const labels = dataArr.map((item: any) => item[fieldName]);
     // Counting the occurrences of each createdAt value
     const counts: any = {};
     labels.forEach((label: any) => {
@@ -171,9 +269,9 @@ export class HomeComponent implements OnInit {
         } else {
           counts[label] = (counts[label] || 0) + 1;
         }
-      }else{
+      } else {
         label = this.destructureArray(label, 'array');
-        label.forEach((child:any)=>{
+        label.forEach((child: any) => {
           counts[label] = (counts[label] || 0) + 1;
         })
       }
@@ -189,12 +287,12 @@ export class HomeComponent implements OnInit {
   }
 
 
-  getDestructuredChartOutput(field_name: string) {
+  getDestructuredChartOutput(dataArr: any, field_name: string) {
     let details: any = {
       labels: [],
       data: [],
     };
-    for (const obj of this.entities) {
+    for (const obj of dataArr) {
       let field_value: any = obj[field_name]
       if (Array.isArray(field_value)) {
         field_value = this.destructureArray(field_value, 'array');
@@ -216,7 +314,6 @@ export class HomeComponent implements OnInit {
           details.data[index]++;
         }
       }
-
     }
     return details;
   }
@@ -244,9 +341,9 @@ export class HomeComponent implements OnInit {
     if (Array.isArray(this.entities[0][field])) {
       return true;
     }
-      return false;
+    return false;
   }
-  
+
 
   destructureArray(data: any, type: any) {
     let arr = data.filter((obj: any) => {

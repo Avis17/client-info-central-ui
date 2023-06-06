@@ -10,6 +10,10 @@ import { DynamicFormCreationComponent } from './components/dynamic-form-creation
 import { BillingComponent } from './components/billing/billing.component';
 import { UserDetailsComponent } from './components/user-details/user-details.component';
 import { UserTableComponent } from './components/user-table/user-table.component';
+import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
+import { ServicesComponent } from './components/services/services.component';
+import { CardModule } from 'primeng/card';
+import { TimelineModule } from 'primeng/timeline';
 
 
 
@@ -22,12 +26,16 @@ import { UserTableComponent } from './components/user-table/user-table.component
   DynamicFormCreationComponent,
   BillingComponent,
   UserDetailsComponent,
-  UserTableComponent
+  UserTableComponent,
+  ServicesComponent
   ],
   imports: [
     CommonModule,
     ClientsRoutingModule,
     SharedModule,
+    TimelineModule,
+    CardModule,
+    NgxDaterangepickerMd.forRoot()
   ]
 })
 export class ClientsModule { }

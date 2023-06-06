@@ -6,6 +6,7 @@ import { DynamicFormCreationComponent } from './components/dynamic-form-creation
 import { BillingComponent } from './components/billing/billing.component';
 import { UserDetailsComponent } from './components/user-details/user-details.component';
 import { UserTableComponent } from './components/user-table/user-table.component';
+import { ServicesComponent } from './components/services/services.component';
 
 const routes:Routes = [
   {
@@ -27,6 +28,10 @@ const routes:Routes = [
       {
         path : 'dynamic-forms',
         component : DynamicFormCreationComponent
+      },
+      {
+        path : 'services',
+        component : ServicesComponent
       }, 
       {
         path : 'user-details/:id',

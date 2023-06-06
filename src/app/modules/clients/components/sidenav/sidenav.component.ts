@@ -13,6 +13,7 @@ export class SidenavComponent {
     "dashboard" : true,
     "billing" : false,
     "clients" : false,
+    "services" : false,
   }
   constructor(private authService:AuthGuardService){
     this.userDetails = this.authService.getUserDetails();
@@ -26,6 +27,5 @@ export class SidenavComponent {
         this.linkActive[li] = false;
       }
     }
-    console.log(this.linkActive)
   }
 }

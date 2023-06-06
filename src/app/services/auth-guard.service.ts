@@ -12,7 +12,8 @@ export class AuthGuardService {
     authorizeTo : ''
   };
   URL = "http://localhost:2000/"
-  // URL = "https://beautiful-ganache-016a3d.netlify.app/"
+
+  // URL = "https://client-info-central.onrender.com/"
   constructor(private router: Router, private http:HttpClient, private cookieService: CookieService) { }
 
 
@@ -54,7 +55,7 @@ export class AuthGuardService {
   }
 
   register(user:any){
-    return this.http.post(this.URL+"signin", user);
+    return this.http.post(this.URL+"app/cic/users/v1/signin", user);
   }
 
   getToken(): string {

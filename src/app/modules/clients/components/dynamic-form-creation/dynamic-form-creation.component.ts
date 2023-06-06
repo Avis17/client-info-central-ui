@@ -18,7 +18,10 @@ export class DynamicFormCreationComponent {
   formGroup: any;
   userDetails: any;
   entitySchema: any = [];
-  isUniqueArr:any = []
+  isUniqueArr:any = [];
+  listOfServices:any = [];
+  searchItem : string = ''
+
   ngOnInit() {
     this.formGroup = this.formBuilder.group({});
     this.createFormGroup();
@@ -26,7 +29,7 @@ export class DynamicFormCreationComponent {
 
   createFormGroup() {
     for (const field of this.userDetails?.app_meta_details?.table_fileds) {
-      this.createEntitySchema(field);
+      // this.createEntitySchema(field);
       const fieldKey = field.field_key;
       const fieldValue = '';
       const validators = [Validators.required];
@@ -77,7 +80,7 @@ export class DynamicFormCreationComponent {
     private commonService: CommonService,
     private formBuilder: FormBuilder
   ) {
-    this.userDetails = authService.getUserDetails();
+    this.userDetails = this.authService.getUserDetails();
     this.isUniqueArr = this.userDetails.app_meta_details.table_fileds.filter((data:any)=>{
       return data.isUnique == true
     })
@@ -99,12 +102,22 @@ export class DynamicFormCreationComponent {
     this.navigationService.navigateWithoutLocationChange(commands);
   }
 
+  onServiceOptionChange(event:any, selectedObj:any){
+    if(event.target.checked){
+      this.listOfServices.push({...selectedObj, createdAt : new Date()})
+    }else{
+      this.listOfServices = this.listOfServices.filter((data:any)=>{
+        return data.service_name != selectedObj.service_name
+      })
+    }
+  }
+
   onSubmit() {
     if (this.formGroup.valid) {
       const formData = {
-        "schema": this.entitySchema,
-        "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.db_details?.dbName) || '',
-        "collectionName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.db_details?.customerCollectionName) || '',
+        "schema": '',
+        "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+        "collectionName": 'customers',
         "collectionData": {...this.formGroup.value, isUniqueField : this.isUniqueArr[0]?.field_key}
       }
       if (formData.dbName == '' || formData.collectionName == '') {
@@ -113,7 +126,8 @@ export class DynamicFormCreationComponent {
       }
       this.entityService.addNewEntity(formData).subscribe((res: any) => {
         if (res.status == 200) {
-          this.errorHandlingService.errorAlertMsg(res, ['client/home']);
+          this.entityService.setinvoiceDetails({...formData.collectionData, services : this.listOfServices})
+          this.navigationService.navigateWithoutLocationChange(['client/billing']);
         }
       }, (err) => {
         this.errorHandlingService.errorAlertMsg(err);

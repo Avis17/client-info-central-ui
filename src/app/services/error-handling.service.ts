@@ -38,10 +38,10 @@ export class ErrorHandlingService {
         break;
       case 500:
         console.log(status.message)
-        this.toastr.error("Server error, try creating again!", 'Error')
+        this.toastr.error("Sorry, the server is busy. Please try again later", 'Error')
         break;
       default:
-        this.toastr.error("Server error, try creating again!", 'Error')
+        this.toastr.error("Sorry, the server is busy. Please try again later", 'Error')
         break;
     }
   }

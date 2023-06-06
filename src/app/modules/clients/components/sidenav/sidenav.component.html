@@ -13,13 +13,19 @@
                     <div class="sb-nav-link-icon">
                         <img src="../../../../../assets/clients/png/customers.png">
                     </div>
-                    Clients View
+                    Clients
                 </a>
                 <a (click)="onClickLink('billing')" appSkipLocationChange [commands]="['/client/billing']" [ngClass]="linkActive['billing'] ? 'text-color nav-link' : 'nav-link'">
                     <div class="sb-nav-link-icon">
                         <img src="../../../../../assets/clients/png/billing.png">
                     </div>
                     Billing
+                </a>
+                <a (click)="onClickLink('services')" appSkipLocationChange [commands]="['/client/services']" [ngClass]="linkActive['services'] ? 'text-color nav-link' : 'nav-link'">
+                    <div class="sb-nav-link-icon">
+                        <img src="../../../../../assets/clients/png/services.png">
+                    </div>
+                    Services
                 </a>
             </div> 
         </div>

@@ -12,7 +12,19 @@ export class EntityService {
   constructor(private http:HttpClient, private cryptoService:CryptoService) { }
 
   URL : string = 'http://localhost:2000/entities/';
+  invoiceDetails:any;
+  // URL = "https://client-info-central.onrender.com/entities/"
+
   entitySchema :any = {}
+
+  getInvoiceDetails(){
+    return this.invoiceDetails;
+  }
+
+  setinvoiceDetails(details:any){
+    this.invoiceDetails = details;
+  }
+
   addNewEntity(data:any){
     return this.http.post(this.URL, data).pipe(
       map((response:any) => {

@@ -1,28 +1,21 @@
 <div class="m-4">
-    <div class="row">
-        <!-- <div class="col-12 lg:col-6 xl:col-3">
-            <div class="card mb-0">
-                <div class="flex justify-content-between mb-3">
-                    <div><span class="block text-500 font-medium mb-3">Customers</span>
-                        <div class="text-900 font-medium text-xl">152</div>
-                    </div>
-                    <div class="flex align-items-center justify-content-center bg-blue-100 border-round"
-                        style="width: 2.5rem; height: 2.5rem;"><i class="pi pi-shopping-cart text-blue-500 text-xl"></i>
-                    </div>
-                </div><span class="text-green-500 font-medium">24 new </span><span class="text-500">since last visit</span>
-            </div>
-        </div> -->
+    <div class="row align-end">
+          <div class="col-lg-6 col-md-6 col-sm-12">
+            <input type="text" class="form-control custom-date" ngxDaterangepickerMd [(ngModel)]="selectedDates" [showCustomRangeLabel]="true"
+            [alwaysShowCalendars]="true" (ngModelChange)="ngModelDateChange($event)" [ranges]="ranges" [linkedCalendars]="true" [isInvalidDate]="isInvalidDate"
+            [showClearButton]="true" placeholder="Filter by dates..."/>
+          </div>
     </div>
-    <div class="row flex-wrap justify-content-center">
+    <div class=" row flex-wrap justify-content-center">
         <div class="col-12">
             <div class="row">
                 <div class="col-lg-4 mt-2 col-md-6 col-sm-12">
-                    <div class="card card-bg border-left-primary shadow h-100 py-2">
+                    <div class="card card-1 border-left-primary shadow h-100 py-2">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs card-text-color text-uppercase mb-1">
-                                        Total Customers
+                                        Customers
                                     </div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{entities.length}}</div>
                                 </div>
@@ -34,17 +27,35 @@
                     </div>
                 </div>
                 <div class="col-lg-4 mt-2 col-md-6 col-sm-12">
-                    <div class="card card-bg border-left-primary shadow h-100 py-2">
+                    <div class="card card-2 border-left-primary shadow h-100 py-2">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs card-text-color text-uppercase mb-1">
-                                        Total Services
+                                        Services
                                     </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{entities.length}}</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{inVoicesList?.length}}</div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-bag-shopping fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mt-2 col-md-6 col-sm-12">
+                    <div class="card card-3 border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs card-text-color text-uppercase mb-1">
+                                        Revenue
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{totalRevenue}}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                                    <!-- <i class="fas fa-bag-shopping fa-2x text-gray-300"></i> -->
                                 </div>
                             </div>
                         </div>
@@ -68,4 +79,4 @@
     </div>
 </div>
 
-<app-user-table></app-user-table>
+<app-user-table [tableData]="getStringfiyData(entities)" [queryData]="tableQuery"></app-user-table>

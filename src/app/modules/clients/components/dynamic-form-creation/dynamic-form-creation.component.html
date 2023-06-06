@@ -1,5 +1,5 @@
 <div class="pt-5 pl-3">
-    <mat-icon class="cursor-pointer" (click)="onPreviousPage()">arrow_back</mat-icon>
+	<mat-icon class="cursor-pointer" (click)="onPreviousPage()">arrow_back</mat-icon>
 </div>
 <div class="container m-3">
 	<mat-card>
@@ -11,8 +11,8 @@
 
 				<div class="col-md-12 col-lg-6 mt-3" *ngFor="let field of userDetails?.app_meta_details?.table_fileds">
 					<ng-container [ngSwitch]="field.field_type">
-						<div  *ngSwitchCase="'text'">
-							<mat-form-field class="" >
+						<div *ngSwitchCase="'text'">
+							<mat-form-field class="">
 								<mat-label>{{ field.field_name }}</mat-label>
 								<input matInput type="text" [formControlName]="field.field_key">
 							</mat-form-field>
@@ -26,7 +26,7 @@
 						</div>
 
 						<div *ngSwitchCase="'number'">
-							<mat-form-field class="" >
+							<mat-form-field class="">
 								<mat-label>{{ field.field_name }}</mat-label>
 								<input matInput type="number" [formControlName]="field.field_key">
 							</mat-form-field>
@@ -35,43 +35,76 @@
 						<div class="" *ngSwitchCase="'radio'">
 							<label>{{ field.field_name }}</label>
 							<div class="w-100" *ngFor="let option of field.field_options">
-								<input class="form-check-input" type="radio" [formControlName]="field.field_key" [value]="option"> {{ option }}
+								<input class="form-check-input" type="radio" [formControlName]="field.field_key"
+									[value]="option"> {{ option }}
 							</div>
 						</div>
 
 						<div *ngSwitchCase="'date'">
-							<input class="w-100" class="form-control" type="date"
-							[formControlName]="field.field_key">
+							<input class="w-100" class="form-control" type="date" [formControlName]="field.field_key">
 						</div>
 
-						<div  *ngSwitchCase="'checkbox'">
+						<div *ngSwitchCase="'checkbox'">
 							<label>{{ field.field_name }}</label>
-							<ng-container [formArrayName]="field.field_key">
-								<div *ngFor="let option of field.field_options; let j = index" [formGroupName]="j">
-									<label>
+							<div class="row" [formArrayName]="field.field_key">
+								<div class="col-sm-12 col-6" *ngFor="let option of field.field_options; let j = index" [formGroupName]="j">
+									<span>
 										<input class="form-check-input" type="checkbox" formControlName="fieldValue">
 										{{ option }}
-									</label>
+									</span>
 								</div>
-							</ng-container>
+							</div>
 						</div>
-						<div  *ngSwitchCase="'select'">
+						<div *ngSwitchCase="'select'">
 							<label>{{ field.field_name }}</label>
-							<mat-form-field >
+							<mat-form-field>
 								<mat-label>Choose an option</mat-label>
 								<mat-select [formControlName]="field.field_key">
-								  <mat-option *ngFor="let option of field.field_options" [value]="option">{{ option }}</mat-option>
+									<mat-option *ngFor="let option of field.field_options" [value]="option">{{ option
+										}}</mat-option>
 								</mat-select>
-							  </mat-form-field>
+							</mat-form-field>
+						</div>
+
+						<div *ngSwitchCase="'multipleValues'">
+							<label>Add Options - (After typed option, click enter
+								:-)</label>
+							<div class="card p-fluid">
+								<p-chips formControlName="field_options"
+									placeholder="Hint: friend1-12345678, friend2-12345678"></p-chips>
+							</div>
+						</div>
+
+						<div *ngSwitchCase="'textarea'">
+							<label>{{ field.field_name }}</label>
+							<mat-form-field>
+								<mat-label>Autosize textarea</mat-label>
+								<textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+									cdkAutosizeMinRows="3" [formControlName]="field.field_key"
+									cdkAutosizeMaxRows="5"></textarea>
+							</mat-form-field>
 						</div>
 
 						<!-- Add cases for other field types -->
 						<div *ngSwitchDefault>
-							<input class="form-control"  type="text"
-							[formControlName]="field.field_key">
+							<input class="form-control" type="text" [formControlName]="field.field_key">
 						</div>
 
 					</ng-container>
+				</div>
+				<div class="mt-3">
+					<label>Add Services Selected</label>
+					<div class="d-flex justify-content-end">
+						<input type="text" style="width: 50%;" class="form-control" placeholder="Search Service" [ngModelOptions]="{standalone: true}" [(ngModel)]="searchItem">
+					</div>
+					<div class="row">
+						<div class="col-sm-12 col-lg-6 my-3" *ngFor="let option of userDetails?.app_meta_details?.servicesList | search:searchItem;let j = index">
+							<span>
+								<input class="form-check-input" type="checkbox" (change)="onServiceOptionChange($event, option)">
+								{{ option.service_name }} - <span style="color: blueviolet;">Rs.{{option.service_price}}</span>
+							</span>
+						</div>
+					</div>
 				</div>
 				<div class="mt-4 mb-3">
 					<button class="btn btn-primary" [disabled]="!formGroup.valid" type="submit">Submit</button>

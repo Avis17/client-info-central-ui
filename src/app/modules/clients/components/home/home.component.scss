@@ -1,37 +1,73 @@
 @import "src/_variables.scss";
 
-.p-datatable .p-datatable-thead > tr > th {
+.p-datatable .p-datatable-thead>tr>th {
     width: inherit !important;
 }
 
-th{
+th {
     // color: $text-white !important;
     background: $card-bg !important;
 }
 
-.card-bg{
+.card-bg {
     background-color: $card-bg !important;
 }
 
-.card-text-color{
-    // color: $third !important;
+.card-text-color {
+    color: $card-label !important;
     font-weight: 600;
 }
 
-.chart-text-color{
+.chart-text-color {
     color: $secondary !important;
     font-weight: 400;
 }
 
-.p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon{
+.p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon {}
 
-}
+.p-datatable .p-sortable-column .p-sortable-column-icon {}
 
-.p-datatable .p-sortable-column .p-sortable-column-icon{
-
-}
-
-.fa-2x{
+.fa-2x {
     color: $primary !important;
 }
 
+.example-form-field {
+    margin-right: 20px;
+}
+
+.align-end {
+    justify-content: end;
+}
+
+.custom-date {
+    cursor: pointer;
+}
+
+.card-3 {
+    background: #9796f0;
+    /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #fbc7d4, #9796f0);
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #fbc7d4, #9796f0);
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.card-2 {
+    background: #6190E8;
+    /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #A7BFE8, #6190E8);
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #A7BFE8, #6190E8);
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.card-1 {
+    background: #ee9ca7;
+    /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #ffdde1, #ee9ca7);
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #ffdde1, #ee9ca7);
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    ;
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}

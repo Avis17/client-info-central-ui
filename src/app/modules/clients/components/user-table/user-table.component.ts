@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { AuthGuardService } from 'src/app/services/auth-guard.service';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
@@ -15,13 +15,16 @@ import { CryptoService } from 'src/app/services/crypto.service';
   templateUrl: './user-table.component.html',
   styleUrls: ['./user-table.component.scss']
 })
-export class UserTableComponent {
+export class UserTableComponent implements OnChanges {
 
   entities: any = [];
   cols: any = [];
   ref: DynamicDialogRef;
   userDetails: any;
   entitySchema: any = [];
+  @Input() queryData: any;
+  @Input() tableData: any;
+
   @ViewChild('tableref') dt: Table | any;
 
   constructor(
@@ -30,17 +33,30 @@ export class UserTableComponent {
     private commonService: CommonService,
     private errorHandlingService: ErrorHandlingService,
     private navigationService: NavigationService,
-    private cryptoService:CryptoService
+    private cryptoService: CryptoService
   ) {
     this.userDetails = this.authService.getUserDetails();
     console.log(this.userDetails)
   }
   ngOnInit() {
-    this.iterateTableFields();
-    this.getAllEntity();
+    // this.iterateTableFields();
+    setTimeout(()=>{
+      if(!this.tableData){
+        this.getAllEntity();
+      }
+    }, 500)
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (this.tableData) {
+      this.entities = JSON.parse(this.tableData);
+      this.createCols();
+    } 
+  }
+
+
   createCols() {
+    this.cols = []
     this.cols = this.userDetails?.app_meta_details?.table_fileds.map((obj: any) => {
       return {
         header: obj.field_name,
@@ -74,14 +90,14 @@ export class UserTableComponent {
     if (Array.isArray(this.entities[0][field])) {
       return true;
     }
-      return false;
+    return false;
   }
 
-  onNavClick(id:any, field:any){
-    let encryptedId = this.cryptoService.encrypt(JSON.stringify({[field]:id}));
+  onNavClick(id: any, field: any) {
+    let encryptedId = this.cryptoService.encrypt(JSON.stringify({ [field]: id }));
     encryptedId = encodeURIComponent(encryptedId);
     this.entityService.setEntitySchema(this.entitySchema);
-    const commands = ['/client/user-details/'+encryptedId];
+    const commands = ['/client/user-details/' + encryptedId];
     this.navigationService.navigateWithoutLocationChange(commands)
   }
 
@@ -89,21 +105,22 @@ export class UserTableComponent {
     this.dt.filterGlobal(($event.target as HTMLInputElement).value, stringVal);
   }
 
-  getAllEntity() {
+  getAllEntity(query?: any) {
     const formData = {
-      "schema": this.entitySchema,
-      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.db_details?.dbName) || 'kuat-technologies',
-      "collectionName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.db_details?.customerCollectionName) || 'students',
-      "queryData": {}
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'customers',
+      "queryData": query || {}
     }
     this.entityService.getAllEntities(formData).subscribe((res: any) => {
       if (res) {
         console.log(res)
+        this.cols = [];
+        this.entities = [];
         this.entities = res.data;
         this.createCols();
-        console.log(this.cols)
       }
-    }, (err:any) => {
+    }, (err: any) => {
       this.errorHandlingService.errorAlertMsg(err);
     })
   }

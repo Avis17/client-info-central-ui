@@ -11,6 +11,7 @@ export class AppMetaCreationService {
   constructor(private http:HttpClient, private cryptoService:CryptoService) { }
 
   URL = "http://localhost:2000/app-meta-creation/";
+  // URL = "https://client-info-central.onrender.com/app-meta-creation/"
 
   getAppCategories(){
     return this.http.get(this.URL+"get-app-categories").pipe(

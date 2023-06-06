@@ -4,3 +4,12 @@ label{
     color: $secondary;
     font-weight: 500;
 }
+
+::ng-deep .p-card-header{
+    background-color: bisque !important;
+}
+
+.img-size{
+    width: 300px;
+    height: 300px;
+}
