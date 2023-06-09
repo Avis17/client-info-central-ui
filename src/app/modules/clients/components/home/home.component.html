@@ -1,15 +1,16 @@
 <div class="m-4">
     <div class="row align-end">
-          <div class="col-lg-6 col-md-6 col-sm-12">
-            <input type="text" class="form-control custom-date" ngxDaterangepickerMd [(ngModel)]="selectedDates" [showCustomRangeLabel]="true"
-            [alwaysShowCalendars]="true" (ngModelChange)="ngModelDateChange($event)" [ranges]="ranges" [linkedCalendars]="true" [isInvalidDate]="isInvalidDate"
-            [showClearButton]="true" placeholder="Filter by dates..."/>
-          </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <input type="text" class="form-control custom-date" ngxDaterangepickerMd [(ngModel)]="selectedDates"
+                [showCustomRangeLabel]="true" [alwaysShowCalendars]="true" (ngModelChange)="ngModelDateChange($event)"
+                [ranges]="ranges" [linkedCalendars]="true" [isInvalidDate]="isInvalidDate" [showClearButton]="true"
+                placeholder="Filter by dates..." />
+        </div>
     </div>
     <div class=" row flex-wrap justify-content-center">
         <div class="col-12">
             <div class="row">
-                <div class="col-lg-4 mt-2 col-md-6 col-sm-12">
+                <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" (click)="onClickCardBox('customers')">
                     <div class="card card-1 border-left-primary shadow h-100 py-2">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
@@ -17,7 +18,8 @@
                                     <div class="text-xs card-text-color text-uppercase mb-1">
                                         Customers
                                     </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{entities.length}}</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        {{aggregatedDats?.noOfCustomers}}</div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-user fa-2x text-gray-300"></i>
@@ -26,7 +28,24 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 mt-2 col-md-6 col-sm-12">
+                <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" (click)="onClickCardBox('invoices')">
+                    <div class="card card-5 border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs card-text-color text-uppercase mb-1">
+                                        Invoices
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{inVoicesList?.length}}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fa-solid fa-file-invoice fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" (click)="onClickCardBox('services')">
                     <div class="card card-2 border-left-primary shadow h-100 py-2">
                         <div class="card-body">
                             <div class="row no-gutters align-items-center">
@@ -34,7 +53,7 @@
                                     <div class="text-xs card-text-color text-uppercase mb-1">
                                         Services
                                     </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{inVoicesList?.length}}</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{listOfServices.length}}</div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fas fa-bag-shopping fa-2x text-gray-300"></i>
@@ -51,10 +70,90 @@
                                     <div class="text-xs card-text-color text-uppercase mb-1">
                                         Revenue
                                     </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{totalRevenue}}</div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        Rs.{{aggregatedDats?.totalRevenue}}</div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                                    <!-- <i class="fas fa-bag-shopping fa-2x text-gray-300"></i> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mt-2 col-md-6 col-sm-12">
+                    <div class="card card-2 border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs card-text-color text-uppercase mb-1">
+                                        Total Expense
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        Rs.{{netProfitAndExpenses?.totalExpenses}}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <img width="40px" src="../../../../../assets/clients/png/expense.png">
+                                    <!-- <i class="fas fa-bag-shopping fa-2x text-gray-300"></i> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mt-2 col-md-6 col-sm-12">
+                    <div class="card card-1 border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs card-text-color text-uppercase mb-1">
+                                        Net Profit
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        Rs.{{netProfitAndExpenses?.netProfit}}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <img width="40px" *ngIf="netProfitAndExpenses?.netProfit < 0"
+                                        src="../../../../../assets/clients/png/loss.png">
+                                    <img width="40px" *ngIf="netProfitAndExpenses?.netProfit > 0"
+                                        src="../../../../../assets/clients/png/profit.png">
+                                    <!-- <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mt-2 col-md-6 col-sm-12">
+                    <div class="card card-4 border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs card-text-color text-uppercase mb-1">
+                                        Idle Days
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{serviceChartDays?.idleDays}}
+                                        Days</div>
+                                </div>
+                                <div class="col-auto">
+                                    <img width="40px" src="../../../../../assets/clients/png/idle.png">
+                                    <!-- <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 mt-2 col-md-6 col-sm-12">
+                    <div class="card card-5 border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs card-text-color text-uppercase mb-1">
+                                        Peak Day
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        {{weekDays[serviceChartDays?.highestInvoiceDayOfWeek - 1]}}</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fa-brands fa-think-peaks fa-2x text-gray-300"></i>
                                     <!-- <i class="fas fa-bag-shopping fa-2x text-gray-300"></i> -->
                                 </div>
                             </div>
@@ -65,14 +164,29 @@
         </div>
         <div class="col-lg-12 col-md-12">
             <div class="row">
-                <div class="col-sm-12 col-md-6 col-lg-4" *ngFor="let chart of dynamicChartDetails; let i=index">
-                    <div class="card p-5 mb-3" *ngIf="entities.length > 0">
-                        <div class="text-end mb-3">
-                            <h3 class="chart-text-color">{{chart.chartName | uppercase}}</h3>
+                <div class="col-12">
+                    <ng-container>
+                        <div class="card p-5 mb-3" *ngIf="entities.length > 0">
+                            <div class="text-end mb-3">
+                                <h3 class="chart-text-color">{{serviceChartDetails.chartName | uppercase}}</h3>
+                            </div>
+                            <p-chart [type]="serviceChartDetails.chartType" height="300"
+                                [data]="serviceChartDetails.chartData"
+                                [options]="serviceChartDetails.chartOptions"></p-chart>
                         </div>
-                        <p-chart [type]="chart.chartType" height="300" type="pie" [data]="chart.chartData"
-                            [options]="chart.chartOptions"></p-chart>
-                    </div>
+                    </ng-container>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-4" *ngFor="let chart of dynamicChartDetails; let i=index">
+                    <ng-container>
+                        <div class="card p-5 mb-3" *ngIf="entities.length > 0">
+                            <div class="text-end mb-3">
+                                <h3 class="chart-text-color">{{chart.chartName | uppercase}}</h3>
+                            </div>
+                            <p-chart [type]="chart.chartType" height="300" [data]="chart.chartData"
+                                [options]="chart.chartOptions"></p-chart>
+                        </div>
+                    </ng-container>
+
                 </div>
             </div>
         </div>

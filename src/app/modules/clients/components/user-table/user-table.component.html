@@ -18,7 +18,7 @@
                     <th style="width:10%; text-align: center !important;">S No</th>
                     <ng-container *ngFor="let col of cols">
                         <th *ngIf="!isArrayCheck(col.field)" [pSortableColumn]="col.field"
-                            style="width:20%;text-align: center !important;">
+                        style="flex-grow: 1; text-align: center !important;">
                             {{ col.header }}
                             <p-sortIcon [field]="col.field"></p-sortIcon>
                         </th>
@@ -27,7 +27,7 @@
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
                 <tr>
-                    <td>{{rowIndex+1}}</td>
+                    <td style="text-align: center;">{{rowIndex+1}}</td>
                     <ng-container *ngFor="let col of columns">
                     <td style="text-align: center;" *ngIf="!isArrayCheck(col.field)">
                             <ng-container *ngIf="col.field == 'createdAt'">{{

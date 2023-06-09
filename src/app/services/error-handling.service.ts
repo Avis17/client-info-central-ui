@@ -15,7 +15,7 @@ export class ErrorHandlingService {
     switch (status.status) {
       case 200:
         this.toastr.success("Entity Updated Successfully!!", "Notification");
-        this.navigationService.navigateWithoutLocationChange(commands);
+        if(commands) this.navigationService.navigateWithoutLocationChange(commands);
         break;
       case 400:
         console.log(status.message)

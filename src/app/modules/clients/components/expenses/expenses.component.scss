@@ -1,0 +1,29 @@
+@import "src/_variables.scss";
+
+::ng-deep .custom-select .ng-select .ng-select-container {
+    position: relative !important;
+    z-index: 9999 !important;
+    cursor: pointer !important;
+  }
+  
+::ng-deep .custom-select .ng-dropdown-panel {
+    position: relative !important;
+    z-index: 10000 !important;
+  }
+
+::ng-deep .ng-select{
+    cursor: pointer !important;
+}
+
+.custom-date {
+    cursor: pointer;
+}
+
+.align-end {
+    justify-content: end;
+}
+
+.card-header{
+    background: $card-bg !important;
+    color: $primary !important;
+}

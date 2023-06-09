@@ -1,1 +1,81 @@
-<p>services works!</p>
+<div class="m-sm-1 m-lg-5">
+    <div class="row">
+        <div class="col-sm-12 col-md-6 col-lg-6 mb-3 mb-2">
+          <input type="text" placeholder="Search service" [(ngModel)]="searchText" class="form-control">
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-6 mb-2 text-end">
+          <p-button label="Create New Service" icon="pi pi-plus" class="mr-2"
+            data-bs-toggle="modal" data-bs-target="#exampleModal"></p-button>
+        </div>
+      </div>
+      
+    <div class="card">
+        <div class="card-header">
+            List Of Services
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>S no</th>
+                            <th>Service Name</th>
+                            <th>Service Price</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let service of (servicesList | search:searchText) | paginate: { itemsPerPage: 5, currentPage: currentPage }; let i = index">
+                            <td>{{i+1}}</td>
+                            <td>
+                                <span *ngIf="!service.isEdit">{{service?.service_name}}</span>
+                                <input [(ngModel)]="service.service_name" *ngIf="service.isEdit" type="text"
+                                    class="form-control" placeholder="Enter Service Name">
+                            </td>
+                            <td>
+                                <span *ngIf="!service.isEdit">{{service?.service_price}}</span>
+                                <input [(ngModel)]="service.service_price" *ngIf="service.isEdit" type="number"
+                                    class="form-control" placeholder="Enter Service Price">
+                            </td>
+                            <td>
+                                <button *ngIf="!service.isEdit" class="btn btn-warning mr-3 mb-2"
+                                    (click)="onEdit(service)">Edit</button>
+                                <button *ngIf="!service.isEdit" class="btn btn-danger mb-2"
+                                    (click)="onDelete(service)">Delete</button>
+                                <button *ngIf="service.isEdit" class="btn btn-info mr-3 mb-2"
+                                    (click)="onCancel(service)">Cancel</button>
+                                <button *ngIf="service.isEdit" class="btn btn-success mb-2"
+                                    (click)="onSave(service)">Save</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal" id="exampleModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add Service</h5>
+          <button type="btn btn-primary" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <input [(ngModel)]="newService.service_name"  type="text"
+            class="form-control mt-2 mb-3" placeholder="Enter Service Name">
+            <input [(ngModel)]="newService.service_price" type="number"
+            class="form-control mb-3" placeholder="Enter Service Price">
+        </div>
+        <div class="modal-footer">
+          <button type="button" [disabled]="!newService.service_name || !newService.service_price" data-bs-dismiss="modal" (click)="onAddService()" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>

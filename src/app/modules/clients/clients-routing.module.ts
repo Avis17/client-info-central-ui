@@ -7,6 +7,8 @@ import { BillingComponent } from './components/billing/billing.component';
 import { UserDetailsComponent } from './components/user-details/user-details.component';
 import { UserTableComponent } from './components/user-table/user-table.component';
 import { ServicesComponent } from './components/services/services.component';
+import { CanDeactivateGuard } from './guards/can-component-deactivate.guard';
+import { ExpensesComponent } from './components/expenses/expenses.component';
 
 const routes:Routes = [
   {
@@ -31,7 +33,12 @@ const routes:Routes = [
       },
       {
         path : 'services',
-        component : ServicesComponent
+        component : ServicesComponent,
+        canDeactivate: [CanDeactivateGuard]
+      },
+      {
+        path : 'expenses',
+        component : ExpensesComponent,
       }, 
       {
         path : 'user-details/:id',

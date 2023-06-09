@@ -189,6 +189,13 @@ export class CreateApplicationMetaComponent implements OnInit {
       "charts_details": this._formBuilder.array([])
     });
     this.furthFormGroup = this._formBuilder.group({
+      "company_address": ["", Validators.required],
+      "city": ["", Validators.required],
+      "state": ["", Validators.required],
+      "country": ["", Validators.required],
+      "gstNo": [""],
+      "upiId" : ["", Validators.required],
+      "logo": ["", Validators.required],
       "signature": ["", Validators.required],
     });
   }
@@ -323,7 +330,7 @@ export class CreateApplicationMetaComponent implements OnInit {
     })
     console.log(isUniqueThere)
     if(isUniqueThere.length >= 1){
-      let data = { ...this.firstFormGroup.value, ...this.secondFormGroup.value, ...this.servicesFormGroup.value , ...this.thirdFormGroup.value, billingdetails: this.furthFormGroup.value }
+      let data = { ...this.firstFormGroup.value, ...this.secondFormGroup.value, ...this.servicesFormGroup.value , ...this.thirdFormGroup.value, billingdetails: {...this.furthFormGroup.value} }
       this.appMetaService.createNewAppMeta(data).subscribe((res: any) => {
         if (res) {
           this.errorHandlingService.errorAlertMsg(res, ['/admin/tools'])

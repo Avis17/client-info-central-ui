@@ -1,0 +1,109 @@
+<div class="m-sm-1 m-lg-5">
+    <div class="row align-end mb-3">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+          <input type="text" class="form-control custom-date" ngxDaterangepickerMd [(ngModel)]="selectedDates" [showCustomRangeLabel]="true"
+          [alwaysShowCalendars]="true" (ngModelChange)="ngModelDateChange($event)" [ranges]="ranges" [linkedCalendars]="true" [isInvalidDate]="isInvalidDate"
+          [showClearButton]="true" placeholder="Filter by dates..."/>
+        </div>
+  </div>
+    <div class="row">
+        <div class="col-lg-5 col-sm-12 col-md-6 mb-3 mb-md-0">
+          <input type="text" placeholder="Search expense" [(ngModel)]="searchText" class="form-control">
+        </div>
+        <div class="col-lg-4 col-sm-12 col-md-6 mb-3 mb-md-0">
+            <select class="form-control" (change)="onCategoryChange($event)">
+                <option>Filter All Category</option>
+                <option  [value]="category"  *ngFor="let category of expenseCategories">{{category}}</option>
+            </select>
+          </div>
+        <div class="col-lg-3 col-sm-12 col-md-6 text-end">
+          <p-button label="Add New Expense" icon="pi pi-plus" class="mr-2"
+            data-bs-toggle="modal" data-bs-target="#exampleModal"></p-button>
+        </div>
+      </div>
+      
+    <div class="card">
+        <div class="card-header">
+            List Of Expenses
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>S no</th>
+                            <th>Expense Category</th>
+                            <th>Expense Amount</th>
+                            <th>Additional Details</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let expense of (expensesList | search:searchText) | paginate: { itemsPerPage: 5, currentPage: currentPage }; let i = index">
+                            <td>{{i+1}}</td>
+                            <td>
+                                <span *ngIf="!expense.isEdit">{{expense?.selectedCategory}}</span>
+                                <ng-select *ngIf="expense.isEdit" class="form-select custom-select" [searchable]="true" [(ngModel)]="expense.selectedCategory">
+                                    <ng-option *ngFor="let category of expenseCategories" [value]="category">{{category}}</ng-option>
+                                </ng-select>
+                            </td>
+                            <td>
+                                <span *ngIf="!expense.isEdit">{{expense?.expense_price}}</span>
+                                <input [(ngModel)]="expense.expense_price" *ngIf="expense.isEdit" type="number"
+                                    class="form-control" placeholder="Enter expense Name">
+                            </td>
+                            <td>
+                                <span *ngIf="!expense.isEdit">{{expense?.expense_comments}}</span>
+                                <input [(ngModel)]="expense.expense_comments" *ngIf="expense.isEdit" type="text"
+                                    class="form-control" placeholder="Enter expense Price">
+                            </td>
+                            <td>
+                                <button *ngIf="!expense.isEdit" class="btn btn-warning mr-3 mb-2"
+                                    (click)="onEdit(expense)">Edit</button>
+                                <button *ngIf="!expense.isEdit" class="btn btn-danger mb-2"
+                                    (click)="onDelete(expense)">Delete</button>
+                                <button *ngIf="expense.isEdit" class="btn btn-info mr-3 mb-2"
+                                    (click)="onCancel(expense)">Cancel</button>
+                                <button *ngIf="expense.isEdit" class="btn btn-success mb-2"
+                                    (click)="onSave(expense)">Save</button>
+                            </td>
+                        </tr>
+                        <tr *ngIf="expensesList.length == 0">
+                            <td colspan="4" class="text-center">No Data Found!</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+    <div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title">Add expense</h5>
+            <button type="btn btn-primary" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+            <div class="modal-body">
+                <ng-select class="form-select custom-select" [searchable]="true" [(ngModel)]="newexpense.selectedCategory">
+                    <ng-option *ngFor="let category of expenseCategories" [value]="category">{{category}}</ng-option>
+                </ng-select>
+
+                <input [(ngModel)]="newexpense.expense_comments"  type="text"
+                class="form-control mt-2 mb-3" placeholder="Enter expense Additional Information">
+
+                <input [(ngModel)]="newexpense.expense_price" type="number"
+                class="form-control mb-3" placeholder="Enter expense Amount">
+            </div>
+            <div class="modal-footer">
+            <button type="button" [disabled]="newexpense.selectedCategory == 'Default Category' || !newexpense.expense_price" data-bs-dismiss="modal" (click)="onAddexpense()" class="btn btn-primary">Save changes</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+        </div>
+    </div>

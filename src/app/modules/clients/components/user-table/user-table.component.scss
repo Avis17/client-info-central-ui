@@ -58,3 +58,9 @@ th{
     color: $third !important;
 
 }
+
+
+
+::ng-deep .p-datatable .p-datatable-thead > tr > th{
+    padding: 10px 0 !important;
+}

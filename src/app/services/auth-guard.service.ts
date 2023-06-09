@@ -81,6 +81,12 @@ export class AuthGuardService {
     this.router.navigate(["/"])
   }
 
+  logoutWithoutNavigate(){
+    this.clearSession()
+    this.removeToken();
+    this.clearUserDetails();
+  }
+
   canAdminActivate(){
     // console.log(this.userDetails)
     if(this.userDetails.authorizeTo == 'admin' || this.userDetails.authorizeTo == 'developer'){

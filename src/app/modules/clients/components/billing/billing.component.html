@@ -6,8 +6,8 @@
         <button type="button" class="btn btn-secondary btn-block mb-3 ml-3"
             (click)="generatePDF('print')">Print
             Invoice</button> -->
-        <button type="submit" class="btn btn-secondary btn-block ml-3" [disabled]="checkDatas()"
-            (click)="generatePDF()">Open
+        <button type="submit" class="btn btn-warning ml-3" [disabled]="checkDatas()"
+            (click)="generatePDF()">Generate
             Invoice</button>
     </div>
 </nav>
@@ -128,7 +128,7 @@
                                 <input  class="form-control" [attr.disabled]="true" name="cgst"   [value]="(invoice.subTotal * invoice.cgst)/100">
                             </div>
                         </div>
-                        <div class="row mb-3" *ngIf="invoice.subTotal > 0">
+                        <!-- <div class="row mb-3" *ngIf="invoice.subTotal > 0">
                             <div class="col-md-6">
                                 <span class="float-right mt-2">Tax SGST</span>
                             </div>
@@ -154,7 +154,7 @@
                             <div class="col-md-3">
                                 <input  class="form-control" [attr.disabled]="true"  name="igst"  [value]="(invoice.subTotal * invoice.igst)/100">
                             </div>
-                        </div>
+                        </div> -->
                         <div class="row mb-3">
                             <div class="col-md-6" >
                                 <button class="btn btn-primary" style="float: right;" (click)="onCalculateTotal()" *ngIf="isSubTotalClicked && invoice.subTotal > 0">Calculate Total</button>

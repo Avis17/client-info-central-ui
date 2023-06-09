@@ -71,6 +71,21 @@ export class AppMetaCreationService {
     );
   }
 
+  updateAppMetaById(data:any){
+    return this.http.post(this.URL+"update-app-meta-by-id", data).pipe(
+      map((response:any) => {
+       if(response.status == 200){
+        let decryptRes = {
+          ...response,
+          data : JSON.parse(this.cryptoService.decrypt(response.data))
+         }
+         return decryptRes;
+       }
+       return response
+     })
+    );
+  }
+
 }
 
 

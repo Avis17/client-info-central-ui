@@ -25,6 +25,21 @@ export class EntityService {
     this.invoiceDetails = details;
   }
 
+  addNewInvoiceEntity(data:any){
+    return this.http.post(this.URL+'upload-invoice', data).pipe(
+      map((response:any) => {
+       if(response.status == 200){
+        let decryptRes = {
+          ...response,
+          data : JSON.parse(this.cryptoService.decrypt(response.data))
+         }
+         return decryptRes;
+       }
+       return response
+     })
+    );
+  }
+  
   addNewEntity(data:any){
     return this.http.post(this.URL, data).pipe(
       map((response:any) => {
@@ -55,6 +70,51 @@ export class EntityService {
     );
   }
 
+  getAllAggregateDatas(data:any){
+    return this.http.post(this.URL+'get-all-aggregates-entities', data).pipe(
+      map((response:any) => {
+       if(response.status == 200){
+        let decryptRes = {
+          ...response,
+          data : JSON.parse(this.cryptoService.decrypt(response.data))
+         }
+         return decryptRes;
+       }
+       return response
+     })
+    );
+  }
+
+  getAllServiceChartDatas(data:any){
+    return this.http.post(this.URL+'get-chart-datas-for-services', data).pipe(
+      map((response:any) => {
+       if(response.status == 200){
+        let decryptRes = {
+          ...response,
+          data : JSON.parse(this.cryptoService.decrypt(response.data))
+         }
+         return decryptRes;
+       }
+       return response
+     })
+    );
+  }
+
+  getNetProfitAndExpense(data:any){
+    return this.http.post(this.URL+'get-expense-profit-datas', data).pipe(
+      map((response:any) => {
+       if(response.status == 200){
+        let decryptRes = {
+          ...response,
+          data : JSON.parse(this.cryptoService.decrypt(response.data))
+         }
+         return decryptRes;
+       }
+       return response
+     })
+    );
+  }
+
   updateEntityById(id:any, data:any){
     return this.http.put(this.URL+"update-entity-by-id/"+id, data).pipe(
       map((response:any) => {
@@ -71,7 +131,17 @@ export class EntityService {
   }
 
   deleteEntityById(id:any, data:any){
-    return this.http.put(this.URL+"delete-entity-by-id/"+id, data).pipe(
+    return this.http.post(this.URL+"delete-entity-by-id/"+id, data);
+  }
+
+  getEntitySchema(){
+    return this.entitySchema
+  }
+
+  // get-customer-services-entities
+
+  getCustomersInvoicesEntity(data:any){
+    return this.http.post(this.URL+'get-customer-services-entities', data).pipe(
       map((response:any) => {
        if(response.status == 200){
         let decryptRes = {
@@ -83,10 +153,6 @@ export class EntityService {
        return response
      })
     );
-  }
-
-  getEntitySchema(){
-    return this.entitySchema
   }
 
   setEntitySchema(schema:any){

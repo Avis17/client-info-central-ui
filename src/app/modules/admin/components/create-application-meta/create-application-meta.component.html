@@ -371,22 +371,62 @@
                         <ng-template matStepLabel>Billing Details</ng-template>
                         <form [formGroup]="furthFormGroup">
                             <div class="row">
-                                <div class="col-lg-12 col-sm-12">
+                                <div class="col-lg-6 col-sm-12 mb-3">
+                                    <mat-form-field>
+                                        <mat-label>Enter Company Address</mat-label>
+                                        <input required formControlName="company_address" matInput>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-lg-6 col-sm-12 mb-3">
+                                    <mat-form-field>
+                                        <mat-label>Enter Company City</mat-label>
+                                        <input required formControlName="city" matInput>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-lg-6 col-sm-12 mb-3">
+                                    <mat-form-field>
+                                        <mat-label>Enter Company State</mat-label>
+                                        <input required formControlName="state" matInput>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-lg-6 col-sm-12 mb-3">
+                                    <mat-form-field>
+                                        <mat-label>Enter Company Country</mat-label>
+                                        <input required formControlName="country" matInput>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-lg-6 col-sm-12 mb-3">
+                                    <mat-form-field>
+                                        <mat-label>Enter Company GST No</mat-label>
+                                        <input formControlName="gstNo" matInput>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-lg-6 col-sm-12 mb-3">
+                                    <mat-form-field>
+                                        <mat-label>Enter UPI ID</mat-label>
+                                        <input required formControlName="upiId" matInput>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-lg-12 col-sm-12 mb-3">
+                                    <mat-form-field>
+                                        <mat-label>Enter Logo Image String</mat-label>
+                                        <textarea required formControlName="logo" matInput></textarea>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-lg-12 col-sm-12 mb-3">
                                     <mat-form-field>
                                         <mat-label>Enter Signature Image String</mat-label>
                                         <textarea required formControlName="signature" matInput></textarea>
                                     </mat-form-field>
-
-                                    <div class="m-5">
-                                        <a href="https://www.base64-image.de/" target="_blank">Click here to convert image to base64 string. </a>
-                                    </div>
-                                    <div class="m-5">
-                                        <a href="https://signaturely.com/online-signature/type/" target="_blank">Click here to create digital signature. </a>
-                                    </div>
-                                    
                                 </div>
-                                
+                                <div class="m-5">
+                                    <a href="https://www.base64-image.de/" target="_blank">Click here to convert image to base64 string. </a>
+                                </div>
+                                <div class="m-5">
+                                    <a href="https://signaturely.com/online-signature/type/" target="_blank">Click here to create digital signature. </a>
+                                </div>
                             </div>
+                            {{furthFormGroup.value | json}}
                             <div>
                                 <button mat-flat-button class="secondary-bg" matStepperPrevious>Back</button> &nbsp;
                                 <button mat-flat-button class="primary-bg" matStepperNext>Next</button>

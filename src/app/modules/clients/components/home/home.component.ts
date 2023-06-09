@@ -7,6 +7,7 @@ import { EntityService } from '../../services/entity.service';
 import { ErrorHandlingService } from 'src/app/services/error-handling.service';
 import { CryptoService } from 'src/app/services/crypto.service';
 import * as moment from 'moment';
+import { ExcelService } from '../../services/excel.service';
 
 @Component({
   selector: 'app-home',
@@ -21,15 +22,21 @@ export class HomeComponent implements OnInit {
   userDetails: any;
   entitySchema: any = [];
   dynamicChartDetails: any = [];
+  serviceChartDetails: any;
   pieChartData: any;
   pieChartOptions: any;
   tableQuery: string = ''
-  chartBackgroundColors = ['#EA6A47', '#1C4E80', "#0091D5", "#A5D8DD", '#7E909A', '#202020'];
-  chartHoverBackgroundColors = ["#EF886C", "#256687", "#0AB1FF", "#C4E6E9", "#8D9DA5", "#3D3D3D"]
+  chartBackgroundColors = ['#4BCBEB', '#1BCFB4', '#fa9f1b', '#cc2b5e', '#EA6A47', '#1C4E80', "#0091D5", "#A5D8DD", '#7E909A', '#202020'];
+  chartHoverBackgroundColors = ['#ffdde1', '#A7BFE8', '#BBD2C5', '#acb6e5', "#EF886C", "#256687", "#0AB1FF", "#C4E6E9", "#8D9DA5", "#3D3D3D"]
+
+  // chartBackgroundColors = ['#ee9ca7', '#6190E8', '#536976', '#86fde8', '#EA6A47', '#1C4E80', "#0091D5", "#A5D8DD", '#7E909A', '#202020'];
+  // chartHoverBackgroundColors = ['#ffdde1', '#A7BFE8', '#BBD2C5', '#acb6e5', "#EF886C", "#256687", "#0AB1FF", "#C4E6E9", "#8D9DA5", "#3D3D3D"]
   inVoicesList: any;
-  totalRevenue = 0
+  totalRevenue = 0;
+  weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "ThursDay", "Friday", "Saturday"]
   selectedDates: { startDate: moment.Moment, endDate: moment.Moment };
   alwaysShowCalendars: boolean;
+  listOfServices: any = []
   ranges: any = {
     'Today': [moment(), moment()],
     'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
@@ -46,7 +53,9 @@ export class HomeComponent implements OnInit {
         .endOf('month')
     ]
   }
-
+  aggregatedDats: any;
+  serviceChartDays: any;
+  netProfitAndExpenses:any;
   invalidDates: moment.Moment[] = [moment().add(2, 'days'), moment().add(3, 'days'), moment().add(5, 'days')];
 
   isInvalidDate = (m: moment.Moment) => {
@@ -56,6 +65,7 @@ export class HomeComponent implements OnInit {
   constructor(
     private entityService: EntityService,
     private authService: AuthGuardService,
+    private excelService:ExcelService,
     private commonService: CommonService,
     private errorHandlingService: ErrorHandlingService,
   ) {
@@ -64,75 +74,115 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.iterateTableFields();
   }
 
-  getInvoiceDetails(queryData?: any) {
-    const formData = {
-      "schema": '',
-      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
-      "collectionName": 'invoices',
-      "queryData": queryData || {}
-    }
-    this.entityService.getAllEntities(formData).subscribe((res: any) => {
-      if (res) {
-        this.inVoicesList = res.data;
-        this.totalRevenue = 0;
-        let products:any = []
-        this.inVoicesList.forEach((data:any)=>{
-          products.push(
-            ...data.products.map((value:any)=>value)
-          )
-          this.totalRevenue = this.totalRevenue+data.finalTotal;
-        })
-        let barDetails: any = this.getDestructuredBarChart(products, 'name');
-        let serviceChartData = {
-          labels: barDetails.labels,
-          datasets: [
-            {
-              label: "Services",
-              data: barDetails.data,
-              backgroundColor: this.chartBackgroundColors,
-              hoverBackgroundColor: this.chartHoverBackgroundColors
+  loadServicesChart(invoices: any) {
+    let response = invoices.map((data: any) => {
+      return data.products
+    })
+    this.listOfServices = this.flattenArray(response);
+    let barDetails: any = this.getDestructuredBarChart(this.listOfServices, 'name');
+    let serviceChartData = {
+      labels: barDetails.labels,
+      datasets: [
+        {
+          label: "Services",
+          data: barDetails.data,
+          backgroundColor: this.chartBackgroundColors,
+          hoverBackgroundColor: this.chartHoverBackgroundColors
+        }
+      ]
+    };
+    let serviceChartOptions = {
+      indexAxis: 'y',
+      maintainAspectRatio: false,
+      aspectRatio: 0.8,
+      // plugins: {
+      //     legend: {
+      //         labels: {
+      //             color: textColor
+      //         }
+      //     }
+      // },
+      scales: {
+        x: {
+          ticks: {
+            // color: textColorSecondary,
+            font: {
+              weight: 500
             }
-          ]
-        };
-        let serviceChartOptions = {
-          plugins: {
-            legend: {
-              labels: {
-                usePointStyle: true,
-                color: '#000'
-              }
-            }
+          },
+          grid: {
+            // color: surfaceBorder,
+            drawBorder: false
+          }
+        },
+        y: {
+          ticks: {
+            // color: textColorSecondary
+          },
+          grid: {
+            // color: surfaceBorder,
+            drawBorder: false
           }
         }
-        this.dynamicChartDetails.push({
-          chartType: 'bar',
-          chartFieldName: 'services',
-          chartName: "Services",
-          chartData: serviceChartData,
-          chartOptions: serviceChartOptions
-        })
       }
-    }, (err: any) => {
-      this.errorHandlingService.errorAlertMsg(err);
-    })
+    };
+    this.serviceChartDetails = {
+      chartType: 'bar',
+      chartFieldName: 'services',
+      chartName: "Services",
+      chartData: serviceChartData,
+      chartOptions: serviceChartOptions
+    }
   }
 
-  getAllEntity(queryData?: any) {
+  flattenArray(arr: any) {
+    return arr.flat(Infinity);
+  }
+
+  getCustomersInvoicesEntity(queryData?: any) {
     const formData = {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
       "collectionName": 'customers',
       "queryData": queryData || {}
     }
-    this.entityService.getAllEntities(formData).subscribe((res: any) => {
-      if (res) {
+    this.entityService.getCustomersInvoicesEntity(formData).subscribe((res: any) => {
+      if (res?.data) {
+        // console.log(res)
+        this.aggregatedDats = res.data;
         this.dynamicChartDetails = []
         this.entities = []
-        this.entities = res.data;
-        this.createDynamicChartArr()
+        this.inVoicesList = []
+        this.entities = res.data.customers;
+        this.inVoicesList = res.data.invoicesList;
+        this.createDynamicChartArr();
+        this.loadServicesChart(res.data.invoicesList);
+      }
+    }, (err: any) => {
+      this.errorHandlingService.errorAlertMsg(err);
+    })
+  }
+
+  getAllAggregateDatas(queryData?: any) {
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'customers',
+      "queryData": queryData || {}
+    }
+    this.entityService.getAllAggregateDatas(formData).subscribe((res: any) => {
+      if (res?.data) {
+        // console.log(res)
+        this.aggregatedDats = res.data;
+        this.dynamicChartDetails = []
+        this.entities = []
+        this.inVoicesList = []
+        this.entities = res.data.customersList;
+        this.inVoicesList = res.data.invoicesList;
+        this.createDynamicChartArr();
+        this.loadServicesChart(res.data.products);
       }
     }, (err: any) => {
       this.errorHandlingService.errorAlertMsg(err);
@@ -143,41 +193,66 @@ export class HomeComponent implements OnInit {
     return JSON.stringify(data);
   }
 
-  loadChartsData() {
-    for (const response of this.entities) {
-      for (const chartDetail of this.dynamicChartDetails) {
-        const fieldValue = response[chartDetail.chartFieldName];
-        if (Array.isArray(fieldValue)) {
-          fieldValue.forEach(value => {
-            chartDetail.chartData.labels.push(value);
-            chartDetail.chartData.datasets[0].data.push(1); // Assuming count is 1 for each value
-          });
-        } else {
-          chartDetail.chartData.labels.push(fieldValue);
-          chartDetail.chartData.datasets[0].data.push(1); // Assuming count is 1 for each value
-        }
-      }
-    }
-  }
-
   ngModelDateChange(event: any) {
-    console.log(event)
     if (this.selectedDates?.startDate && this.selectedDates?.endDate) {
       this.tableQuery = JSON.stringify({
         createdAt: {
-          $gte: this.selectedDates.startDate.toISOString(),
-          $lte: this.selectedDates.endDate.toISOString()
+          startDate: this.selectedDates.startDate,
+          endDate: this.selectedDates.endDate
         }
       })
-      this.getAllEntity(JSON.parse(this.tableQuery))
-      this.getInvoiceDetails(JSON.parse(this.tableQuery))
+      // this.getAllAggregateDatas(JSON.parse(this.tableQuery));
+      this.getAllServiceChartDatas(JSON.parse(this.tableQuery));
+      this.getCustomersInvoicesEntity(JSON.parse(this.tableQuery))
+      this.getNetProfitAndExpense(JSON.parse(this.tableQuery))
     } else {
-      this.getAllEntity();
-      this.getInvoiceDetails();
+      // this.getAllAggregateDatas();
+      this.tableQuery = JSON.stringify({
+        createdAt: {
+          startDate: new Date(this.userDetails?.app_meta_details?.createdAt),
+          endDate: new Date()
+        }
+      })
+      this.getAllServiceChartDatas(JSON.parse(this.tableQuery));
+      this.getCustomersInvoicesEntity({})
+      this.getNetProfitAndExpense()
       this.tableQuery = JSON.stringify({})
     }
   }
 
+  getAllServiceChartDatas(queryData?: any) {
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'invoices',
+      "queryData": queryData
+    }
+    this.entityService.getAllServiceChartDatas(formData).subscribe((res: any) => {
+      if (res) {
+        this.serviceChartDays = res.data;
+        console.log(this.serviceChartDays)
+      }
+    }, (err: any) => {
+      this.errorHandlingService.errorAlertMsg(err);
+    })
+  }
+
+  getNetProfitAndExpense(queryData?: any){
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'invoices',
+      "queryData": queryData
+    }
+    this.entityService.getNetProfitAndExpense(formData).subscribe((res: any) => {
+      if (res) {
+        this.netProfitAndExpenses = res.data
+        console.log(this.netProfitAndExpenses)
+      }
+    }, (err: any) => {
+      this.errorHandlingService.errorAlertMsg(err);
+    })
+  }
 
   createDynamicChartArr(type: any = 'services') {
     // Iterate over the charts_details array in the configuration object
@@ -244,7 +319,7 @@ export class HomeComponent implements OnInit {
           break;
         // Add cases for other chart types if needed
         default:
-          console.error('Unsupported chart type:', chart.chart_type);
+          // console.error('Unsupported chart type:', chart.chart_type);
           break;
       }
 
@@ -318,33 +393,6 @@ export class HomeComponent implements OnInit {
     return details;
   }
 
-
-
-  iterateTableFields() {
-    for (const field of this.userDetails?.app_meta_details?.table_fileds) {
-      this.createEntitySchema(field);
-    }
-  }
-
-  createEntitySchema(field: any) {
-    let schema = {
-      [field.field_key]: {
-        type: this.commonService.toTitleCase(field.field_value) || 'Mixed',
-        required: field.isRequired || true,
-        unique: field.isUnique || false,
-      }
-    }
-    this.entitySchema.push(schema);
-  }
-
-  isArrayCheck(field: any) {
-    if (Array.isArray(this.entities[0][field])) {
-      return true;
-    }
-    return false;
-  }
-
-
   destructureArray(data: any, type: any) {
     let arr = data.filter((obj: any) => {
       return obj.fieldValue == true
@@ -360,6 +408,27 @@ export class HomeComponent implements OnInit {
     }
 
     return arr
+  }
+
+  onClickCardBox(cardName:any){
+    console.log(cardName)
+    switch(cardName){
+      case 'customers':
+        this.exportAsXLSX(this.entities, cardName);
+        break;
+      case 'services':
+        this.exportAsXLSX(this.listOfServices, cardName);
+        break;
+      case 'invoices':
+        this.exportAsXLSX(this.inVoicesList, cardName);
+        break;
+      default:
+        console.log('invalid card clicked!')
+    }
+  }
+
+  exportAsXLSX(data:any, filename:any):void {
+    this.excelService.exportAsExcelFile(data, filename);
   }
 
 }

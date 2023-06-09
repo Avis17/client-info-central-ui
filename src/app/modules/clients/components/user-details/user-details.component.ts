@@ -6,6 +6,7 @@ import { CommonService } from 'src/app/services/common.service';
 import { ErrorHandlingService } from 'src/app/services/error-handling.service';
 import { NavigationService } from 'src/app/services/navigation.service';
 import { AuthGuardService } from 'src/app/services/auth-guard.service';
+import { ExcelService } from '../../services/excel.service';
 
 @Component({
   selector: 'app-user-details',
@@ -17,17 +18,20 @@ export class UserDetailsComponent {
   userId = "";
   entitySchema: any = {}
   userDetails : any = {}
-  clientInfo:any = {};
+  clientInfo:any;
   clientInfoKeys:any = []
   inVoicesList : any = []
   listOfServices : any = []
   newInvoice  = false;
   searchItem : string = ''
+  servicesList :any = []
+  totalRevenue:number = 0;
   constructor(
     private activatedRoute: ActivatedRoute,
     private cryptoService: CryptoService,
     private entityService: EntityService,
     private commonService: CommonService,
+    private excelService:ExcelService,
     private errorHandlingService: ErrorHandlingService,
     private navigationService: NavigationService,
     private authenticationService:AuthGuardService
@@ -40,41 +44,41 @@ export class UserDetailsComponent {
       this.userId = this.cryptoService.decrypt(this.userId);
       this.userId = JSON.parse(this.userId)
     }
-    this.getUserDetails();
-    this.getInvoiceDetails();
+    this.getAllAggregateDatas();
   }
 
-  getUserDetails() {
+  flattenArray(arr: any) {
+    return arr.flat(Infinity);
+  }
+
+  getAllAggregateDatas(queryData?: any){
     const formData = {
-      "schema": {},
+      "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
       "collectionName": 'customers',
       "queryData": this.userId
     }
-    this.entityService.getAllEntities(formData).subscribe((res: any) => {
-      if (res) {
+    this.entityService.getAllAggregateDatas(formData).subscribe((res:any)=>{
+      if(res?.data){
         console.log(res)
-        this.clientInfo = res.data[0];
+        this.clientInfo = res.data.customersList[0];
         this.clientInfoKeys = this.userDetails?.app_meta_details?.table_fileds?.map((data:any)=>{
           return {field_name:data.field_name, field_key:data.field_key}
         })
-      }
-    }, (err: any) => {
-      this.errorHandlingService.errorAlertMsg(err);
-    })
-  }
-
-  getInvoiceDetails(queryData?:any){
-    const formData = {
-      "schema": '',
-      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
-      "collectionName": 'invoices',
-      "queryData": this.userId
-    }
-    this.entityService.getAllEntities(formData).subscribe((res: any) => {
-      if (res) {
-       this.inVoicesList = res.data;
-       console.log(this.inVoicesList)
+        if(res.data.invoicesList[0]){
+          this.servicesList = this.flattenArray(res.data.products[0]);
+          this.totalRevenue = res.data.totalRevenue;
+          this.inVoicesList = res.data.invoicesList[0].reverse();
+          this.inVoicesList = this.inVoicesList.map((data:any)=>{
+            return {
+              ...data,
+              createdAt : this.formatDate(data.createdAt)
+            }
+          })
+        }else{
+          this.inVoicesList = []
+        }
+        
       }
     }, (err: any) => {
       this.errorHandlingService.errorAlertMsg(err);
@@ -98,6 +102,14 @@ export class UserDetailsComponent {
     this.navigationService.navigateWithoutLocationChange(['client/billing']);
   }
 
+  getDate(now:any){
+    if(now){
+      now = new Date(now);
+      return now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear();
+    }
+    return ''
+  }
+
   onServiceOptionChange(event:any, selectedObj:any){
     if(event.target.checked){
       this.listOfServices.push({...selectedObj, createdAt : new Date()})
@@ -106,5 +118,35 @@ export class UserDetailsComponent {
         return data.service_name != selectedObj.service_name
       })
     }
+  }
+  
+
+  formatDate(dateString:any) {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = String(date.getFullYear());
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    return `${day}/${month}/${year} ${hours}:${minutes}`;
+  }
+
+  onClickCardBox(cardName:any){
+    console.log(cardName)
+    switch(cardName){
+      case 'services':
+        this.exportAsXLSX(this.servicesList, cardName);
+        break;
+      case 'invoices':
+        this.exportAsXLSX(this.inVoicesList, cardName);
+        break;
+      default:
+        console.log('invalid card clicked!')
+    }
+  }
+
+  exportAsXLSX(data:any, filename:any):void {
+    this.excelService.exportAsExcelFile(data, filename);
   }
 }

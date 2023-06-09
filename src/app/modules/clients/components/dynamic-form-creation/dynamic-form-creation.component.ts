@@ -18,9 +18,9 @@ export class DynamicFormCreationComponent {
   formGroup: any;
   userDetails: any;
   entitySchema: any = [];
-  isUniqueArr:any = [];
-  listOfServices:any = [];
-  searchItem : string = ''
+  isUniqueArr: any = [];
+  listOfServices: any = [];
+  searchItem: string = ''
 
   ngOnInit() {
     this.formGroup = this.formBuilder.group({});
@@ -59,6 +59,9 @@ export class DynamicFormCreationComponent {
         case 'date':
           formControl = this.formBuilder.control(new Date(fieldValue), validators);
           break;
+        case 'multipleValues':
+          formControl = this.formBuilder.control('', validators);
+          break;
         case 'dropdown':
           formControl = this.formBuilder.control(fieldValue, validators);
           break;
@@ -75,13 +78,13 @@ export class DynamicFormCreationComponent {
     private toastr: ToastrService,
     private authService: AuthGuardService,
     private router: Router,
-    private navigationService:NavigationService,
+    private navigationService: NavigationService,
     private errorHandlingService: ErrorHandlingService,
     private commonService: CommonService,
     private formBuilder: FormBuilder
   ) {
     this.userDetails = this.authService.getUserDetails();
-    this.isUniqueArr = this.userDetails.app_meta_details.table_fileds.filter((data:any)=>{
+    this.isUniqueArr = this.userDetails.app_meta_details.table_fileds.filter((data: any) => {
       return data.isUnique == true
     })
   }
@@ -102,11 +105,11 @@ export class DynamicFormCreationComponent {
     this.navigationService.navigateWithoutLocationChange(commands);
   }
 
-  onServiceOptionChange(event:any, selectedObj:any){
-    if(event.target.checked){
-      this.listOfServices.push({...selectedObj, createdAt : new Date()})
-    }else{
-      this.listOfServices = this.listOfServices.filter((data:any)=>{
+  onServiceOptionChange(event: any, selectedObj: any) {
+    if (event.target.checked) {
+      this.listOfServices.push({ ...selectedObj, createdAt: new Date() })
+    } else {
+      this.listOfServices = this.listOfServices.filter((data: any) => {
         return data.service_name != selectedObj.service_name
       })
     }
@@ -118,7 +121,7 @@ export class DynamicFormCreationComponent {
         "schema": '',
         "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
         "collectionName": 'customers',
-        "collectionData": {...this.formGroup.value, isUniqueField : this.isUniqueArr[0]?.field_key}
+        "collectionData": { ...this.formGroup.value, isUniqueField: this.isUniqueArr[0]?.field_key }
       }
       if (formData.dbName == '' || formData.collectionName == '') {
         this.toastr.error("invalid DB details! contact your application provider immediately.", "Error")
@@ -126,7 +129,7 @@ export class DynamicFormCreationComponent {
       }
       this.entityService.addNewEntity(formData).subscribe((res: any) => {
         if (res.status == 200) {
-          this.entityService.setinvoiceDetails({...formData.collectionData, services : this.listOfServices})
+          this.entityService.setinvoiceDetails({ ...formData.collectionData, services: this.listOfServices })
           this.navigationService.navigateWithoutLocationChange(['client/billing']);
         }
       }, (err) => {

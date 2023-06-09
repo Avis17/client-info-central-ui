@@ -27,6 +27,12 @@
                     </div>
                     Services
                 </a>
+                <a (click)="onClickLink('expenses')" appSkipLocationChange [commands]="['/client/expenses']" [ngClass]="linkActive['expenses'] ? 'text-color nav-link' : 'nav-link'">
+                    <div class="sb-nav-link-icon">
+                        <img src="../../../../../assets/clients/png/expense-25.png">
+                    </div>
+                    Expenses Management
+                </a>
             </div> 
         </div>
         <div class="sb-sidenav-footer">

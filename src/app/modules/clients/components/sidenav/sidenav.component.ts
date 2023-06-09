@@ -14,6 +14,7 @@ export class SidenavComponent {
     "billing" : false,
     "clients" : false,
     "services" : false,
+    "expenses" : false
   }
   constructor(private authService:AuthGuardService){
     this.userDetails = this.authService.getUserDetails();

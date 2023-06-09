@@ -14,6 +14,11 @@ import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
 import { ServicesComponent } from './components/services/services.component';
 import { CardModule } from 'primeng/card';
 import { TimelineModule } from 'primeng/timeline';
+import {MatChipsModule} from '@angular/material/chips';
+import { CanDeactivateGuard } from './guards/can-component-deactivate.guard';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { ExpensesComponent } from './components/expenses/expenses.component';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 
 
@@ -27,7 +32,8 @@ import { TimelineModule } from 'primeng/timeline';
   BillingComponent,
   UserDetailsComponent,
   UserTableComponent,
-  ServicesComponent
+  ServicesComponent,
+  ExpensesComponent,
   ],
   imports: [
     CommonModule,
@@ -35,7 +41,11 @@ import { TimelineModule } from 'primeng/timeline';
     SharedModule,
     TimelineModule,
     CardModule,
+    MatChipsModule,
+    NgSelectModule,
+    NgxPaginationModule,
     NgxDaterangepickerMd.forRoot()
-  ]
+  ],
+  providers : [CanDeactivateGuard]
 })
 export class ClientsModule { }
