@@ -1,3 +1,6 @@
+
+<app-custom-loader *ngIf="isLoading"></app-custom-loader>
+
 <div class="pt-5 pl-3">
     <mat-icon class="cursor-pointer" (click)="onPreviousPage()">arrow_back</mat-icon>
 </div>
@@ -426,7 +429,6 @@
                                     <a href="https://signaturely.com/online-signature/type/" target="_blank">Click here to create digital signature. </a>
                                 </div>
                             </div>
-                            {{furthFormGroup.value | json}}
                             <div>
                                 <button mat-flat-button class="secondary-bg" matStepperPrevious>Back</button> &nbsp;
                                 <button mat-flat-button class="primary-bg" matStepperNext>Next</button>

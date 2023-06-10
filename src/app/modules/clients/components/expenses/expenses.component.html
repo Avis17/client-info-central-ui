@@ -1,3 +1,5 @@
+<app-custom-loader *ngIf="isLoading"></app-custom-loader>
+
 <div class="m-sm-1 m-lg-5">
     <div class="row align-end mb-3">
         <div class="col-lg-6 col-md-6 col-sm-12">
@@ -33,6 +35,7 @@
                         <tr>
                             <th>S no</th>
                             <th>Expense Category</th>
+                            <th>Date</th>
                             <th>Expense Amount</th>
                             <th>Additional Details</th>
                             <th>Action</th>
@@ -46,6 +49,9 @@
                                 <ng-select *ngIf="expense.isEdit" class="form-select custom-select" [searchable]="true" [(ngModel)]="expense.selectedCategory">
                                     <ng-option *ngFor="let category of expenseCategories" [value]="category">{{category}}</ng-option>
                                 </ng-select>
+                            </td>
+                            <td>
+                                <span>{{expense?.createdAt | date:'medium'}}</span>
                             </td>
                             <td>
                                 <span *ngIf="!expense.isEdit">{{expense?.expense_price}}</span>
@@ -69,7 +75,7 @@
                             </td>
                         </tr>
                         <tr *ngIf="expensesList.length == 0">
-                            <td colspan="4" class="text-center">No Data Found!</td>
+                            <td colspan="6" class="text-center">No Data Found!</td>
                         </tr>
                     </tbody>
                 </table>

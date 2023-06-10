@@ -74,3 +74,31 @@ label{
     color: $card-label !important;
     font-weight: 600;
 }
+
+.card-box{
+    background: lightgray;
+    border-radius: 25px;
+    padding: 2px !important;
+    margin: 10px !important;
+}
+
+.no-card-box {
+    /* Add your desired styles for the false condition */
+    /* For example, you can set display: none; to hide the element */
+    display: none !important;
+}
+  
+.f-500{
+    font-weight: 400 !important;
+    color: black;
+}
+
+.page-spinner {
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    margin: auto;
+  }

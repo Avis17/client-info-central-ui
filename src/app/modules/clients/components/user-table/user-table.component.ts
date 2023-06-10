@@ -24,6 +24,7 @@ export class UserTableComponent implements OnChanges {
   entitySchema: any = [];
   @Input() queryData: any;
   @Input() tableData: any;
+  isLoading:boolean  = true;
 
   @ViewChild('tableref') dt: Table | any;
 
@@ -49,6 +50,7 @@ export class UserTableComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.tableData) {
+      this.isLoading = false;
       this.entities = JSON.parse(this.tableData);
       this.createCols();
     } 
@@ -112,7 +114,9 @@ export class UserTableComponent implements OnChanges {
       "collectionName": 'customers',
       "queryData": query || {}
     }
+    this.isLoading = true;
     this.entityService.getAllEntities(formData).subscribe((res: any) => {
+      this.isLoading = false;
       if (res) {
         console.log(res)
         this.cols = [];
@@ -121,6 +125,7 @@ export class UserTableComponent implements OnChanges {
         this.createCols();
       }
     }, (err: any) => {
+      this.isLoading = false;
       this.errorHandlingService.errorAlertMsg(err);
     })
   }

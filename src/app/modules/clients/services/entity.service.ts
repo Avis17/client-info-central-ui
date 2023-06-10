@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import {delay, map} from 'rxjs/operators';
 import { CryptoService } from 'src/app/services/crypto.service';
 import { Schema } from 'mongoose';
+import { environment } from 'src/environment/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +12,8 @@ export class EntityService {
 
   constructor(private http:HttpClient, private cryptoService:CryptoService) { }
 
-  URL : string = 'http://localhost:2000/entities/';
   invoiceDetails:any;
-  // URL = "https://client-info-central.onrender.com/entities/"
+  URL = environment.apiUrl+'entities/';
 
   entitySchema :any = {}
 
@@ -39,7 +39,7 @@ export class EntityService {
      })
     );
   }
-  
+
   addNewEntity(data:any){
     return this.http.post(this.URL, data).pipe(
       map((response:any) => {

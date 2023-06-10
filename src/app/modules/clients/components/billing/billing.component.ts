@@ -21,6 +21,7 @@ export class BillingComponent implements OnDestroy {
   isSubTotalClicked = false;
   isFinalTotalClicked = false;
   invoicedetails: any;
+  isLoading: boolean = false;
 
   constructor(
     private authService: AuthGuardService,
@@ -450,7 +451,7 @@ export class BillingComponent implements OnDestroy {
                   margin: [0, 0, 0, 5]
                 },
                 {
-                  text: this.userDetails?.app_meta_details?.billingdetails?.city + ', '+this.userDetails?.app_meta_details?.billingdetails?.state+', '+this.userDetails?.app_meta_details?.billingdetails?.country,
+                  text: this.userDetails?.app_meta_details?.billingdetails?.city + ', ' + this.userDetails?.app_meta_details?.billingdetails?.state + ', ' + this.userDetails?.app_meta_details?.billingdetails?.country,
                   fontSize: 10,
                   alignment: 'right'
                 },
@@ -536,7 +537,7 @@ export class BillingComponent implements OnDestroy {
                 { text: 'Total', colSpan: 3, alignment: 'right', bold: true, fillColor: '#eaeaea' },
                 {},
                 {},
-                { text: "Rs."+this.invoice.finalTotal, alignment: 'right', fillColor: '#eaeaea', color: '#CC5803' }
+                { text: "Rs." + this.invoice.finalTotal, alignment: 'right', fillColor: '#eaeaea', color: '#CC5803' }
               ]
             ]
           },
@@ -614,15 +615,15 @@ export class BillingComponent implements OnDestroy {
   generatePDF(action = 'open') {
     console.log("open")
     const docDefinition: any = this.createPDFData();
-  
+
     const fileContent = JSON.stringify(docDefinition); // Convert docDefinition to a string
-  
+
     // Create a Blob from the file content
     const blob = new Blob([fileContent], { type: 'application/json' });
-  
+
     // Create a File from the Blob
     const file = new File([blob], 'invoice.pdf', { type: 'application/pdf' });
-  
+
     const formData = new FormData();
     formData.append('schema', '');
     formData.append('dbName', this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '');
@@ -630,25 +631,24 @@ export class BillingComponent implements OnDestroy {
     formData.append('collectionData', JSON.stringify(this.invoice));
     formData.append('file', file);
     console.log(formData)
-
+    this.isLoading = true;
     this.entityService.addNewInvoiceEntity(formData).subscribe(
       (res: any) => {
+        this.isLoading = false;
         console.log(res)
         if (res.status == 200) {
-          console.log(res.fileURL)
-          // this.downloadFile(this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name), "invoices", res.data._id);
-          // window.location.href = res.fileURL;
           pdfMake.createPdf(docDefinition).open();
           this.navigationService.navigateWithoutLocationChange(['client/home']);
         }
       },
       (err) => {
+        this.isLoading = false;
         this.errorHandlingService.errorAlertMsg(err);
       }
     );
   }
-  
-  downloadFile(dbName:any, collectionName:any, entityId:any){
+
+  downloadFile(dbName: any, collectionName: any, entityId: any) {
     const fileURL = `/files/${dbName}/${collectionName}/${entityId}/download`;
     const link = document.createElement('a');
     link.href = fileURL;

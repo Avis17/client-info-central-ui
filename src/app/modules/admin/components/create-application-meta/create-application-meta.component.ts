@@ -22,17 +22,17 @@ export class CreateApplicationMetaComponent implements OnInit {
   dynamicAppMetaForm: any;
   appCategories: any = [];
   stepperOrientation: Observable<StepperOrientation>;
-
+  isLoading:boolean  = false;
   fieldsType: string[] = [
     "text",
     "number",
     "email",
+    "checkbox",
+    "radio",
     "textarea",
     "multipleValues",
     "date",
     "file",
-    "checkbox",
-    "radio",
     "select",
     "password",
     "submit",
@@ -311,13 +311,17 @@ export class CreateApplicationMetaComponent implements OnInit {
   }
 
   getAppCategories() {
+    this.isLoading = true;
+
     this.appMetaService.getAppCategories().subscribe((res) => {
+      this.isLoading = false;
       if (res) {
         this.appCategories = res.data;
         return;
       }
       this.appCategories = []
     }, (err) => {
+      this.isLoading = false;
       this.appCategories = []
       // console.log(err)
       this.errorHandlingService.errorAlertMsg(err)
@@ -331,11 +335,14 @@ export class CreateApplicationMetaComponent implements OnInit {
     console.log(isUniqueThere)
     if(isUniqueThere.length >= 1){
       let data = { ...this.firstFormGroup.value, ...this.secondFormGroup.value, ...this.servicesFormGroup.value , ...this.thirdFormGroup.value, billingdetails: {...this.furthFormGroup.value} }
+      this.isLoading = true;
       this.appMetaService.createNewAppMeta(data).subscribe((res: any) => {
+        this.isLoading = false;
         if (res) {
           this.errorHandlingService.errorAlertMsg(res, ['/admin/tools'])
         }
       }, (err: any) => {
+        this.isLoading = false;
         this.errorHandlingService.errorAlertMsg(err)
       })
     }else{

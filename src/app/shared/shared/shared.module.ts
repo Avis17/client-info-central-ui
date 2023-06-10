@@ -24,12 +24,15 @@ import { ArrayDestructurePipe } from 'src/app/pipes/array-destructure.pipe';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
 import { SearchPipe } from 'src/app/pipes/search.pipe';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { CustomLoaderComponent } from 'src/app/components/custom-loader/custom-loader.component';
 
 @NgModule({
   declarations: [
     ArrayDestructurePipe,
     SkipLocationChangeDirective,
-    SearchPipe
+    SearchPipe,
+    CustomLoaderComponent
   ],
   imports: [
     CommonModule,
@@ -54,6 +57,8 @@ import { SearchPipe } from 'src/app/pipes/search.pipe';
     ToolbarModule,
     ChartModule,
     MatDatepickerModule,
+    MatNativeDateModule,
+    ProgressSpinnerModule
   ],
   exports: [
     CommonModule,
@@ -80,7 +85,10 @@ import { SearchPipe } from 'src/app/pipes/search.pipe';
     ArrayDestructurePipe,
     MatDatepickerModule,
     SkipLocationChangeDirective,
-    SearchPipe
+    SearchPipe,
+    ProgressSpinnerModule, 
+    MatNativeDateModule,
+    CustomLoaderComponent
   ]
 })
 export class SharedModule { }

@@ -1,0 +1,75 @@
+@import "src/_variables.scss";
+
+
+.spinnerContainer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(255, 255, 255, 0.8);
+    cursor: wait;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  
+    .spinner {
+      position: relative;
+      width: 10em;
+  
+      .spinner-defaults {
+        stroke: $primary;
+      }
+  
+      .rotate {
+        animation: spin 60s linear infinite;
+        transform-origin: 60px 60px;
+      }
+  
+      .rotate-reverse {
+        animation: spin reverse 30s linear infinite;
+        transform-origin: 60px 60px;
+      }
+  
+      .rotate-random {
+        animation: spinner-rotate-single-1 10s 0s ease-in-out infinite;
+        transform-origin: 60px 60px;
+      }
+  
+      .rotate-fast {
+        animation: spin 2s linear infinite;
+        transform-origin: 60px 60px;
+      }
+    }
+  }
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  
+  @keyframes spinner-rotate-single-1 {
+    0% {
+      transform: rotateZ(56deg);
+    }
+    20% {
+      transform: rotateZ(-132deg);
+    }
+    40% {
+      transform: rotateZ(-250deg);
+    }
+    60% {
+      transform: rotateZ(40deg);
+    }
+    70% {
+      transform: rotateZ(-80deg);
+    }
+    100% {
+      transform: rotateZ(56deg);
+    }
+  }
+  

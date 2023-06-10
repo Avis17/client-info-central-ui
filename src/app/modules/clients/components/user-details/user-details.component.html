@@ -1,3 +1,5 @@
+<app-custom-loader *ngIf="isLoading"></app-custom-loader>
+
 <div class="pt-5 pl-3">
     <mat-icon class="cursor-pointer" (click)="onPreviousPage()">arrow_back</mat-icon>
     <div class="text-end mb-3">
@@ -90,15 +92,15 @@
                             <div style="text-align: start;">
                                 <div class="row ml-3">
                                     <ng-container *ngFor="let obj of clientInfo[key.field_key]">
-                                        <div class="col p-0">
+                                        <div class="col p-0 card-box" [ngClass]="{'no-card-box': obj.fieldValue === false}">
                                           <div class="col-4" *ngIf="obj.fieldValue">
                                             <ng-container>
-                                              <h4 class="m-0">{{ obj.fieldName | uppercase }}</h4>
+                                              <label class="m-0 f-500">{{ obj.fieldName | uppercase }}</label>
                                             </ng-container>
                                           </div>
-                                          <div class="col-4" *ngIf="obj.fieldValue == undefined">
+                                          <div class="col-4" *ngIf="obj.fieldValue === undefined">
                                             <ng-container>
-                                              <h4 class="m-0">{{ obj}}</h4>
+                                              <label class="m-0 f-500">{{ obj }}</label>
                                             </ng-container>
                                           </div>
                                         </div>

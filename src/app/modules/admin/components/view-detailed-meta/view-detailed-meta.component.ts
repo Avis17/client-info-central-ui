@@ -13,6 +13,8 @@ export class ViewDetailedMetaComponent {
 
   appId : string = '';
   appDetails:any;
+  isLoading:boolean  = true;
+
   constructor(
     private activatedRoute:ActivatedRoute,
     private appMetaService:AppMetaCreationService,
@@ -24,7 +26,9 @@ export class ViewDetailedMetaComponent {
   }
 
   getMetaDetailsById(){
-    this.appMetaService.getAllAppMetas({_id : this.appId}).subscribe((res:any)=>{
+    this.isLoading = true;
+    this.appMetaService.getAllAppMetas({_id : this.appId}).subscribe((res:any)=>{     
+      this.isLoading = false;
       if(res){
         this.appDetails = res.data[0];
         console.log(this.appDetails)
@@ -32,6 +36,7 @@ export class ViewDetailedMetaComponent {
         this.appDetails = {};
       }
     }, (err)=>{
+      this.isLoading = false;
       this.errorHandlingService.errorAlertMsg(err)
     })
   }

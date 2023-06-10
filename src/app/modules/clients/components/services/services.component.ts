@@ -20,10 +20,12 @@ export class ServicesComponent implements CanComponentDeactivate {
   newService: any = {}
   currentPage = 1;
   itemsPerPage = 10;
-  searchText :any = ''
+  searchText :any = '';
+  isLoading:boolean  = false;
+
   constructor(private authService: AuthGuardService, private cryptService: CryptoService, private appMetaService: AppMetaCreationService, private errorHandlingService: ErrorHandlingService) {
     this.userDetails = this.authService.getUserDetails();
-    this.servicesList = [...this.userDetails.app_meta_details.servicesList];
+    this.servicesList = [...this.userDetails?.app_meta_details?.servicesList] || []
   }
 
   updateServicesData(resolve: any) {
@@ -36,13 +38,16 @@ export class ServicesComponent implements CanComponentDeactivate {
     }
     delete query.data._id;
     delete query.data.__v;
+    this.isLoading = true;
     this.appMetaService.updateAppMetaById(query).subscribe((res: any) => {
+      this.isLoading = false;
       if (res.status == 200) {
         this.authService.logoutWithoutNavigate();
         resolve(true);
       }
       resolve(false)
     }, (err) => {
+      this.isLoading = false;
       this.errorHandlingService.errorAlertMsg(err);
       resolve(true);
     })
@@ -56,7 +61,6 @@ export class ServicesComponent implements CanComponentDeactivate {
     this.servicesList = this.servicesList.filter((data: any) => {
       return data != service
     })
-    console.log(this.servicesList)
   }
 
   onCancel(service: any) {

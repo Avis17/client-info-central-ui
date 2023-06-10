@@ -13,7 +13,9 @@ export class LoginComponent {
 
 
   email : string = ""
-  password : string = ''
+  password : string = '';
+  isLoading:boolean  = false;
+
   constructor(private cryptService:CryptoService,private toastr: ToastrService, private navigationService: NavigationService, private authService:AuthGuardService){
     let userDetails:any = authService.getSessionUserDetails()
     if(userDetails){
@@ -37,7 +39,10 @@ export class LoginComponent {
   }
 
   onLoginBtnClick(){
+    this.isLoading = true;
+
     this.authService.login({"email":this.email, "password":this.password}).subscribe((res:any)=>{
+      this.isLoading = false;
       if(res.status == 200){
         let decryptedData:any = this.setStorage(res.data);
         this.navigateToAuthorizeModule(decryptedData.authorizeTo);
@@ -50,6 +55,7 @@ export class LoginComponent {
         return;
       }
     }, (err)=>{
+      this.isLoading = false;
       if(err.status == 401){
         this.toastr.error("Invalid credentials, try again!", 'Error')
         return

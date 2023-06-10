@@ -25,7 +25,8 @@ export class HomeComponent implements OnInit {
   serviceChartDetails: any;
   pieChartData: any;
   pieChartOptions: any;
-  tableQuery: string = ''
+  tableQuery: string = '';
+  isLoading: boolean = true;
   chartBackgroundColors = ['#4BCBEB', '#1BCFB4', '#fa9f1b', '#cc2b5e', '#EA6A47', '#1C4E80', "#0091D5", "#A5D8DD", '#7E909A', '#202020'];
   chartHoverBackgroundColors = ['#ffdde1', '#A7BFE8', '#BBD2C5', '#acb6e5', "#EF886C", "#256687", "#0AB1FF", "#C4E6E9", "#8D9DA5", "#3D3D3D"]
 
@@ -55,7 +56,7 @@ export class HomeComponent implements OnInit {
   }
   aggregatedDats: any;
   serviceChartDays: any;
-  netProfitAndExpenses:any;
+  netProfitAndExpenses: any;
   invalidDates: moment.Moment[] = [moment().add(2, 'days'), moment().add(3, 'days'), moment().add(5, 'days')];
 
   isInvalidDate = (m: moment.Moment) => {
@@ -65,7 +66,7 @@ export class HomeComponent implements OnInit {
   constructor(
     private entityService: EntityService,
     private authService: AuthGuardService,
-    private excelService:ExcelService,
+    private excelService: ExcelService,
     private commonService: CommonService,
     private errorHandlingService: ErrorHandlingService,
   ) {
@@ -141,29 +142,6 @@ export class HomeComponent implements OnInit {
     return arr.flat(Infinity);
   }
 
-  getCustomersInvoicesEntity(queryData?: any) {
-    const formData = {
-      "schema": '',
-      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
-      "collectionName": 'customers',
-      "queryData": queryData || {}
-    }
-    this.entityService.getCustomersInvoicesEntity(formData).subscribe((res: any) => {
-      if (res?.data) {
-        // console.log(res)
-        this.aggregatedDats = res.data;
-        this.dynamicChartDetails = []
-        this.entities = []
-        this.inVoicesList = []
-        this.entities = res.data.customers;
-        this.inVoicesList = res.data.invoicesList;
-        this.createDynamicChartArr();
-        this.loadServicesChart(res.data.invoicesList);
-      }
-    }, (err: any) => {
-      this.errorHandlingService.errorAlertMsg(err);
-    })
-  }
 
   getAllAggregateDatas(queryData?: any) {
     const formData = {
@@ -193,7 +171,8 @@ export class HomeComponent implements OnInit {
     return JSON.stringify(data);
   }
 
-  ngModelDateChange(event: any) {
+  async ngModelDateChange(event: any) {
+    this.isLoading = true;
     if (this.selectedDates?.startDate && this.selectedDates?.endDate) {
       this.tableQuery = JSON.stringify({
         createdAt: {
@@ -202,9 +181,19 @@ export class HomeComponent implements OnInit {
         }
       })
       // this.getAllAggregateDatas(JSON.parse(this.tableQuery));
-      this.getAllServiceChartDatas(JSON.parse(this.tableQuery));
-      this.getCustomersInvoicesEntity(JSON.parse(this.tableQuery))
-      this.getNetProfitAndExpense(JSON.parse(this.tableQuery))
+      try {
+        const chartDataPromise = this.getAllServiceChartDatas(JSON.parse(this.tableQuery));
+        const invoicesPromise = this.getCustomersInvoicesEntity(JSON.parse(this.tableQuery));
+        const netProfitPromise = this.getNetProfitAndExpense(JSON.parse(this.tableQuery));
+        // Wait for all promises to resolve or reject
+        const [chartData, invoices, netProfit] = await Promise.all([chartDataPromise, invoicesPromise, netProfitPromise]);
+        console.log("completed")
+      } catch (error) {
+        // Handle any errors that occurred during the API calls
+        console.error(error);
+        // Set the loader state to false in case of any failure
+        this.isLoading = false;
+      }
     } else {
       // this.getAllAggregateDatas();
       this.tableQuery = JSON.stringify({
@@ -213,46 +202,108 @@ export class HomeComponent implements OnInit {
           endDate: new Date()
         }
       })
-      this.getAllServiceChartDatas(JSON.parse(this.tableQuery));
-      this.getCustomersInvoicesEntity({})
-      this.getNetProfitAndExpense()
+      try {
+        const chartDataPromise = this.getAllServiceChartDatas(JSON.parse(this.tableQuery));
+        const invoicesPromise = this.getCustomersInvoicesEntity();
+        const netProfitPromise = this.getNetProfitAndExpense();
+        // Wait for all promises to resolve or reject
+        const [chartData, invoices, netProfit] = await Promise.all([chartDataPromise, invoicesPromise, netProfitPromise]);
+        console.log("completed")
+        this.isLoading = false;
+      } catch (error) {
+        // Handle any errors that occurred during the API calls
+        console.error(error);
+        // Set the loader state to false in case of any failure
+        this.isLoading = false;
+      }
       this.tableQuery = JSON.stringify({})
     }
   }
 
   getAllServiceChartDatas(queryData?: any) {
+    return new Promise((resolve, reject) => {
+      const formData = {
+        "schema": '',
+        "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+        "collectionName": 'invoices',
+        "queryData": queryData
+      };
+  
+      this.entityService.getAllServiceChartDatas(formData).subscribe(
+        (res: any) => {
+          if (res) {
+            this.serviceChartDays = res.data;
+            console.log(this.serviceChartDays);
+            resolve(this.serviceChartDays);
+          }
+        },
+        (err: any) => {
+          this.errorHandlingService.errorAlertMsg(err);
+          reject(err);
+        }
+      );
+    });
+  }
+  
+  getCustomersInvoicesEntity(queryData?: any) {
     const formData = {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
-      "collectionName": 'invoices',
-      "queryData": queryData
-    }
-    this.entityService.getAllServiceChartDatas(formData).subscribe((res: any) => {
-      if (res) {
-        this.serviceChartDays = res.data;
-        console.log(this.serviceChartDays)
-      }
-    }, (err: any) => {
-      this.errorHandlingService.errorAlertMsg(err);
-    })
+      "collectionName": 'customers',
+      "queryData": queryData || {}
+    };
+  
+    return new Promise((resolve, reject) => {
+      this.entityService.getCustomersInvoicesEntity(formData).subscribe(
+        (res: any) => {
+          if (res?.data) {
+            this.aggregatedDats = res.data;
+            this.dynamicChartDetails = [];
+            this.entities = [];
+            this.inVoicesList = [];
+            this.entities = res.data.customers;
+            this.inVoicesList = res.data.invoicesList;
+            this.createDynamicChartArr();
+            this.loadServicesChart(res.data.invoicesList);
+            resolve(res.data); // Resolve with the actual data
+          } else {
+            reject(new Error("Failed to get customers invoices entity"));
+          }
+        },
+        (err: any) => {
+          this.errorHandlingService.errorAlertMsg(err);
+          reject(err);
+        }
+      );
+    });
+  }
+  
+
+  getNetProfitAndExpense(queryData?: any) {
+    return new Promise((resolve, reject) => {
+      const formData = {
+        "schema": '',
+        "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+        "collectionName": 'invoices',
+        "queryData": queryData
+      };
+  
+      this.entityService.getNetProfitAndExpense(formData).subscribe(
+        (res: any) => {
+          if (res) {
+            this.netProfitAndExpenses = res.data;
+            console.log(this.netProfitAndExpenses);
+            resolve(this.netProfitAndExpenses);
+          }
+        },
+        (err: any) => {
+          this.errorHandlingService.errorAlertMsg(err);
+          reject(err);
+        }
+      );
+    });
   }
 
-  getNetProfitAndExpense(queryData?: any){
-    const formData = {
-      "schema": '',
-      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
-      "collectionName": 'invoices',
-      "queryData": queryData
-    }
-    this.entityService.getNetProfitAndExpense(formData).subscribe((res: any) => {
-      if (res) {
-        this.netProfitAndExpenses = res.data
-        console.log(this.netProfitAndExpenses)
-      }
-    }, (err: any) => {
-      this.errorHandlingService.errorAlertMsg(err);
-    })
-  }
 
   createDynamicChartArr(type: any = 'services') {
     // Iterate over the charts_details array in the configuration object
@@ -410,9 +461,9 @@ export class HomeComponent implements OnInit {
     return arr
   }
 
-  onClickCardBox(cardName:any){
+  onClickCardBox(cardName: any) {
     console.log(cardName)
-    switch(cardName){
+    switch (cardName) {
       case 'customers':
         this.exportAsXLSX(this.entities, cardName);
         break;
@@ -427,7 +478,7 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  exportAsXLSX(data:any, filename:any):void {
+  exportAsXLSX(data: any, filename: any): void {
     this.excelService.exportAsExcelFile(data, filename);
   }
 

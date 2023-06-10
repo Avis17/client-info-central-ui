@@ -24,6 +24,7 @@ export class CreateUserAccessComponent {
   isHidePassword = true;
   isHideConfirmPassword = true;
   isDisableBtn = false;
+  isLoading:boolean  = false;
 
   constructor(
     private navigationService :NavigationService,
@@ -53,11 +54,17 @@ export class CreateUserAccessComponent {
   }
 
   onRegisterBtnClick(){
+    this.isLoading = true;
+
     this.authGuardService.register(this.userDetails).subscribe((res:any)=>{
+      this.isLoading = false;
+
       if(res){
         this.errorHandlingService.errorAlertMsg(res, ['/admin/tools'])
       }
     }, (err)=>{
+      this.isLoading = false;
+
       this.errorHandlingService.errorAlertMsg(err, ['/admin/tools'])
     })
   }

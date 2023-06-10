@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { CookieService } from 'ngx-cookie-service';
+import { environment } from 'src/environment/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +12,8 @@ export class AuthGuardService {
   userDetails : any = {
     authorizeTo : ''
   };
-  URL = "http://localhost:2000/"
 
-  // URL = "https://client-info-central.onrender.com/"
+  URL = environment.apiUrl;
   constructor(private router: Router, private http:HttpClient, private cookieService: CookieService) { }
 
 

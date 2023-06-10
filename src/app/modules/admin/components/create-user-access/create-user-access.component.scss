@@ -30,3 +30,13 @@
     color: $primary !important;
     font-size: 28px;
   }
+
+  .page-spinner {
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    margin: auto;
+  }

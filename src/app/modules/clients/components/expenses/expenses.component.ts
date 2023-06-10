@@ -34,6 +34,7 @@ export class ExpensesComponent {
     "Advance",
     "Others"
   ]
+  isLoading:boolean  = true;
   selectedDates: { startDate: moment.Moment, endDate: moment.Moment };
   ranges: any = {
     'Today': [moment(), moment()],
@@ -78,13 +79,17 @@ export class ExpensesComponent {
       "collectionName": 'expenses',
       "queryData": {}
     }
+    this.isLoading = true;
     this.entityService.deleteEntityById(expense._id, formData).subscribe((res:any)=>{
+      this.isLoading = false;
       if(res.status == 200){
         Swal.fire('Expense Successfully deleted!', '', 'success').then(()=>{
           this.getExpenses();
         })
       }
     }, (err:any)=>{
+      this.isLoading = false;
+
       this.errorHandlingService.errorAlertMsg(err);
     })
   }
@@ -103,11 +108,15 @@ export class ExpensesComponent {
       "collectionName": 'expenses',
       "collectionData" : expense
     }
+    this.isLoading = true;
+
     this.entityService.updateEntityById(_id, formData).subscribe((res:any)=>{
+      this.isLoading = false;
       if(res.status == 200){
         Swal.fire('Expense Updated!', '', 'success');
       }
     }, (err:any)=>{
+      this.isLoading = false;
       this.errorHandlingService.errorAlertMsg(err);
     })
   }
@@ -123,13 +132,18 @@ export class ExpensesComponent {
       "collectionName": 'expenses',
       "collectionData": this.newexpense
     }
+    this.isLoading = true;
     this.entityService.addNewEntity(formData).subscribe((res: any) => {
+      this.isLoading = false;
+
       if (res.status == 200) {
         this.newexpense = {}
         this.errorHandlingService.errorAlertMsg(res);
         this.getExpenses();
       }
     }, (err) => {
+      this.isLoading = false;
+
       this.errorHandlingService.errorAlertMsg(err);
     })
   }
@@ -141,11 +155,15 @@ export class ExpensesComponent {
       "collectionName": 'expenses',
       "queryData": query || {}
     }
+    this.isLoading = true;
     this.entityService.getAllEntities(formData).subscribe((res: any) => {
+      this.isLoading = false;
       if (res) {
+        console.log(res)
         this.expensesList = res.data;
       }
     }, (err: any) => {
+      this.isLoading = false;
       this.errorHandlingService.errorAlertMsg(err);
     })
   }

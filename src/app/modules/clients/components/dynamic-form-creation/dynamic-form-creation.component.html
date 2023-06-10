@@ -1,3 +1,5 @@
+<app-custom-loader *ngIf="isLoading"></app-custom-loader>
+
 <div class="pt-5 pl-3">
 	<mat-icon class="cursor-pointer" (click)="onPreviousPage()">arrow_back</mat-icon>
 </div>
@@ -40,7 +42,20 @@
 						</div>
 
 						<div *ngSwitchCase="'date'">
-							<input class="w-100" class="form-control" type="date" [formControlName]="field.field_key">
+							<label>{{ field.field_name }}</label>
+							<mat-form-field class="example-form-field">
+								<mat-label>Choose a date</mat-label>
+								<input matInput [formControlName]="field.field_key" [matDatepicker]="datepicker">
+								<mat-hint>MM/DD/YYYY</mat-hint>
+								<mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
+								<mat-datepicker #datepicker>
+								  <mat-datepicker-actions>
+									<button mat-button matDatepickerCancel>Cancel</button>
+									<button mat-raised-button color="primary" matDatepickerApply>Apply</button>
+								  </mat-datepicker-actions>
+								</mat-datepicker>
+							  </mat-form-field>
+
 						</div>
 
 						<div *ngSwitchCase="'checkbox'">
@@ -86,6 +101,7 @@
 
 						<!-- Add cases for other field types -->
 						<div *ngSwitchDefault>
+							<label>{{ field.field_name }}</label>
 							<input class="form-control" type="text" [formControlName]="field.field_key">
 						</div>
 

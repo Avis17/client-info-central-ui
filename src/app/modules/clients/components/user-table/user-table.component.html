@@ -1,3 +1,5 @@
+<app-custom-loader *ngIf="isLoading"></app-custom-loader>
+
 <p-toolbar>
     <div class="p-toolbar-group-start">
         <input type="text" pInputText placeholder="Search Fields" (input)="applyFilterGlobal($event, 'contains')" />

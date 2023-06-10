@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {map} from 'rxjs/operators';
 import { CryptoService } from 'src/app/services/crypto.service';
+import { environment } from 'src/environment/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +11,7 @@ export class AppMetaCreationService {
 
   constructor(private http:HttpClient, private cryptoService:CryptoService) { }
 
-  URL = "http://localhost:2000/app-meta-creation/";
-  // URL = "https://client-info-central.onrender.com/app-meta-creation/"
+  URL = environment.apiUrl+"app-meta-creation/";
 
   getAppCategories(){
     return this.http.get(this.URL+"get-app-categories").pipe(

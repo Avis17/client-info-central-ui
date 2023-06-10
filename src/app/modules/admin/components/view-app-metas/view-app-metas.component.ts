@@ -45,13 +45,21 @@ export class ViewAppMetasComponent {
   allAppMetas :any;
   items: MenuItem[] = [];  
   selectedItem :any;
+  isLoading:boolean  = true;
+
   getAllAppMetas(){
+    this.isLoading = true;
+
     this.appMetaService.getAllAppMetas({}).subscribe((res)=>{
+      this.isLoading = false;
+
       if(res){
         this.allAppMetas = res.data;
         console.log(this.allAppMetas)
       }
     },(err)=>{
+      this.isLoading = false;
+
       this.errorHandlingService.errorAlertMsg(err);
     })
   }
@@ -62,12 +70,18 @@ export class ViewAppMetasComponent {
 
 
   onDelete(id:string){
+    this.isLoading = true;
     this.appMetaService.deleteAppMeta(id).subscribe((res:any)=>{
+      this.isLoading = false;
+
       if(res.status == 200){
         this.toastr.success('Meta Deleted Successfully.', 'Notification');
         this.getAllAppMetas();
       } 
-    }, err => this.errorHandlingService.errorAlertMsg(err))
+    }, (err) =>{
+      this.errorHandlingService.errorAlertMsg(err)
+      this.isLoading = false;
+    })
   }
 
   onEdit(app:any){

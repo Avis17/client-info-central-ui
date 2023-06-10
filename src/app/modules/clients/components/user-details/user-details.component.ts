@@ -26,6 +26,8 @@ export class UserDetailsComponent {
   searchItem : string = ''
   servicesList :any = []
   totalRevenue:number = 0;
+  isLoading:boolean  = true;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private cryptoService: CryptoService,
@@ -58,7 +60,11 @@ export class UserDetailsComponent {
       "collectionName": 'customers',
       "queryData": this.userId
     }
+    this.isLoading = true;
+
     this.entityService.getAllAggregateDatas(formData).subscribe((res:any)=>{
+      this.isLoading = false;
+
       if(res?.data){
         console.log(res)
         this.clientInfo = res.data.customersList[0];
@@ -81,6 +87,7 @@ export class UserDetailsComponent {
         
       }
     }, (err: any) => {
+      this.isLoading = false;
       this.errorHandlingService.errorAlertMsg(err);
     })
   }

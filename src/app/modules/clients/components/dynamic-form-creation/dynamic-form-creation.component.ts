@@ -21,6 +21,7 @@ export class DynamicFormCreationComponent {
   isUniqueArr: any = [];
   listOfServices: any = [];
   searchItem: string = ''
+  isLoading:boolean  = true;
 
   ngOnInit() {
     this.formGroup = this.formBuilder.group({});
@@ -127,12 +128,15 @@ export class DynamicFormCreationComponent {
         this.toastr.error("invalid DB details! contact your application provider immediately.", "Error")
         return;
       }
+      this.isLoading = true;
       this.entityService.addNewEntity(formData).subscribe((res: any) => {
+        this.isLoading = false;
         if (res.status == 200) {
           this.entityService.setinvoiceDetails({ ...formData.collectionData, services: this.listOfServices })
           this.navigationService.navigateWithoutLocationChange(['client/billing']);
         }
       }, (err) => {
+        this.isLoading = false;
         this.errorHandlingService.errorAlertMsg(err);
       })
     } else {
