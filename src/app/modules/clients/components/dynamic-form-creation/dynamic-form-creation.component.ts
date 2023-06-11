@@ -21,7 +21,7 @@ export class DynamicFormCreationComponent {
   isUniqueArr: any = [];
   listOfServices: any = [];
   searchItem: string = ''
-  isLoading:boolean  = true;
+  isLoading:boolean  = false;
 
   ngOnInit() {
     this.formGroup = this.formBuilder.group({});

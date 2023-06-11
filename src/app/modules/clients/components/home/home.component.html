@@ -53,7 +53,7 @@
                             <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs card-text-color text-uppercase mb-1">
-                                        Services
+                                        Products
                                     </div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{listOfServices.length}}</div>
                                 </div>
@@ -73,7 +73,7 @@
                                         Revenue
                                     </div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                        Rs.{{aggregatedDats?.totalRevenue}}</div>
+                                        &#8377; {{aggregatedDats?.totalRevenue}}</div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
@@ -92,7 +92,7 @@
                                         Total Expense
                                     </div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                        Rs.{{netProfitAndExpenses?.totalExpenses}}</div>
+                                        &#8377; {{netProfitAndExpenses?.totalExpenses}}</div>
                                 </div>
                                 <div class="col-auto">
                                     <img width="40px" src="../../../../../assets/clients/png/expense.png">
@@ -111,7 +111,7 @@
                                         Net Profit
                                     </div>
                                     <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                        Rs.{{netProfitAndExpenses?.netProfit}}</div>
+                                        &#8377; {{netProfitAndExpenses?.netProfit}}</div>
                                 </div>
                                 <div class="col-auto">
                                     <img width="40px" *ngIf="netProfitAndExpenses?.netProfit < 0"
@@ -162,19 +162,40 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-lg-4 mt-2 col-md-6 col-sm-12">
+                    <div class="card card-3 border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs card-text-color text-uppercase mb-1">
+                                        Higest Revenue
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                        {{serviceChartDays?.highestRevenueDate}} -    &#8377; {{serviceChartDays?.highestRevenueAmount}}</div>
+                                    <!-- <div class="highest-revenue h5 mb-0 text-gray-800">
+                                         </div> -->
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                                    <!-- <i class="fas fa-bag-shopping fa-2x text-gray-300"></i> -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="col-lg-12 col-md-12">
             <div class="row">
-                <div class="col-12">
+                <div class="col-12" *ngIf="listOfServices.length > 0">
                     <ng-container>
-                        <div class="card p-5 mb-3" *ngIf="entities.length > 0">
+                        <div class="card p-5 mb-3">
                             <div class="text-end mb-3">
-                                <h3 class="chart-text-color">{{serviceChartDetails.chartName | uppercase}}</h3>
+                                <h3 class="chart-text-color">{{serviceChartDetails?.chartName | uppercase}}</h3>
                             </div>
-                            <p-chart [type]="serviceChartDetails.chartType" height="300"
-                                [data]="serviceChartDetails.chartData"
-                                [options]="serviceChartDetails.chartOptions"></p-chart>
+                            <p-chart [type]="serviceChartDetails?.chartType" height="300"
+                                [data]="serviceChartDetails?.chartData"
+                                [options]="serviceChartDetails?.chartOptions"></p-chart>
                         </div>
                     </ng-container>
                 </div>
@@ -185,7 +206,7 @@
                                 <h3 class="chart-text-color">{{chart.chartName | uppercase}}</h3>
                             </div>
                             <p-chart [type]="chart.chartType" height="300" [data]="chart.chartData"
-                                [options]="chart.chartOptions"></p-chart>
+                                [options]="chart.chartOptions" (onDataSelect)="onChartPointSelect($event, chart.chartFieldName, chart.chartData)"></p-chart>
                         </div>
                     </ng-container>
 

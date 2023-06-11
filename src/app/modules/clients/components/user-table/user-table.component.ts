@@ -56,6 +56,10 @@ export class UserTableComponent implements OnChanges {
     } 
   }
 
+  isDateField(value: any): boolean {
+    return !isNaN(Date.parse(value));
+  }
+
 
   createCols() {
     this.cols = []

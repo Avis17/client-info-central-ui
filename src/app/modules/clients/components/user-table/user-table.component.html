@@ -32,9 +32,9 @@
                     <td style="text-align: center;">{{rowIndex+1}}</td>
                     <ng-container *ngFor="let col of columns">
                     <td style="text-align: center;" *ngIf="!isArrayCheck(col.field)">
-                            <ng-container *ngIf="col.field == 'createdAt'">{{
+                            <ng-container *ngIf="isDateField(rowData[col.field])">{{
                                 rowData[col.field] | date:'shortDate' }}</ng-container>
-                            <ng-container *ngIf="col.field != 'createdAt'">
+                            <ng-container *ngIf="!isDateField(rowData[col.field])">
                                 <ng-container *ngIf="rowData['isUniqueField'] != col.field">
                                     {{rowData[col.field] }}
                                 </ng-container>

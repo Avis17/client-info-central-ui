@@ -500,12 +500,12 @@ export class BillingComponent implements OnDestroy {
                 fontSize: 12,
                 alignment: 'right'
               },
-              {
-                text: `Due Date: ${new Date().toLocaleDateString()}`,
-                bold: true,
-                fontSize: 12,
-                alignment: 'right'
-              }
+              // {
+              //   text: `Due Date: ${new Date().toLocaleDateString()}`,
+              //   bold: true,
+              //   fontSize: 12,
+              //   alignment: 'right'
+              // }
             ]
           ]
         },
@@ -613,26 +613,20 @@ export class BillingComponent implements OnDestroy {
 
 
   generatePDF(action = 'open') {
-    console.log("open")
     const docDefinition: any = this.createPDFData();
+    // const fileContent = JSON.stringify(docDefinition); 
+    // const blob = new Blob([fileContent], { type: 'application/json' });
+    // const file = new File([blob], 'invoice.pdf', { type: 'application/pdf' });
+    // const formData = new FormData();
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'invoices',
+      "collectionData": this.invoice
+    }
 
-    const fileContent = JSON.stringify(docDefinition); // Convert docDefinition to a string
-
-    // Create a Blob from the file content
-    const blob = new Blob([fileContent], { type: 'application/json' });
-
-    // Create a File from the Blob
-    const file = new File([blob], 'invoice.pdf', { type: 'application/pdf' });
-
-    const formData = new FormData();
-    formData.append('schema', '');
-    formData.append('dbName', this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '');
-    formData.append('collectionName', 'invoices');
-    formData.append('collectionData', JSON.stringify(this.invoice));
-    formData.append('file', file);
-    console.log(formData)
     this.isLoading = true;
-    this.entityService.addNewInvoiceEntity(formData).subscribe(
+    this.entityService.addNewEntity(formData).subscribe(
       (res: any) => {
         this.isLoading = false;
         console.log(res)
@@ -720,11 +714,11 @@ class Invoice {
   subTotal: number = 0;
   cgst: number = 0;
   cgstAmount: number = 0;
-  sgst: number = 0;
+  // sgst: number = 0;
   gstNo: string;
-  sgstAmount: number = 0;
-  igstAmount: number = 0;
-  igst: number = 0;
+  // sgstAmount: number = 0;
+  // igstAmount: number = 0;
+  // igst: number = 0;
   finalTotal: number = 0;
   products: Product[] = [];
   invoicedate: string = '';

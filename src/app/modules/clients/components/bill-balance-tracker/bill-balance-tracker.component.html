@@ -1,0 +1,198 @@
+<app-custom-loader *ngIf="isLoading"></app-custom-loader>
+
+
+
+<div class="m-sm-1 m-lg-5">
+    <div class="row mb-5" *ngIf="balanceList.length > 0">
+        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" >
+            <div class="card card-1 border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs card-text-color text-uppercase mb-1">
+                                Total Bill Amount
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                &#8377; {{totalAmountSum}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" >
+            <div class="card card-2 border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs card-text-color text-uppercase mb-1">
+                                Total Paid Amount
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                &#8377; {{paidAmountSum}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" >
+            <div class="card card-3 border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs card-text-color text-uppercase mb-1">
+                                Total Balance Amount
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                &#8377; {{balanceAmountSum}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row align-end mb-3">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <input type="text" class="form-control custom-date" ngxDaterangepickerMd [(ngModel)]="selectedDates"
+                [showCustomRangeLabel]="true" [alwaysShowCalendars]="true" (ngModelChange)="ngModelDateChange($event)"
+                [ranges]="ranges" [linkedCalendars]="true" [isInvalidDate]="isInvalidDate" [showClearButton]="true"
+                placeholder="Filter by dates..." />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-6 col-sm-12 col-md-6 mb-3 mb-md-0">
+            <input type="text" (input)="updateFilteredItems($event)" placeholder="Search bill details" [(ngModel)]="searchText" class="form-control">
+        </div>
+        <!-- <div class="col-lg-4 col-sm-12 col-md-6 mb-3 mb-md-0">
+            <select class="form-control" (change)="onCategoryChange($event)">
+                <option>Filter All Category</option>
+                <option [value]="category" *ngFor="let category of expenseCategories">{{category}}</option>
+            </select>
+        </div> -->
+        <div class="col-lg-6 col-sm-12 col-md-6 text-end">
+            <p-button label="Add New Expense" icon="pi pi-plus" class="mr-2" data-bs-toggle="modal"
+                data-bs-target="#exampleModal"></p-button>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            List Of Bill Balance
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>S no</th>
+                            <th>Customer Name</th>
+                            <th>Phone</th>
+                            <th>Date</th>
+                            <th>Total Bill</th>
+                            <th>Paid Bill</th>
+                            <th>Balance Bill</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            *ngFor="let balance of filteredItems | paginate: { itemsPerPage: 5, currentPage: currentPage }; let i = index">
+                            <td>{{i+1}}</td>
+                            <td>
+                                <span>{{balance?.name}}</span>
+                            </td>
+                            <td>
+                                <span>{{balance?.phone}}</span>
+                            </td>
+                            <td>
+                                <span>{{balance?.bill_balance_date | date:'shortDate'}}</span>
+                            </td>
+                            <td>
+                                <span>{{balance?.totalAmount}}</span>
+                            </td>
+                            <td>
+                                <span>{{balance?.paidAmount}}</span>
+                            </td>
+                            <td>
+                                <span>{{balance?.balanceAmount}}</span>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger mb-2"
+                                    (click)="onDelete(balance)">Paid</button>
+                            </td>
+                        </tr>
+                        <tr *ngIf="balanceList.length == 0">
+                            <td colspan="8" class="text-center">No Data Found!</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="mt-5">
+                    <pagination-controls  (pageChange)="currentPage = $event"></pagination-controls>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add expense</h5>
+                <button type="btn btn-primary" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <mat-form-field class="mt-5 mb-2 full-width">
+                    <mat-label>Enter Customer Name</mat-label>
+                    <input matInput type="text" [(ngModel)]="newBillBalance.name">
+                </mat-form-field>
+
+                <mat-form-field class="mb-2 full-width">
+                    <mat-label>Enter Customer phone</mat-label>
+                    <input matInput type="number" [(ngModel)]="newBillBalance.phone">
+                </mat-form-field>
+
+                <mat-form-field class="example-form-field mb-2 full-width">
+                    <mat-label>Choose a date</mat-label>
+                    <input matInput [(ngModel)]="newBillBalance.bill_balance_date" [matDatepicker]="datepicker">
+                    <mat-hint>MM/DD/YYYY</mat-hint>
+                    <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
+                    <mat-datepicker #datepicker>
+                        <mat-datepicker-actions>
+                            <button mat-button matDatepickerCancel>Cancel</button>
+                            <button mat-raised-button color="primary" matDatepickerApply>Apply</button>
+                        </mat-datepicker-actions>
+                    </mat-datepicker>
+                </mat-form-field>
+
+                <mat-form-field class="mb-2 full-width">
+                    <mat-label>Enter Total Amount</mat-label>
+                    <input matInput type="number" [(ngModel)]="newBillBalance.totalAmount">
+                </mat-form-field>
+
+                <mat-form-field class="mb-2 full-width">
+                    <mat-label>Enter Paid Amount</mat-label>
+                    <input matInput type="number" [(ngModel)]="newBillBalance.paidAmount">
+                </mat-form-field>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                    [disabled]="checkBillValidation()"
+                    data-bs-dismiss="modal" (click)="onAddBill()" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

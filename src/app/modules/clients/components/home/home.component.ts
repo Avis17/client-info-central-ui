@@ -158,6 +158,7 @@ export class HomeComponent implements OnInit {
         this.entities = []
         this.inVoicesList = []
         this.entities = res.data.customersList;
+        console.log("entities", this.entities)
         this.inVoicesList = res.data.invoicesList;
         this.createDynamicChartArr();
         this.loadServicesChart(res.data.products);
@@ -172,7 +173,6 @@ export class HomeComponent implements OnInit {
   }
 
   async ngModelDateChange(event: any) {
-    this.isLoading = true;
     if (this.selectedDates?.startDate && this.selectedDates?.endDate) {
       this.tableQuery = JSON.stringify({
         createdAt: {
@@ -182,12 +182,15 @@ export class HomeComponent implements OnInit {
       })
       // this.getAllAggregateDatas(JSON.parse(this.tableQuery));
       try {
+        this.isLoading = true;
         const chartDataPromise = this.getAllServiceChartDatas(JSON.parse(this.tableQuery));
         const invoicesPromise = this.getCustomersInvoicesEntity(JSON.parse(this.tableQuery));
         const netProfitPromise = this.getNetProfitAndExpense(JSON.parse(this.tableQuery));
         // Wait for all promises to resolve or reject
         const [chartData, invoices, netProfit] = await Promise.all([chartDataPromise, invoicesPromise, netProfitPromise]);
         console.log("completed")
+        this.isLoading = false;
+
       } catch (error) {
         // Handle any errors that occurred during the API calls
         console.error(error);
@@ -262,6 +265,7 @@ export class HomeComponent implements OnInit {
             this.entities = [];
             this.inVoicesList = [];
             this.entities = res.data.customers;
+            console.log("entities", this.entities)
             this.inVoicesList = res.data.invoicesList;
             this.createDynamicChartArr();
             this.loadServicesChart(res.data.invoicesList);
@@ -278,6 +282,32 @@ export class HomeComponent implements OnInit {
     });
   }
   
+  onChartPointSelect(event: any, chartName:any, dataArr:any) {
+    // Access the selected value from the event object
+    const index = event.element.index;
+    let filterdDetails:any;
+    let key = dataArr.labels[index].toLowerCase();
+  
+    if(this.isArrayCheck(chartName)){
+      filterdDetails = this.entities.filter((value:any)=>{
+        return value[chartName].some((data:any) => data.fieldName === key && data.fieldValue);
+      })
+    }
+    else if(this.isDateField(dataArr.labels[index])){
+      filterdDetails = this.entities.filter((value:any)=>{
+        return this.getDateFormated(new Date(value[chartName])) == key
+      })
+    } else{
+      filterdDetails = this.entities.filter((value:any)=>{
+        return value[chartName] == dataArr.labels[index]
+      })
+    }
+    this.exportAsXLSX(filterdDetails, chartName);   
+  }
+  
+  isDateField(value: any): boolean {
+    return !isNaN(Date.parse(value));
+  }
 
   getNetProfitAndExpense(queryData?: any) {
     return new Promise((resolve, reject) => {
@@ -292,6 +322,9 @@ export class HomeComponent implements OnInit {
         (res: any) => {
           if (res) {
             this.netProfitAndExpenses = res.data;
+            if(this.netProfitAndExpenses.netProfit){
+              this.netProfitAndExpenses.netProfit = this.netProfitAndExpenses?.netProfit?.toFixed(2);
+            }
             console.log(this.netProfitAndExpenses);
             resolve(this.netProfitAndExpenses);
           }
@@ -314,7 +347,7 @@ export class HomeComponent implements OnInit {
         chartFieldName: chart.chart_field_name,
         chartName: this.userDetails?.app_meta_details?.table_fileds.find((data: any) => {
           return data.field_key == chart.chart_field_name
-        })?.field_name || 'Customer',
+        })?.field_name || '',
         chartData: {},
         chartOptions: {
           plugins: {
@@ -390,7 +423,7 @@ export class HomeComponent implements OnInit {
       if (!Array.isArray(label)) {
         if (fieldName == 'createdAt') {
           label = new Date(label);
-          label = label.getDate() + '/' + (label.getMonth() + 1) + '/' + label.getFullYear();
+          label = this.getDateFormated(label)
           counts[label] = (counts[label] || 0) + 1;
         } else {
           counts[label] = (counts[label] || 0) + 1;
@@ -410,6 +443,10 @@ export class HomeComponent implements OnInit {
       "data": dataValues,
       "labels": Object.keys(counts)
     }
+  }
+
+  getDateFormated(date:any){
+    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
   }
 
 
@@ -480,6 +517,13 @@ export class HomeComponent implements OnInit {
 
   exportAsXLSX(data: any, filename: any): void {
     this.excelService.exportAsExcelFile(data, filename);
+  }
+
+  isArrayCheck(field: any) {
+    if (Array.isArray(this.entities[0][field])) {
+      return true;
+    }
+    return false;
   }
 
 }

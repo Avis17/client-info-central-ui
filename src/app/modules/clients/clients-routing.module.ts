@@ -9,6 +9,7 @@ import { UserTableComponent } from './components/user-table/user-table.component
 import { ServicesComponent } from './components/services/services.component';
 import { CanDeactivateGuard } from './guards/can-component-deactivate.guard';
 import { ExpensesComponent } from './components/expenses/expenses.component';
+import { BillBalanceTrackerComponent } from './components/bill-balance-tracker/bill-balance-tracker.component';
 
 const routes:Routes = [
   {
@@ -40,6 +41,10 @@ const routes:Routes = [
         path : 'expenses',
         component : ExpensesComponent,
       }, 
+      {
+        path : 'balance',
+        component : BillBalanceTrackerComponent,
+      },
       {
         path : 'user-details/:id',
         component : UserDetailsComponent

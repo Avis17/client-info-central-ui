@@ -19,6 +19,7 @@ import { CanDeactivateGuard } from './guards/can-component-deactivate.guard';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { ExpensesComponent } from './components/expenses/expenses.component';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { BillBalanceTrackerComponent } from './components/bill-balance-tracker/bill-balance-tracker.component';
 
 
 
@@ -34,6 +35,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
     UserTableComponent,
     ServicesComponent,
     ExpensesComponent,
+    BillBalanceTrackerComponent,
   ],
   imports: [
     CommonModule,

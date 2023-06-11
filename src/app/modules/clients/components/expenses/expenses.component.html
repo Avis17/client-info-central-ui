@@ -1,29 +1,51 @@
 <app-custom-loader *ngIf="isLoading"></app-custom-loader>
 
 <div class="m-sm-1 m-lg-5">
+    <div class="row mb-5" *ngIf="expensesList.length > 0">
+        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" >
+            <div class="card card-1 border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs card-text-color text-uppercase mb-1">
+                                Total Expense Amount
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                &#8377; {{totalExpenseSum}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    </div>
     <div class="row align-end mb-3">
         <div class="col-lg-6 col-md-6 col-sm-12">
-          <input type="text" class="form-control custom-date" ngxDaterangepickerMd [(ngModel)]="selectedDates" [showCustomRangeLabel]="true"
-          [alwaysShowCalendars]="true" (ngModelChange)="ngModelDateChange($event)" [ranges]="ranges" [linkedCalendars]="true" [isInvalidDate]="isInvalidDate"
-          [showClearButton]="true" placeholder="Filter by dates..."/>
+            <input type="text" class="form-control custom-date" ngxDaterangepickerMd [(ngModel)]="selectedDates"
+                [showCustomRangeLabel]="true" [alwaysShowCalendars]="true" (ngModelChange)="ngModelDateChange($event)"
+                [ranges]="ranges" [linkedCalendars]="true" [isInvalidDate]="isInvalidDate" [showClearButton]="true"
+                placeholder="Filter by dates..." />
         </div>
-  </div>
+    </div>
     <div class="row">
         <div class="col-lg-5 col-sm-12 col-md-6 mb-3 mb-md-0">
-          <input type="text" placeholder="Search expense" [(ngModel)]="searchText" class="form-control">
+            <input type="text" (input)="updateFilteredItems($event)" placeholder="Search expense" [(ngModel)]="searchText" class="form-control">
         </div>
         <div class="col-lg-4 col-sm-12 col-md-6 mb-3 mb-md-0">
             <select class="form-control" (change)="onCategoryChange($event)">
                 <option>Filter All Category</option>
-                <option  [value]="category"  *ngFor="let category of expenseCategories">{{category}}</option>
+                <option [value]="category" *ngFor="let category of expenseCategories">{{category}}</option>
             </select>
-          </div>
-        <div class="col-lg-3 col-sm-12 col-md-6 text-end">
-          <p-button label="Add New Expense" icon="pi pi-plus" class="mr-2"
-            data-bs-toggle="modal" data-bs-target="#exampleModal"></p-button>
         </div>
-      </div>
-      
+        <div class="col-lg-3 col-sm-12 col-md-6 text-end">
+            <p-button label="Add New Expense" icon="pi pi-plus" class="mr-2" data-bs-toggle="modal"
+                data-bs-target="#exampleModal"></p-button>
+        </div>
+    </div>
+
     <div class="card">
         <div class="card-header">
             List Of Expenses
@@ -42,26 +64,29 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let expense of (expensesList | search:searchText) | paginate: { itemsPerPage: 5, currentPage: currentPage }; let i = index">
+                        <tr
+                            *ngFor="let expense of filteredItems | paginate: { itemsPerPage: 5, currentPage: currentPage }; let i = index">
                             <td>{{i+1}}</td>
                             <td>
                                 <span *ngIf="!expense.isEdit">{{expense?.selectedCategory}}</span>
-                                <ng-select *ngIf="expense.isEdit" class="form-select custom-select" [searchable]="true" [(ngModel)]="expense.selectedCategory">
-                                    <ng-option *ngFor="let category of expenseCategories" [value]="category">{{category}}</ng-option>
+                                <ng-select *ngIf="expense.isEdit" class="form-select custom-select" [searchable]="true"
+                                    [(ngModel)]="expense.selectedCategory">
+                                    <ng-option *ngFor="let category of expenseCategories"
+                                        [value]="category">{{category}}</ng-option>
                                 </ng-select>
                             </td>
                             <td>
-                                <span>{{expense?.createdAt | date:'medium'}}</span>
+                                <span>{{expense?.expense_date | date:'shortDate'}}</span>
                             </td>
                             <td>
                                 <span *ngIf="!expense.isEdit">{{expense?.expense_price}}</span>
                                 <input [(ngModel)]="expense.expense_price" *ngIf="expense.isEdit" type="number"
-                                    class="form-control" placeholder="Enter expense Name">
+                                    class="form-control" placeholder="Enter expense Price">
                             </td>
                             <td>
                                 <span *ngIf="!expense.isEdit">{{expense?.expense_comments}}</span>
                                 <input [(ngModel)]="expense.expense_comments" *ngIf="expense.isEdit" type="text"
-                                    class="form-control" placeholder="Enter expense Price">
+                                    class="form-control" placeholder="Enter expense Comments">
                             </td>
                             <td>
                                 <button *ngIf="!expense.isEdit" class="btn btn-warning mr-3 mb-2"
@@ -86,30 +111,47 @@
 
 </div>
 
-    <div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
+<div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title">Add expense</h5>
-            <button type="btn btn-primary" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+                <h5 class="modal-title">Add expense</h5>
+                <button type="btn btn-primary" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
-                <ng-select class="form-select custom-select" [searchable]="true" [(ngModel)]="newexpense.selectedCategory">
+                <ng-select class="form-select custom-select mb-5" [searchable]="true"
+                    [(ngModel)]="newexpense.selectedCategory">
                     <ng-option *ngFor="let category of expenseCategories" [value]="category">{{category}}</ng-option>
                 </ng-select>
 
-                <input [(ngModel)]="newexpense.expense_comments"  type="text"
-                class="form-control mt-2 mb-3" placeholder="Enter expense Additional Information">
+                <input [(ngModel)]="newexpense.expense_comments" type="text" class="form-control mb-5"
+                    placeholder="Enter expense Additional Information">
 
-                <input [(ngModel)]="newexpense.expense_price" type="number"
-                class="form-control mb-3" placeholder="Enter expense Amount">
+                <input [(ngModel)]="newexpense.expense_price" type="number" class="form-control mb-5"
+                    placeholder="Enter expense Amount">
+
+                <mat-form-field class="example-form-field mb-5">
+                    <mat-label>Choose a expense date</mat-label>
+                    <input matInput [(ngModel)]="newexpense.expense_date" [matDatepicker]="datepicker">
+                    <mat-hint>MM/DD/YYYY</mat-hint>
+                    <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
+                    <mat-datepicker #datepicker>
+                        <mat-datepicker-actions>
+                            <button mat-button matDatepickerCancel>Cancel</button>
+                            <button mat-raised-button color="primary" matDatepickerApply>Apply</button>
+                        </mat-datepicker-actions>
+                    </mat-datepicker>
+                </mat-form-field>
+
             </div>
             <div class="modal-footer">
-            <button type="button" [disabled]="newexpense.selectedCategory == 'Default Category' || !newexpense.expense_price" data-bs-dismiss="modal" (click)="onAddexpense()" class="btn btn-primary">Save changes</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button"
+                    [disabled]="newexpense.selectedCategory == 'Default Category' || !newexpense.expense_price"
+                    data-bs-dismiss="modal" (click)="onAddexpense()" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
-        </div>
     </div>
+</div>
