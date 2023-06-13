@@ -9,9 +9,11 @@
             (click)="onAddUSer()"></p-button>
     </div>
 </p-toolbar>
-   <div class="card m-4" *ngIf="entities.length > 0">
-        <p-table #tableref [value]="entities" [paginator]="true" [columns]="cols" [rows]="5" [showCurrentPageReport]="true"
+   <div class="card m-4 mb-8" *ngIf="entities.length > 0">
+        <p-table #tableref [value]="entities" [paginator]="true" [columns]="cols" [rows]="5"
+         [showCurrentPageReport]="true"
             [tableStyle]="{ 'min-width': '60rem' }"
+            [reorderableColumns]="true"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
             [rowsPerPageOptions]="[5, 10, 25, 50]">
     
@@ -20,7 +22,8 @@
                     <th style="width:10%; text-align: center !important;">S No</th>
                     <ng-container *ngFor="let col of cols">
                         <th *ngIf="!isArrayCheck(col.field)" [pSortableColumn]="col.field"
-                        style="flex-grow: 1; text-align: center !important;">
+                        style="flex-grow: 1; text-align: center !important;"
+                        >
                             {{ col.header }}
                             <p-sortIcon [field]="col.field"></p-sortIcon>
                         </th>
