@@ -16,10 +16,14 @@ import { CardModule } from 'primeng/card';
 import { TimelineModule } from 'primeng/timeline';
 import { MatChipsModule } from '@angular/material/chips';
 import { CanDeactivateGuard } from './guards/can-component-deactivate.guard';
-import { NgxPaginationModule } from 'ngx-pagination';
 import { ExpensesComponent } from './components/expenses/expenses.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { BillBalanceTrackerComponent } from './components/bill-balance-tracker/bill-balance-tracker.component';
+import { RebillComponent } from './components/rebill/rebill.component';
+import { DragDropModule } from 'primeng/dragdrop';
+import { CustomerFollowupComponent } from './components/customer-followup/customer-followup.component';
+import { TagModule } from 'primeng/tag';
+import { DropdownModule } from 'primeng/dropdown';
 
 
 
@@ -36,6 +40,8 @@ import { BillBalanceTrackerComponent } from './components/bill-balance-tracker/b
     ServicesComponent,
     ExpensesComponent,
     BillBalanceTrackerComponent,
+    RebillComponent,
+    CustomerFollowupComponent,
   ],
   imports: [
     CommonModule,
@@ -45,7 +51,9 @@ import { BillBalanceTrackerComponent } from './components/bill-balance-tracker/b
     CardModule,
     MatChipsModule,
     NgSelectModule,
-    NgxPaginationModule,
+    TagModule,
+    DragDropModule,
+    DropdownModule,
     NgxDaterangepickerMd.forRoot()
   ],
   providers: [CanDeactivateGuard]

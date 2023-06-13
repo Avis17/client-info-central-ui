@@ -64,10 +64,10 @@
             <input type="text" class="form-control custom-date" ngxDaterangepickerMd [(ngModel)]="selectedDates"
                 [showCustomRangeLabel]="true" [alwaysShowCalendars]="true" (ngModelChange)="ngModelDateChange($event)"
                 [ranges]="ranges" [linkedCalendars]="true" [isInvalidDate]="isInvalidDate" [showClearButton]="true"
-                placeholder="Filter by dates..." />
+                placeholder="Filter by dates" />
         </div>
     </div>
-    <div class="row">
+    <div class="row mb-3">
         <div class="col-lg-6 col-sm-12 col-md-6 mb-3 mb-md-0">
             <input type="text" (input)="updateFilteredItems($event)" placeholder="Search bill details" [(ngModel)]="searchText" class="form-control">
         </div>
@@ -78,7 +78,7 @@
             </select>
         </div> -->
         <div class="col-lg-6 col-sm-12 col-md-6 text-end">
-            <p-button label="Add New Expense" icon="pi pi-plus" class="mr-2" data-bs-toggle="modal"
+            <p-button label="New Bill Balance" icon="pi pi-plus" class="mr-2" data-bs-toggle="modal"
                 data-bs-target="#exampleModal"></p-button>
         </div>
     </div>
@@ -196,3 +196,4 @@
         </div>
     </div>
 </div>
+

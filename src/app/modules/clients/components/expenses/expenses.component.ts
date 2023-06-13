@@ -19,7 +19,7 @@ export class ExpensesComponent {
   searchText:any = '';
   filteredItems:any = []
   currentPage = 1;
-  itemsPerPage = 10;
+  itemsPerPage = 5;
   userDetails:any = {};
   Query:any = {};
   totalExpenseSum : number = 0;
@@ -129,6 +129,12 @@ export class ExpensesComponent {
   }
 
   onAddexpense(){
+    const clientOffset = new Date().getTimezoneOffset();
+    const adjustedDate = new Date(this.newexpense.expense_date.getTime() - clientOffset * 60000);
+    this.newexpense = {
+      ...this.newexpense,
+      expense_date : adjustedDate
+    }
     const formData = {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
@@ -212,15 +218,15 @@ export class ExpensesComponent {
       const startDate = this.selectedDates.startDate.startOf('day');
       const endDate = this.selectedDates.endDate.endOf('day');
       this.Query = {
-        bill_balance_date: {
+        expense_date: {
           $gte: startDate.toDate(),
           $lte: endDate.toDate()
         }
       }
-      this.getExpenses(JSON.parse(this.Query));
+      this.getExpenses(this.Query);
     } else {
       this.getExpenses();
-      this.Query = JSON.stringify({})
+      this.Query = {}
     }
   }
 

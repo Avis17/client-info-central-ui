@@ -9,6 +9,8 @@ export interface user {
   email: string;
   password: string;
   authorizeTo: string;
+  companyEmail : string,
+  permission:string
 }
 
 
@@ -35,7 +37,9 @@ export class CreateUserAccessComponent {
     this.userDetails = {
       email : '',
       password : '',
-      authorizeTo : ''
+      authorizeTo : '',
+      companyEmail : '',
+      permission : 'default'
     }
   }
 

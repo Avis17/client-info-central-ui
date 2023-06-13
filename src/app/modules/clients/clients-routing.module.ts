@@ -10,6 +10,8 @@ import { ServicesComponent } from './components/services/services.component';
 import { CanDeactivateGuard } from './guards/can-component-deactivate.guard';
 import { ExpensesComponent } from './components/expenses/expenses.component';
 import { BillBalanceTrackerComponent } from './components/bill-balance-tracker/bill-balance-tracker.component';
+import { CustomerFollowupComponent } from './components/customer-followup/customer-followup.component';
+import { RebillComponent } from './components/rebill/rebill.component';
 
 const routes:Routes = [
   {
@@ -23,6 +25,10 @@ const routes:Routes = [
       {
         path : 'billing',
         component : BillingComponent
+      },
+      {
+        path : 'bill-download',
+        component : RebillComponent
       },
       {
         path : 'clients',
@@ -46,6 +52,9 @@ const routes:Routes = [
         component : BillBalanceTrackerComponent,
       },
       {
+        path : 'followup',
+        component : CustomerFollowupComponent,
+      },      {
         path : 'user-details/:id',
         component : UserDetailsComponent
       }

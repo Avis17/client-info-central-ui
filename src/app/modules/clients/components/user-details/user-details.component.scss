@@ -91,6 +91,7 @@ label{
 .f-500{
     font-weight: 400 !important;
     color: black;
+    font-size: 14px !important;
 }
 
 .page-spinner {
@@ -101,4 +102,9 @@ label{
     bottom: 0;
     z-index: 9999;
     margin: auto;
+  }
+
+  .wrapped-text {
+    word-wrap: break-word;
+    max-width: 100%;
   }

@@ -12,6 +12,7 @@ export class AppMetaCreationService {
   constructor(private http:HttpClient, private cryptoService:CryptoService) { }
 
   URL = environment.apiUrl+"app-meta-creation/";
+  URL_auth = environment.apiUrl+"app/cic/users/";
 
   getAppCategories(){
     return this.http.get(this.URL+"get-app-categories").pipe(
@@ -69,6 +70,25 @@ export class AppMetaCreationService {
        return response
      })
     );
+  }
+
+  getAllUsers(query:any){
+    return this.http.post(this.URL_auth+'get-all-users', {query}).pipe(
+      map((response:any) => {
+       if(response.status == 200){
+        let decryptRes = {
+          ...response,
+          data : JSON.parse(this.cryptoService.decrypt(response.data))
+         }
+         return decryptRes;
+       }
+       return response
+     })
+    );
+  }
+
+  deleteUserById(_id:string){
+    return this.http.post(this.URL_auth+"delete-user-by-id", {_id});
   }
 
   updateAppMetaById(data:any){

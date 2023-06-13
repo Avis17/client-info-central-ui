@@ -3,7 +3,7 @@
         <div class="sb-sidenav-menu">
             <div class="nav">
                 <div style="display: flex; justify-content: center; margin: 10px 0;">
-                    <img [src]="userDetails?.app_meta_details?.billingdetails?.logo || sanitizeImageURL(logo)" width="100px" height="100px">
+                    <img [src]="userDetails?.app_meta_details?.billingdetails?.logo == 'undefined' ? sanitizeImageURL(logo) : userDetails?.app_meta_details?.billingdetails?.logo" width="100px" height="100px">
                 </div>
                 <!-- <div class="sb-sidenav-menu-heading">Core</div> -->
                 <a (click)="onClickLink('dashboard')" appSkipLocationChange [commands]="['/client/home']" [ngClass]="linkActive['dashboard'] ? 'text-color nav-link' : 'nav-link'">
@@ -38,9 +38,15 @@
                 </a>
                 <a (click)="onClickLink('balance')" appSkipLocationChange [commands]="['/client/balance']" [ngClass]="linkActive['balance'] ? 'text-color nav-link' : 'nav-link'">
                     <div class="sb-nav-link-icon">
-                        <img src="../../../../../assets/clients/png/expense-25.png">
+                        <img src="../../../../../assets/clients/png/billing.png">
                     </div>
                     Bill Balance Tracker
+                </a>
+                <a (click)="onClickLink('followup')" appSkipLocationChange [commands]="['/client/followup']" [ngClass]="linkActive['followup'] ? 'text-color nav-link' : 'nav-link'">
+                    <div class="sb-nav-link-icon">
+                        <img src="../../../../../assets/clients/png/billing.png">
+                    </div>
+                    Customer Followup
                 </a>
             </div> 
         </div>

@@ -1,0 +1,160 @@
+<app-custom-loader *ngIf="isLoading"></app-custom-loader>
+
+<div class="m-sm-1 m-lg-5 row mb-8 ">
+    <div class="row mb-5" *ngIf="customerList.length > 0 || selectedCustomers.length > 0">
+        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer">
+            <div class="card card-1 border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs card-text-color text-uppercase mb-1">
+                                Total Pending Enquiry
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                &#8377; {{customerList.length}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer">
+            <div class="card card-2 border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs card-text-color text-uppercase mb-1">
+                                Total Completed Enquiry
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                &#8377; {{selectedCustomers.length}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-lg-6 col-sm-12 col-md-6 mb-3 mb-md-0">
+            <input type="text" placeholder="Search Followup" [(ngModel)]="searchText" class="form-control mb-3">
+        </div>
+        <div class="col-lg-6 col-sm-12 col-md-6 text-end mb-3">
+            <p-button label="New Customer Enquiry" icon="pi pi-plus" class="mr-2" data-bs-toggle="modal"
+                data-bs-target="#exampleModal"></p-button>
+        </div>
+    </div>
+
+    <div class="col-lg-4 col-md-12 col-sm-12 mt-5 card">
+        <div *ngIf="customerList.length > 0">
+            <div *ngFor="let customer of (customerList | search:searchText) | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }">
+                <div class="product-item p-3 row" pDraggable="customers" (onDragStart)="dragStart(customer)"
+                    (onDragEnd)="dragEnd()">
+                    <div class="customer-info col-lg-8 col-sm-12">
+                        <h5 class="mb-2 highlight">{{ customer.name }}</h5>
+                        <p><span>Phone:</span> {{ customer.phone }}</p>
+                        <p><span>Status:</span> {{ customer.interest }}</p>
+                        <p><span>Place:</span> {{ customer.place }}</p>
+                        <p class="wrapped-text"><span>Enquiry:</span> {{ customer.comments }}</p>
+                    </div>
+                    <div class="customer-action col-lg-4 col-sm-12 box-center">
+                        <button class="follow-up-button" *ngIf="showUpdate"
+                            (click)="updateStatus(customer)">Update</button>
+                        <p-dropdown [options]="statusOptions" *ngIf="!showUpdate" [(ngModel)]="customer.interest"
+                            (onChange)="updateInterest(customer)"></p-dropdown>
+                    </div>
+                </div>
+                <hr>
+            </div>
+            <div class="mt-3">
+                <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+            </div>
+        </div>
+
+        <tr *ngIf="customerList.length == 0" class="mt-5">
+            <td style="text-align: center;display: block;margin: 10px;" colspan="5">No follow-up details!!</td>
+        </tr>
+    </div>
+    <div class="col-lg-8 col-md-12 col-sm-12 mt-5">
+        <div class="card ml-2" style="min-height: 100%;" pDroppable="customers" (onDrop)="drop()">
+            <p-table *ngIf="selectedCustomers.length > 0" [value]="selectedCustomers" [paginator]="true" [rows]="5"
+                [showCurrentPageReport]="true" [tableStyle]="{ 'min-width': '60rem' }" [reorderableColumns]="true"
+                [columns]="cols" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [rowsPerPageOptions]="[5, 10, 25, 50]">
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width:5%; text-align: center !important;">S No</th>
+                        <ng-container *ngFor="let col of cols">
+                            <th [pSortableColumn]="col.field" style="flex-grow: 1; text-align: center !important;">
+                                {{ col.header }}
+                                <p-sortIcon [field]="col.field"></p-sortIcon>
+                            </th>
+                        </ng-container>
+                        <th style="width:10%; text-align: center !important;">Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-customer let-rowIndex="rowIndex">
+                    <tr>
+                        <td style="text-align: center;">{{rowIndex+1}}</td>
+                        <td style="text-align: center;">{{ customer.name }}</td>
+                        <td style="text-align: center;">{{ customer.phone }}</td>
+                        <td style="text-align: center;">{{ customer.interest }}</td>
+                        <td style="text-align: center;">{{ customer.place }}</td>
+                        <td style="text-align: center;">{{ customer.createdAt | date:'shortDate'}}</td>
+                        <td style="text-align: center;">
+                            <button class="btn btn-info" (click)="returnToDraggable(customer)">Return</button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+            <tr *ngIf="selectedCustomers.length == 0" class="mt-5">
+                <td style="text-align: center;display: block;margin: 10px;" colspan="5">No Active customers!</td>
+            </tr>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Customer</h5>
+                <button type="btn btn-primary" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <mat-form-field class="mt-5 mb-2 full-width">
+                    <mat-label>Enter Customer Name</mat-label>
+                    <input matInput type="text" [(ngModel)]="newCustomerFollowup.name">
+                </mat-form-field>
+
+                <mat-form-field class="mt-5 mb-2 full-width">
+                    <mat-label>Enter Customer Phone</mat-label>
+                    <input matInput type="text" [(ngModel)]="newCustomerFollowup.phone">
+                </mat-form-field>
+
+                <mat-form-field class="mt-5 mb-2 full-width">
+                    <mat-label>Enter Customer Place</mat-label>
+                    <input matInput type="text" [(ngModel)]="newCustomerFollowup.place">
+                </mat-form-field>
+
+                <mat-form-field class="full-width">
+                    <mat-label>Enquiry</mat-label>
+                    <textarea [(ngModel)]="newCustomerFollowup.comments" matInput placeholder="Enter Customer Enquiry"></textarea>
+                </mat-form-field>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-bs-dismiss="modal" (click)="onAddNewFollowUp()" class="btn btn-primary">Save
+                    changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -20,7 +20,8 @@ export class SidenavComponent {
     "clients" : false,
     "services" : false,
     "expenses" : false,
-    "balance" : false
+    "balance" : false,
+    "followup" : false
   }
   constructor(private authService:AuthGuardService, private sanitizer: DomSanitizer){
     this.userDetails = this.authService.getUserDetails();

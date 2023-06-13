@@ -6,6 +6,7 @@ import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { CreateApplicationMetaComponent } from './components/create-application-meta/create-application-meta.component';
 import { ViewAppMetasComponent } from './components/view-app-metas/view-app-metas.component';
 import { ViewDetailedMetaComponent } from './components/view-detailed-meta/view-detailed-meta.component';
+import { ViewUsersComponent } from './components/view-users/view-users.component';
 
 const routes:Routes = [
   {
@@ -27,6 +28,10 @@ const routes:Routes = [
       {
         path : "view-app-metas",
         component : ViewAppMetasComponent
+      },
+      {
+        path : "view-users",
+        component : ViewUsersComponent
       },
       {
         path : "view-meta-details/:id",

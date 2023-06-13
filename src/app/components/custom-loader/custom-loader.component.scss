@@ -2,74 +2,94 @@
 
 
 .spinnerContainer {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: rgba(255, 255, 255, 0.8);
-    cursor: wait;
-    display: -webkit-box;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  
-    .spinner {
-      position: relative;
-      width: 10em;
-  
-      .spinner-defaults {
-        stroke: $primary;
-      }
-  
-      .rotate {
-        animation: spin 60s linear infinite;
-        transform-origin: 60px 60px;
-      }
-  
-      .rotate-reverse {
-        animation: spin reverse 30s linear infinite;
-        transform-origin: 60px 60px;
-      }
-  
-      .rotate-random {
-        animation: spinner-rotate-single-1 10s 0s ease-in-out infinite;
-        transform-origin: 60px 60px;
-      }
-  
-      .rotate-fast {
-        animation: spin 2s linear infinite;
-        transform-origin: 60px 60px;
-      }
-    }
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(255, 255, 255, 0.8);
+  cursor: wait;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  position: relative;
+  width: 10em;
+}
+
+.spinner-defaults {
+  stroke: $primary;
+}
+
+.rotate {
+  animation: spin 2s linear infinite;
+  transform-origin: 50% 50%;
+}
+
+.rotate-reverse {
+  animation: spin-reverse 4s linear infinite;
+  transform-origin: 50% 50%;
+}
+
+.rotate-random {
+  animation: spinner-rotate-single-1 6s infinite;
+  transform-origin: 50% 50%;
+}
+
+.rotate-fast {
+  animation: spin 1s linear infinite;
+  transform-origin: 50% 50%;
+}
+
+.extra-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6em;
+  height: 6em;
+  border-radius: 50%;
+  background-color: $secondary;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
   }
-  
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
   }
-  
-  @keyframes spinner-rotate-single-1 {
-    0% {
-      transform: rotateZ(56deg);
-    }
-    20% {
-      transform: rotateZ(-132deg);
-    }
-    40% {
-      transform: rotateZ(-250deg);
-    }
-    60% {
-      transform: rotateZ(40deg);
-    }
-    70% {
-      transform: rotateZ(-80deg);
-    }
-    100% {
-      transform: rotateZ(56deg);
-    }
+}
+
+@keyframes spin-reverse {
+  from {
+    transform: rotate(360deg);
   }
-  
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes spinner-rotate-single-1 {
+  0% {
+    transform: rotateZ(56deg);
+  }
+  20% {
+    transform: rotateZ(-132deg);
+  }
+  40% {
+    transform: rotateZ(-250deg);
+  }
+  60% {
+    transform: rotateZ(40deg);
+  }
+  70% {
+    transform: rotateZ(-80deg);
+  }
+  100% {
+    transform: rotateZ(56deg);
+  }
+}
+

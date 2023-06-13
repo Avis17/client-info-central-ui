@@ -25,7 +25,8 @@
                   <mat-divider></mat-divider>
                 </mat-card-content>
                 <mat-card-actions>
-                  <button (click)="onClickNavigation('register-user')" mat-flat-button class="primary-bg">REGISTER</button>
+                  <button (click)="onClickNavigation('register-user')" mat-flat-button class="primary-bg mr-3">REGISTER</button>
+                  <button (click)="onClickNavigation('view-users')" mat-flat-button class="secondary-bg">VIEW USERS</button>
                 </mat-card-actions>
                 <mat-card-footer>
                   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
@@ -58,3 +59,5 @@
         </div>
     </div>
 </div>
+
+<app-footer></app-footer>

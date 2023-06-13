@@ -58,7 +58,7 @@ export class HomeComponent implements OnInit {
   serviceChartDays: any;
   netProfitAndExpenses: any;
   invalidDates: moment.Moment[] = [moment().add(2, 'days'), moment().add(3, 'days'), moment().add(5, 'days')];
-
+  selectedPeriod :any = 'Overall Datas'
   isInvalidDate = (m: moment.Moment) => {
     return this.invalidDates.some(d => d.isSame(m, 'day'))
   }
@@ -174,6 +174,8 @@ export class HomeComponent implements OnInit {
 
   async ngModelDateChange(event: any) {
     if (this.selectedDates?.startDate && this.selectedDates?.endDate) {
+      this.selectedPeriod = ''
+      this.selectedPeriod = this.getMomentDateFormated(this.selectedDates.startDate, this.selectedDates.endDate);
       this.tableQuery = JSON.stringify({
         createdAt: {
           startDate: this.selectedDates.startDate,
@@ -447,6 +449,22 @@ export class HomeComponent implements OnInit {
 
   getDateFormated(date:any){
     return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
+  }
+
+  getMomentDateFormated(startDate: any, endDate: any){
+    const formattedStartDate = new Date(startDate).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  
+    const formattedEndDate = new Date(new Date(endDate).getTime() - 86400000).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  
+    return formattedStartDate + " - " + formattedEndDate;
   }
 
 

@@ -55,7 +55,7 @@ export class BillBalanceTrackerComponent {
   totalAmountSum = 0;
   paidAmountSum = 0;
   balanceAmountSum = 0;
-  filteredItems :any = []
+  filteredItems: any = []
   isInvalidDate = (m: moment.Moment) => {
     return this.invalidDates.some(d => d.isSame(m, 'day'))
   }
@@ -128,6 +128,12 @@ export class BillBalanceTrackerComponent {
   }
 
   onAddBill() {
+    const clientOffset = new Date().getTimezoneOffset();
+    const adjustedDate = new Date(this.newBillBalance.bill_balance_date.getTime() - clientOffset * 60000);
+    this.newBillBalance = {
+      ...this.newBillBalance,
+      bill_balance_date : adjustedDate
+    }
     const formData = {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
@@ -174,11 +180,11 @@ export class BillBalanceTrackerComponent {
     })
   }
 
-  calculateBillAmounts(data:any) {
+  calculateBillAmounts(data: any) {
     this.totalAmountSum = 0;
     this.paidAmountSum = 0;
     this.balanceAmountSum = 0;
-    data.forEach((item:any) => {
+    data.forEach((item: any) => {
       this.totalAmountSum += item.totalAmount;
       this.paidAmountSum += item.paidAmount;
       this.balanceAmountSum += item.balanceAmount;
@@ -211,16 +217,16 @@ export class BillBalanceTrackerComponent {
       this.getBills(this.Query);
     } else {
       this.getBills();
-      this.Query = JSON.stringify({})
+      this.Query = {}
     }
   }
 
-  updateFilteredItems(event:any): void {
+  updateFilteredItems(event: any): void {
     if (!this.searchText) {
       this.filteredItems = [...this.balanceList];
       this.calculateBillAmounts(this.filteredItems);
     } else {
-      this.filteredItems = this.balanceList.filter((item:any) => {
+      this.filteredItems = this.balanceList.filter((item: any) => {
         // Implement your search logic here
         // Return true if the item matches the search criteria
         // Otherwise, return false

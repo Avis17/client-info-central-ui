@@ -95,3 +95,12 @@ th {
     font-weight: 400 !important;
     margin-top: 5px !important;
 }
+
+
+::ng-deep .md-drppicker .clear svg{
+    display: none !important;
+}
+
+::ng-deep .md-drppicker .btn.btn-default{
+    margin-right: 10px !important;
+}

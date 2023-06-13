@@ -92,6 +92,7 @@ export class UserTableComponent implements OnChanges {
     this.entitySchema.push(schema);
   }
 
+  
   isArrayCheck(field: any) {
     if (Array.isArray(this.entities[0][field])) {
       return true;

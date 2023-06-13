@@ -14,7 +14,6 @@ export class ErrorHandlingService {
     const login_commands = ['/'];
     switch (status.status) {
       case 200:
-        this.toastr.success("Entity Updated Successfully!!", "Notification");
         if(commands) this.navigationService.navigateWithoutLocationChange(commands);
         break;
       case 400:

@@ -26,13 +26,16 @@ import {MatNativeDateModule} from '@angular/material/core';
 import { SearchPipe } from 'src/app/pipes/search.pipe';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CustomLoaderComponent } from 'src/app/components/custom-loader/custom-loader.component';
+import { NgxPaginationModule } from 'ngx-pagination';
+import { FooterComponent } from 'src/app/components/footer/footer.component';
 
 @NgModule({
   declarations: [
     ArrayDestructurePipe,
     SkipLocationChangeDirective,
     SearchPipe,
-    CustomLoaderComponent
+    CustomLoaderComponent,
+    FooterComponent
   ],
   imports: [
     CommonModule,
@@ -58,7 +61,8 @@ import { CustomLoaderComponent } from 'src/app/components/custom-loader/custom-l
     ChartModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    NgxPaginationModule
   ],
   exports: [
     CommonModule,
@@ -88,7 +92,9 @@ import { CustomLoaderComponent } from 'src/app/components/custom-loader/custom-l
     SearchPipe,
     ProgressSpinnerModule, 
     MatNativeDateModule,
-    CustomLoaderComponent
+    CustomLoaderComponent,
+    NgxPaginationModule,
+    FooterComponent
   ]
 })
 export class SharedModule { }

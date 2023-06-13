@@ -1,37 +1,88 @@
 @import "src/_variables.scss";
 
-::ng-deep .custom-select .ng-select .ng-select-container {
-    position: relative !important;
-    z-index: 9999 !important;
-    cursor: pointer !important;
+.customer-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
 }
 
-::ng-deep .custom-select .ng-dropdown-panel {
-    position: relative !important;
-    z-index: 10000 !important;
+.customer-item {
+    width: 100%;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #f7f7f7;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
 }
 
-::ng-deep .ng-select {
-    cursor: pointer !important;
+.customer-info {
+    flex: 1;
 }
 
-.custom-date {
+.customer-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.customer-phone {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.customer-interest {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.customer-place {
+    font-size: 1rem;
+}
+
+.customer-action {
+    flex-shrink: 0;
+    margin-left: 1rem;
+}
+
+.follow-up-button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: 500;
+    background-color: $card-bg;
+    color: $primary;
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
 }
 
-.align-end {
-    justify-content: end;
+.box-center {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
 }
 
-.card-header {
-    background: $card-bg !important;
-    color: $primary !important;
+.row {
+    display: flex !important;
+}
+
+.card {
+    flex-grow: 1 !important;
 }
 
 
+.full-width {
+    width: 100% !important;
+}
 
-::ng-deep .cdk-overlay-container {
-    z-index: 1200 !important;
+span,
+.highlight {
+    color: $primary;
+    font-weight: 500;
+}
+
+.wrapped-text {
+    word-wrap: break-word;
+    max-width: 100%;
 }
 
 .card-3 {
@@ -70,8 +121,4 @@
 
 .fa-2x {
     color: $primary !important;
-}
-
-.full-width {
-    width: 100% !important;
 }

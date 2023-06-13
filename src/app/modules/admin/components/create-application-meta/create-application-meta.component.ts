@@ -61,10 +61,11 @@ export class CreateApplicationMetaComponent implements OnInit {
     "isMarried",
     "age",
     "place",
+    "address",
     "interestedIn",
     "isFutureUpdateRequired",
     "whatsappNumber",
-    "referFriends"
+    "referals"
   ]
 
   chartTypes: string[] = [

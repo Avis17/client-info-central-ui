@@ -12,6 +12,7 @@ import { ViewAppMetasComponent } from './components/view-app-metas/view-app-meta
 import { AccordionModule } from 'primeng/accordion';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { ViewDetailedMetaComponent } from './components/view-detailed-meta/view-detailed-meta.component';
+import { ViewUsersComponent } from './components/view-users/view-users.component';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { ViewDetailedMetaComponent } from './components/view-detailed-meta/view-
     ModalComponent,
     ViewAppMetasComponent,
     ViewDetailedMetaComponent,
+    ViewUsersComponent,
   ],
   imports: [
     CommonModule,

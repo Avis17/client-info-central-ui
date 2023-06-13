@@ -105,8 +105,15 @@ export class UserDetailsComponent {
   }
 
   onAddNewInvoice(){
-    this.entityService.setinvoiceDetails({...this.clientInfo, services : this.listOfServices})
-    this.navigationService.navigateWithoutLocationChange(['client/billing']);
+    if(this.listOfServices.length > 0){
+      this.entityService.setinvoiceDetails({...this.clientInfo, services : this.listOfServices})
+      this.navigationService.navigateWithoutLocationChange(['client/billing']);  
+    }
+  }
+
+  onDownloadBill(data:any){
+    this.entityService.setinvoiceDetails(data);
+    this.navigationService.navigateWithoutLocationChange(['client/bill-download']);  
   }
 
   getDate(now:any){

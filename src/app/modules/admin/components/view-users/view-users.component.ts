@@ -6,12 +6,11 @@ import { NavigationService } from 'src/app/services/navigation.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
-  selector: 'app-view-app-metas',
-  templateUrl: './view-app-metas.component.html',
-  styleUrls: ['./view-app-metas.component.scss']
+  selector: 'app-view-users',
+  templateUrl: './view-users.component.html',
+  styleUrls: ['./view-users.component.scss']
 })
-export class ViewAppMetasComponent {
-
+export class ViewUsersComponent {
   constructor(
     private appMetaService:AppMetaCreationService,
     private navigationService:NavigationService,
@@ -19,7 +18,7 @@ export class ViewAppMetasComponent {
     private toastr: ToastrService
 
     ){
-      this.getAllAppMetas();
+      this.getAllAppUsers();
   }
 
   addItems(){
@@ -42,26 +41,26 @@ export class ViewAppMetasComponent {
   return this.items;
   }
 
-  allAppMetas :any;
+  allAppUsers :any;
   items: MenuItem[] = [];  
   selectedItem :any;
   isLoading:boolean  = true;
-  searchText:string = '';
+  searchText : string = '';
   currentPage = 1;
   itemsPerPage = 5;
-  getAllAppMetas(){
+
+  getAllAppUsers(){
     this.isLoading = true;
 
-    this.appMetaService.getAllAppMetas({}).subscribe((res)=>{
+    this.appMetaService.getAllUsers({}).subscribe((res)=>{
       this.isLoading = false;
 
       if(res){
-        this.allAppMetas = res.data;
-        console.log(this.allAppMetas)
+        this.allAppUsers = res.data;
+        console.log(this.allAppUsers)
       }
     },(err)=>{
       this.isLoading = false;
-
       this.errorHandlingService.errorAlertMsg(err);
     })
   }
@@ -73,12 +72,12 @@ export class ViewAppMetasComponent {
 
   onDelete(id:string){
     this.isLoading = true;
-    this.appMetaService.deleteAppMeta(id).subscribe((res:any)=>{
+    this.appMetaService.deleteUserById(id).subscribe((res:any)=>{
       this.isLoading = false;
-
+      console.log(res)
       if(res.status == 200){
         this.toastr.success('Meta Deleted Successfully.', 'Notification');
-        this.getAllAppMetas();
+        this.getAllAppUsers();
       } 
     }, (err) =>{
       this.errorHandlingService.errorAlertMsg(err)
@@ -100,4 +99,5 @@ export class ViewAppMetasComponent {
     const commands = ['/admin/tools'];
     this.navigationService.navigateWithoutLocationChange(commands);
   }
+
 }

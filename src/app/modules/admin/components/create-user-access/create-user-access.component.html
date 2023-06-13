@@ -13,34 +13,47 @@
             <div class="row">
                 <div class="col-sm-12 col-md-12 col-lg-6 mt-2">
                     <mat-form-field>
-                        <mat-label>Enter your email</mat-label>
+                        <mat-label>Enter user email</mat-label>
                         <input [(ngModel)]="userDetails.email" matInput type="text">
                     </mat-form-field>
                 </div>
                 <div class="col-sm-12 col-md-12 col-lg-6 mt-2">
                     <mat-form-field>
-                        <mat-label>Enter your password</mat-label>
+                        <mat-label>Enter company email</mat-label>
+                        <input [(ngModel)]="userDetails.companyEmail" matInput type="text">
+                    </mat-form-field>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 mt-2">
+                    <mat-form-field>
+                        <mat-label>Enter user password</mat-label>
                         <input [(ngModel)]="userDetails.password" matInput [type]="isHidePassword ? 'password' : 'text'">
                         <button mat-icon-button matSuffix (click)="isHidePassword = !isHidePassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="isHidePassword">
                           <mat-icon>{{isHidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
                         </button>
                     </mat-form-field>
                 </div>
-                <div class="col-sm-12 col-md-12 col-lg-12 mt-3">
+                <div class="col-sm-12 col-md-12 col-lg-6 mt-3">
                     <mat-form-field>
-                        <mat-label>Enter confirm password</mat-label>
+                        <mat-label>Confirm password</mat-label>
                         <input (change)="onChangePassword($event)" matInput [type]="isHideConfirmPassword ? 'password' : 'text'">
                         <button  mat-icon-button matSuffix (click)="isHideConfirmPassword = !isHideConfirmPassword" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="isHideConfirmPassword">
                           <mat-icon>{{isHideConfirmPassword ? 'visibility_off' : 'visibility'}}</mat-icon>
                         </button>
                     </mat-form-field>
                 </div>
-                <div class="col-sm-12 col-md-12 col-lg-12 mt-2 mb-4">
+                <div class="col-sm-12 col-md-12 col-lg-6 mt-2 mb-4">
                     <mat-label>User Type </mat-label><br>
                     <mat-radio-group aria-label="Select an option" class="pl-1" [(ngModel)]='userDetails.authorizeTo'>
                         <mat-radio-button value="developer">Developer</mat-radio-button>
                         <mat-radio-button value="admin">Admin</mat-radio-button>
                         <mat-radio-button value="client">Client</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-6 mt-2 mb-4" *ngIf="userDetails.authorizeTo == 'client'">
+                    <mat-label>Permission </mat-label><br>
+                    <mat-radio-group aria-label="Select an option" class="pl-1" [(ngModel)]='userDetails.permission'>
+                        <mat-radio-button value="admin">Admin Access</mat-radio-button>
+                        <mat-radio-button value="default">Default</mat-radio-button>
                     </mat-radio-group>
                 </div>
                 <div class="col-sm-12 col-md-12 col-lg-6">
@@ -54,3 +67,5 @@
         <div>Passwords must match</div>    
     </div>
 </div>
+
+<app-footer></app-footer>
