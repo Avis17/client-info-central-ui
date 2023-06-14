@@ -1,6 +1,6 @@
 <app-custom-loader *ngIf="isLoading"></app-custom-loader>
 
-<div class="m-sm-1 m-lg-5 row mb-8 ">
+<div class="m-sm-1 m-lg-5 row mb-8">
     <div class="row mb-5" *ngIf="customerList.length > 0 || selectedCustomers.length > 0">
         <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer">
             <div class="card card-1 border-left-primary shadow h-100 py-2">
@@ -14,7 +14,7 @@
                                 &#8377; {{customerList.length}}</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                            <i class="fas fa-user fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
@@ -32,7 +32,7 @@
                                 &#8377; {{selectedCustomers.length}}</div>
                         </div>
                         <div class="col-auto">
-                            <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                            <i class="fas fa-user fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
@@ -43,7 +43,7 @@
 
     <div class="row">
         <div class="col-lg-6 col-sm-12 col-md-6 mb-3 mb-md-0">
-            <input type="text" placeholder="Search Followup" [(ngModel)]="searchText" class="form-control mb-3">
+            <input type="text" placeholder="Search Followup" (input)="applyFilterGlobal($event, 'contains')" [(ngModel)]="searchText" class="form-control mb-3">
         </div>
         <div class="col-lg-6 col-sm-12 col-md-6 text-end mb-3">
             <p-button label="New Customer Enquiry" icon="pi pi-plus" class="mr-2" data-bs-toggle="modal"
@@ -51,13 +51,13 @@
         </div>
     </div>
 
-    <div class="col-lg-4 col-md-12 col-sm-12 mt-5 card">
+    <div class="col-lg-4 col-md-12 col-sm-12 mt-5 mb-5 card">
         <div *ngIf="customerList.length > 0">
             <div *ngFor="let customer of (customerList | search:searchText) | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }">
                 <div class="product-item p-3 row" pDraggable="customers" (onDragStart)="dragStart(customer)"
                     (onDragEnd)="dragEnd()">
                     <div class="customer-info col-lg-8 col-sm-12">
-                        <h5 class="mb-2 highlight">{{ customer.name }}</h5>
+                        <h5 class="mb-2 highlight">{{ customer.name | titlecase}}</h5>
                         <p><span>Phone:</span> {{ customer.phone }}</p>
                         <p><span>Status:</span> {{ customer.interest }}</p>
                         <p><span>Place:</span> {{ customer.place }}</p>
@@ -81,26 +81,26 @@
             <td style="text-align: center;display: block;margin: 10px;" colspan="5">No follow-up details!!</td>
         </tr>
     </div>
-    <div class="col-lg-8 col-md-12 col-sm-12 mt-5">
+    <div class="col-lg-8 col-md-12 col-sm-12 mt-5 mb-5">
         <div class="card ml-2" style="min-height: 100%;" pDroppable="customers" (onDrop)="drop()">
-            <p-table *ngIf="selectedCustomers.length > 0" [value]="selectedCustomers" [paginator]="true" [rows]="5"
-                [showCurrentPageReport]="true" [tableStyle]="{ 'min-width': '60rem' }" [reorderableColumns]="true"
+            <p-table #tableref [value]="selectedCustomers" [paginator]="true" [rows]="5"
+                [showCurrentPageReport]="true" [reorderableColumns]="true"
                 [columns]="cols" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                [rowsPerPageOptions]="[5, 10, 25, 50]">
+                [rowsPerPageOptions]="[5, 10, 25, 50]" [tableStyle]="{ 'width': 'auto', 'min-width' : '100%' }" paginatorPosition="top">
                 <ng-template pTemplate="header">
-                    <tr>
-                        <th style="width:5%; text-align: center !important;">S No</th>
+                    <tr *ngIf="selectedCustomers.length > 0">
+                        <th style="text-align: center !important;">S No</th>
                         <ng-container *ngFor="let col of cols">
                             <th [pSortableColumn]="col.field" style="flex-grow: 1; text-align: center !important;">
                                 {{ col.header }}
                                 <p-sortIcon [field]="col.field"></p-sortIcon>
                             </th>
                         </ng-container>
-                        <th style="width:10%; text-align: center !important;">Action</th>
+                        <th style="text-align: center !important;">Action</th>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-customer let-rowIndex="rowIndex">
-                    <tr>
+                    <tr *ngIf="selectedCustomers.length > 0">
                         <td style="text-align: center;">{{rowIndex+1}}</td>
                         <td style="text-align: center;">{{ customer.name }}</td>
                         <td style="text-align: center;">{{ customer.phone }}</td>
@@ -151,7 +151,7 @@
                 </mat-form-field>
             </div>
             <div class="modal-footer">
-                <button type="button" data-bs-dismiss="modal" (click)="onAddNewFollowUp()" class="btn btn-primary">Save
+                <button type="button" data-bs-dismiss="modal" [disabled]="checkValidations()" (click)="onAddNewFollowUp()" class="btn btn-primary">Save
                     changes</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>

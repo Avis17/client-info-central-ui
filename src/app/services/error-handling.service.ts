@@ -15,10 +15,12 @@ export class ErrorHandlingService {
     switch (status.status) {
       case 200:
         if(commands) this.navigationService.navigateWithoutLocationChange(commands);
+        window.scrollTo(0, 0); // Scroll to the top
         break;
       case 400:
         console.log(status.message)
-        this.toastr.error("Bad Request, try again!", 'Error')
+        window.scrollTo(0, 0); // Scroll to the top
+        this.toastr.error("Bad Request, try again!", 'Error');
         break;
       case 401:
         console.log(status.message)
@@ -29,17 +31,21 @@ export class ErrorHandlingService {
         this.authenticationService.logout()
         break;
       case 404:
+        window.scrollTo(0, 0); // Scroll to the top
         this.toastr.warning("No data Found !!", "Notification");
         break;
       case 409:
         console.log(status.message)
+        window.scrollTo(0, 0); // Scroll to the top
         this.toastr.error("Dublicate Entity found, try new data!", 'Notification')
         break;
       case 500:
         console.log(status.message)
+        window.scrollTo(0, 0); // Scroll to the top
         this.toastr.error("Sorry, the server is busy. Please try again later", 'Error')
         break;
       default:
+        window.scrollTo(0, 0); // Scroll to the top
         this.toastr.error("Sorry, the server is busy. Please try again later", 'Error')
         break;
     }

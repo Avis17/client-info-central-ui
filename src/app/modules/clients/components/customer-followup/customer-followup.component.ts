@@ -1,10 +1,11 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ViewChild } from '@angular/core';
 import { EntityService } from '../../services/entity.service';
 import { CommonService } from 'src/app/services/common.service';
 import { ErrorHandlingService } from 'src/app/services/error-handling.service';
 import { CryptoService } from 'src/app/services/crypto.service';
 import { AuthGuardService } from 'src/app/services/auth-guard.service';
 import Swal from 'sweetalert2';
+import { Table } from 'primeng/table'
 
 @Component({
   selector: 'app-customer-followup',
@@ -42,7 +43,7 @@ export class CustomerFollowupComponent implements OnDestroy{
   ]
   userDetails: any;
   currentPage = 1;
-  itemsPerPage = 5;
+  itemsPerPage = 3;
   newCustomerFollowup: any = {
     interest: 'interested',
     name: '',
@@ -51,7 +52,7 @@ export class CustomerFollowupComponent implements OnDestroy{
     comments: ''
   };
 
-
+  @ViewChild('tableref') dt: Table | any;
   searchText: any = '';
   constructor(
     private authService: AuthGuardService,
@@ -174,6 +175,10 @@ export class CustomerFollowupComponent implements OnDestroy{
     this.onUpdate(customer)
     this.showUpdate = true;
   }
+
+  applyFilterGlobal($event: any, stringVal: string) {
+    this.dt.filterGlobal(($event.target as HTMLInputElement).value, stringVal);
+  }
   
   onUpdate(data: any) {
     const _id = data._id;
@@ -192,9 +197,17 @@ export class CustomerFollowupComponent implements OnDestroy{
       if(res.status == 200){
         Swal.fire('Customer details Updated!', '', 'success');
       }
+      this.errorHandlingService.errorAlertMsg(res);
     }, (err:any)=>{
       this.isLoading = false;
       this.errorHandlingService.errorAlertMsg(err);
     })
+  }
+
+  checkValidations(){
+    if(this.newCustomerFollowup.name != '' && this.newCustomerFollowup.phone != '' && this.newCustomerFollowup.place != '' && this.newCustomerFollowup.comments){
+      return false
+    }
+    return true;
   }
 }
