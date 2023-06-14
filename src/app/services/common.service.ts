@@ -17,5 +17,6 @@ export class CommonService {
     if(!str) return str
     return str.toLowerCase().split(' ').join('_');
   }
+  
 
 }

@@ -147,12 +147,10 @@ export class ExpensesComponent {
 
       if (res.status == 200) {
         this.newexpense = {}
-        this.errorHandlingService.errorAlertMsg(res);
         this.getExpenses();
       }
     }, (err) => {
       this.isLoading = false;
-
       this.errorHandlingService.errorAlertMsg(err);
     })
   }

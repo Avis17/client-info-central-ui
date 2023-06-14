@@ -18,7 +18,7 @@ const routes: Routes = [
     canActivate: [authenticationGuard, adminGuard],
     loadChildren: () => import('./modules/admin/admin.module').then(m => m.AdminModule)
   },
-  { path: '*', component : LoginComponent },
+  { path: '*', pathMatch: 'full', redirectTo: 'dashboard'},
 ];
 
 @NgModule({

@@ -30,6 +30,7 @@ export class BillingComponent implements OnDestroy {
     private errorHandlingService: ErrorHandlingService,
     private commonService: CommonService,
   ) {
+    // this.generatePDF_Format_2();
     this.userDetails = this.authService.getUserDetails();
     this.invoicedetails = entityService.getInvoiceDetails();
     if (this.invoicedetails) {
@@ -296,6 +297,166 @@ export class BillingComponent implements OnDestroy {
       }
     );
   }
+
+  generatePDF_Format_2() {
+
+
+    // Define the document definition for the invoice
+    var documentDefinition:any = {
+      content: [
+        {
+          columns: [
+            // {
+            //   image: 'path/to/company-logo.png',
+            //   width: 100,
+            //   height: 100,
+            // },
+            {
+              text: 'Company Name',
+              style: 'company-name',
+              alignment: 'right',
+            },
+          ],
+        },
+        {
+          text: 'Invoice No: 1452',
+          style: 'invoice-details',
+        },
+        {
+          text: 'Invoice Date: June 14, 2023',
+          style: 'invoice-details',
+        },
+        {
+          columns: [
+            {
+              width: '50%',
+              text: [
+                { text: 'Company Details\n', style: 'details-header' },
+                'Company Name\n',
+                'Address Line 1\n',
+                'Address Line 2\n',
+                'City, State - Postal Code',
+              ],
+            },
+            {
+              width: '50%',
+              text: [
+                { text: 'Billing Customer Details\n', style: 'details-header' },
+                { text: 'Customer Name\n', style: 'customer-details' },
+                'Address Line 1\n',
+                'Address Line 2\n',
+                'City, State - Postal Code',
+              ],
+            },
+          ],
+          columnGap: 10,
+          margin: [0, 20],
+        },
+        {
+          table: {
+            headerRows: 1,
+            widths: ['*', 'auto', 'auto', 'auto', 'auto'],
+            body: [
+              [
+                { text: 'Description', style: 'table-header' },
+                { text: 'HSN Code', style: 'table-header' },
+                { text: 'Qty', style: 'table-header' },
+                { text: 'Rate', style: 'table-header' },
+                { text: 'Amount', style: 'table-header' },
+              ],
+              ['Item 1', '12345', '2', '10.00', '20.00'],
+              ['Item 2', '67890', '1', '15.00', '15.00'],
+            ],
+          },
+          layout: {
+            fillColor: function (rowIndex:any, node:any, columnIndex:any) {
+              return rowIndex === 0 ? '#f2f2f2' : null;
+            },
+          },
+          margin: [0, 0, 0, 20],
+        },
+        {
+          columns: [
+            {
+              width: '50%',
+              alignment: 'right',
+              text: [
+                { text: 'Total: $35.00\n', style: 'total' },
+                { text: 'SGST: $1.75\n', style: 'total' },
+                { text: 'CGST: $1.75\n', style: 'total' },
+                { text: 'Grand Total: $38.50', style: 'total' },
+              ],
+            },
+            {
+              width: '50%',
+              alignment: 'right',
+              text: [
+                { text: 'GSTIN: XXXXXXXXX\n', style: 'gst-details' },
+                { text: 'Place of Supply: XXXXXXX', style: 'gst-details' },
+              ],
+            },
+          ],
+          columnGap: 10,
+          margin: [0, 0, 0, 20],
+        },
+        {
+          columns: [
+            {
+              width: '50%',
+              text: [
+                { text: 'Account Details\n', style: 'details-header' },
+                'Bank Name: ABC Bank\n',
+                'Account No: 1234567890\n',
+                'IFSC Code: ABCD1234',
+              ],
+            },
+            {
+              width: '50%',
+              text: [
+                { text: 'Digital Signature\n', style: 'details-header' },
+                // { image: 'path/to/digital-signature.png', width: 150 },
+              ],
+              alignment: 'right',
+            },
+          ],
+          columnGap: 10,
+        },
+      ],
+      styles: {
+        'company-name': {
+          fontSize: 18,
+          bold: true,
+          color: 'blue',
+        },
+        'invoice-details': {
+          bold: true,
+          margin: [0, 5],
+        },
+        'details-header': {
+          bold: true,
+          color: 'blue',
+        },
+        'customer-details': {
+          bold: true,
+        },
+        'table-header': {
+          bold: true,
+          fillColor: '#f2f2f2',
+        },
+        total: {
+          alignment: 'right',
+        },
+        'gst-details': {
+          alignment: 'right',
+        },
+      },
+    };
+
+    // Generate the PDF and open it in a new tab
+    pdfMake.createPdf(documentDefinition).open();
+
+  }
+
 
   downloadFile(dbName: any, collectionName: any, entityId: any) {
     const fileURL = `/files/${dbName}/${collectionName}/${entityId}/download`;
