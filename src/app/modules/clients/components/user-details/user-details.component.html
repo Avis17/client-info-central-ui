@@ -91,13 +91,13 @@
                             <div style="text-align: start;">
                                 <div class="row ml-3">
                                     <ng-container *ngFor="let obj of clientInfo[key.field_key]">
-                                        <div class="col p-0 card-box" [ngClass]="{'no-card-box': obj.fieldValue === false}">
-                                          <div class="col-4" *ngIf="obj.fieldValue">
+                                        <div class="col-lg-5 col-sm-12 p-0 card-box" [ngClass]="{'no-card-box': obj.fieldValue === false}">
+                                          <div class="col-12" *ngIf="obj.fieldValue">
                                             <ng-container>
-                                              <label class="m-0 f-500">{{ obj.fieldName | uppercase }}</label>
+                                              <label class="m-0 f-500">{{ obj.fieldName | titlecase }}</label>
                                             </ng-container>
                                           </div>
-                                          <div class="col-4" *ngIf="obj.fieldValue === undefined">
+                                          <div class="col-12" *ngIf="obj.fieldValue === undefined">
                                             <ng-container>
                                               <label class="m-0 f-500">{{ obj }}</label>
                                             </ng-container>
