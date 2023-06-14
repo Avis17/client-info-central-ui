@@ -28,12 +28,14 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CustomLoaderComponent } from 'src/app/components/custom-loader/custom-loader.component';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { FooterComponent } from 'src/app/components/footer/footer.component';
+import { TitlecasePipe } from 'src/app/pipes/titlecase.pipe';
 
 @NgModule({
   declarations: [
     ArrayDestructurePipe,
     SkipLocationChangeDirective,
     SearchPipe,
+    TitlecasePipe,
     CustomLoaderComponent,
     FooterComponent
   ],
@@ -90,6 +92,7 @@ import { FooterComponent } from 'src/app/components/footer/footer.component';
     MatDatepickerModule,
     SkipLocationChangeDirective,
     SearchPipe,
+    TitlecasePipe,
     ProgressSpinnerModule, 
     MatNativeDateModule,
     CustomLoaderComponent,
