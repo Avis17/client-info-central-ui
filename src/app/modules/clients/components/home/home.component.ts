@@ -522,7 +522,7 @@ export class HomeComponent implements OnInit {
       case 'customers':
         this.exportAsXLSX(this.entities, cardName);
         break;
-      case 'services':
+      case 'products':
         this.exportAsXLSX(this.listOfServices, cardName);
         break;
       case 'invoices':
