@@ -22,6 +22,10 @@ export class BillingComponent implements OnDestroy {
   isFinalTotalClicked = false;
   invoicedetails: any;
   isLoading: boolean = false;
+  paymentStatus : string = '';
+  partPaymentAmount: string = '';
+  invoiceuser:any;
+  servicesList:any = []
 
   constructor(
     private authService: AuthGuardService,
@@ -32,6 +36,7 @@ export class BillingComponent implements OnDestroy {
   ) {
     // this.generatePDF_Format_2();
     this.userDetails = this.authService.getUserDetails();
+    this.servicesList = [...this.userDetails?.app_meta_details?.servicesList] || []
     this.invoicedetails = entityService.getInvoiceDetails();
     if (this.invoicedetails) {
       console.log(this.invoicedetails)
@@ -49,9 +54,16 @@ export class BillingComponent implements OnDestroy {
     { terms: "Warrenty of the product will be subject to the manufacturer terms and conditions." },
     { terms: "This is system generated invoice." }
   ]
+  isBillCreated : boolean = false;
+  isInvlidPartAmount :boolean = false;
 
   ngOnDestroy(): void {
     this.entityService.setinvoiceDetails({})
+  }
+
+  onProductChange(event:any, index:number){
+    console.log(event)
+    this.invoice.products[index].price = this.servicesList.find((data:any)=> event.target.value == data.service_name)?.service_price;
   }
 
   createPDFData() {
@@ -267,28 +279,55 @@ export class BillingComponent implements OnDestroy {
     };
   }
 
+  validateAmount(){
+    if(Number(this.partPaymentAmount) > this.invoice.finalTotal){
+      this.isInvlidPartAmount = true;
+      return;
+    }
+    this.isInvlidPartAmount = false;
+  }
+
+  onSavePaymentDetails(){
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'invoices',
+      "collectionData": {...this.invoice, paymentStatus:this.paymentStatus, paidAmount:this.paymentStatus == 'part' ? this.partPaymentAmount : this.invoice.finalTotal}
+    }
+    this.isLoading = true;
+    let _id = this.invoiceuser._id || '';
+    this.entityService.updateEntityById(_id,formData).subscribe(
+      (res: any) => {
+        this.isLoading = false;
+        if (res.status == 200) {
+          this.isBillCreated = true
+          this.navigationService.navigateWithoutLocationChange(['client/home']);
+        }
+      },
+      (err) => {
+        this.isLoading = false;
+        this.errorHandlingService.errorAlertMsg(err);
+      }
+    );
+  }
 
   generatePDF(action = 'open') {
     const docDefinition: any = this.createPDFData();
-    // const fileContent = JSON.stringify(docDefinition); 
-    // const blob = new Blob([fileContent], { type: 'application/json' });
-    // const file = new File([blob], 'invoice.pdf', { type: 'application/pdf' });
-    // const formData = new FormData();
     const formData = {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
       "collectionName": 'invoices',
       "collectionData": this.invoice
     }
-
     this.isLoading = true;
     this.entityService.addNewEntity(formData).subscribe(
       (res: any) => {
         this.isLoading = false;
-        console.log(res)
         if (res.status == 200) {
+          this.invoiceuser = res.data;
+          console.log(res)
+          this.isBillCreated = true;
           pdfMake.createPdf(docDefinition).open();
-          this.navigationService.navigateWithoutLocationChange(['client/home']);
         }
       },
       (err) => {
@@ -479,6 +518,21 @@ export class BillingComponent implements OnDestroy {
 
   onRemoveTerms(index: number) {
     this.termsList.splice(index, 1)
+  }
+
+  onAddTerms(){
+    this.termsList.push({terms:""})
+  }
+
+  onValidateTc() {
+    let isTermsEmpty = false;
+    this.termsList.forEach((data: any) => {
+      if (data.terms == '') {
+        isTermsEmpty = true;
+        return; // exit the loop if an empty term is found
+      }
+    });
+    return isTermsEmpty;
   }
 
   onProductRemove(index: number) {

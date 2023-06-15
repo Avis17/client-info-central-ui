@@ -41,15 +41,21 @@ export class ServicesComponent implements CanComponentDeactivate {
     this.isLoading = true;
     this.appMetaService.updateAppMetaById(query).subscribe((res: any) => {
       this.isLoading = false;
+      console.log("update", res)
       if (res.status == 200) {
-        this.authService.logoutWithoutNavigate();
-        resolve(true);
+        this.authService.setUserDetails(
+          {
+            ...this.userDetails,
+            app_meta_details : res.data
+          }
+        )
+        resolve(true)
       }
       resolve(false)
     }, (err) => {
       this.isLoading = false;
       this.errorHandlingService.errorAlertMsg(err);
-      resolve(true);
+      resolve(true)
     })
   }
 
@@ -86,11 +92,10 @@ export class ServicesComponent implements CanComponentDeactivate {
         confirmButtonText: 'Save',
       }).then((result) => {
         if (result.isConfirmed) {
-          // Allow navigation
           this.updateServicesData(resolve);
         } else {
           Swal.fire('Changes are not modified', '', 'info');
-          resolve(true); // Prevent navigation
+          resolve(true); 
         }
       });
     });

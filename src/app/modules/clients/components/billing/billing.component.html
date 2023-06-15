@@ -9,13 +9,12 @@
         <button type="button" class="btn btn-secondary btn-block mb-3 ml-3"
             (click)="generatePDF('print')">Print
             Invoice</button> -->
-        <button type="submit" class="btn btn-warning ml-3" [disabled]="checkDatas()"
-            (click)="generatePDF()">Generate
-            Invoice</button>
+        <button type="submit" class="btn btn-warning ml-3" data-bs-toggle="modal" data-bs-target="#exampleModal">Update
+            T&C</button>
     </div>
 </nav>
 <form #invoiceForm="ngForm">
-    <div class="container-fluid pt-2 mb-5">
+    <div class="container-fluid pt-2 mb-5" *ngIf="!isBillCreated">
         <div class="row">
             <div class="col-md-12">
                 <div class="card border-secondary">
@@ -79,10 +78,13 @@
                                 <tbody>
                                     <tr *ngFor="let product of invoice.products; let i=index">
                                         <td scope="row">
-                                            <input type="text" class="form-control" name="productName{{i}}"
-                                                [ngClass]="{'is-invalid': invoiceForm.submitted && ProductName.invalid}"
+                                            <select class="form-control" name="productName{{i}}" 
+                                            [ngClass]="{'is-invalid': invoiceForm.submitted && ProductName.invalid}"
                                                 id="productName" [(ngModel)]="product.name" #ProductName="ngModel"
+                                                (change)="onProductChange($event, i)"
                                                 required>
+                                                <option *ngFor="let service of servicesList" [value]="service.service_name">{{service.service_name}}</option>
+                                            </select>                                   
                                         </td>
                                         <td>
                                             <input type="number" class="form-control" name="price{{i}}" id="price"
@@ -109,26 +111,29 @@
                 <div class="card border-secondary mt-2 mb-5" *ngIf="invoice.products.length >= 1">
                     <div class="card-body">
                         <div class="row mb-3">
-                            <div class="col-md-6" >
-                                <button class="btn btn-info" style="float: right;" (click)="onCalculateSubTotal()">Calculate SubTotal</button>
+                            <div class="col-md-6">
+                                <button class="btn btn-info" style="float: right;"
+                                    (click)="onCalculateSubTotal()">Calculate SubTotal</button>
                             </div>
                             <div class="col-md-6">
-                                <input  class="form-control float-right"   name="subtotal" *ngIf="invoice.subTotal > 0" [(ngModel)]="invoice.subTotal">
+                                <input class="form-control float-right" name="subtotal" *ngIf="invoice.subTotal > 0"
+                                    [(ngModel)]="invoice.subTotal">
                             </div>
-                           
+
                         </div>
-        
+
                         <div class="row mb-3" *ngIf="invoice.subTotal > 0">
                             <div class="col-md-6">
                                 <span class="float-right mt-2">Tax GST</span>
                             </div>
                             <div class="col-md-3">
-                                <select class="form-select" name="name" [(ngModel)]="invoice.cgst" >
-                                    <option *ngFor="let gst of gstList" [value]="gst" >{{gst}} %</option>
+                                <select class="form-select" name="name" [(ngModel)]="invoice.cgst">
+                                    <option *ngFor="let gst of gstList" [value]="gst">{{gst}} %</option>
                                 </select>
                             </div>
                             <div class="col-md-3">
-                                <input  class="form-control" [attr.disabled]="true" name="cgst"   [value]="(invoice.subTotal * invoice.cgst)/100">
+                                <input class="form-control" [attr.disabled]="true" name="cgst"
+                                    [value]="(invoice.subTotal * invoice.cgst)/100">
                             </div>
                         </div>
                         <!-- <div class="row mb-3" *ngIf="invoice.subTotal > 0">
@@ -159,23 +164,45 @@
                             </div>
                         </div> -->
                         <div class="row mb-3">
-                            <div class="col-md-6" >
-                                <button class="btn btn-primary" style="float: right;" (click)="onCalculateTotal()" *ngIf="isSubTotalClicked && invoice.subTotal > 0">Calculate Total</button>
+                            <div class="col-md-6">
+                                <button class="btn btn-primary" style="float: right;" (click)="onCalculateTotal()"
+                                    *ngIf="isSubTotalClicked && invoice.subTotal > 0">Calculate Total</button>
                             </div>
                             <div class="col-md-6">
-                                <input  class="form-control float-right"   name="finaltotal" *ngIf="isSubTotalClicked && invoice.finalTotal>0"  [(ngModel)]="invoice.finalTotal">
+                                <input class="form-control float-right" name="finaltotal"
+                                    *ngIf="isSubTotalClicked && invoice.finalTotal>0" [(ngModel)]="invoice.finalTotal">
                             </div>
-                           
+
                         </div>
                     </div>
                 </div>
-                <div class="card border-secondary mt-2">
+               <div class="mt-5" *ngIf="!checkDatas()">
+                <button type="submit" class="btn btn-warning ml-3" (click)="generatePDF()">Generate
+                    Invoice</button>
+               </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid pt-2 mb-5" *ngIf="isBillCreated">
+        <div class="row">
+            <div class="col">
+                <div class="card border-secondary">
                     <div class="card-body">
-                        <h4 class="card-title">Terms And Conditions</h4>
-                        <div class="row m-3" *ngFor="let term of termsList;let i = index">
-                            <textarea [name]="'term'+i" [(ngModel)]="term.terms" type="text" class="form-control col-10"></textarea>
-                            <div class="text-center col-2">
-                                <button class="btn-close" (click)="onRemoveTerms(i)"></button>
+                        <h4 class="card-title">Payment Status:</h4>
+                        <div class="row ml-5">
+                            <div class="col">
+                                <input type="radio" name="paymentStatus" [(ngModel)]="paymentStatus" class="ml-3" value="full"> Full Payment
+                                <input type="radio" name="paymentStatus" [(ngModel)]="paymentStatus" class="ml-3" value="part"> Part Payment
+                                <div class="mt-3">
+                                    <button *ngIf="paymentStatus == 'full'" class="btn btn-info" (click)="onSavePaymentDetails()">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="paymentStatus != '' && paymentStatus == 'part'" class="m-3">
+                            <input type="text" (input)="validateAmount()" name="partPaymentAmount" class="form-control" [(ngModel)]="partPaymentAmount" placeholder="Enter Part Payment Amount">
+                            <label *ngIf="isInvlidPartAmount" style="color: red;">part amount should not be grater than final total.</label>
+                            <div class="mt-3">
+                                <button [disabled]="partPaymentAmount == '' || isInvlidPartAmount" class="btn btn-info" (click)="onSavePaymentDetails()">Save</button>
                             </div>
                         </div>
                     </div>
@@ -185,3 +212,35 @@
     </div>
 </form>
 
+<div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Terms & Conditions</h5>
+                <!-- <button type="btn btn-primary" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button> -->
+            </div>
+            <div class="modal-body">
+                <div class="card border-secondary mt-2">
+                    <div class="card-body">
+                        <div class="text-end">
+                            <p-button label="New T&C" icon="pi pi-plus" class="mr-2" (click)="onAddTerms()"></p-button>
+                        </div>
+                        <div class="row m-3" *ngFor="let term of termsList;let i = index">
+                            <textarea [name]="'term'+i" [(ngModel)]="term.terms" type="text"
+                                class="form-control col-10"></textarea>
+                            <div class="text-center col-2">
+                                <button class="btn-close" (click)="onRemoveTerms(i)"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-bs-dismiss="modal" [disabled]="onValidateTc()" class="btn btn-info">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
