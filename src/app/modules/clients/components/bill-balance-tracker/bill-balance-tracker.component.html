@@ -71,15 +71,9 @@
         <div class="col-lg-6 col-sm-12 col-md-6 mb-3 mb-md-0">
             <input type="text" (input)="updateFilteredItems($event)" placeholder="Search bill details" [(ngModel)]="searchText" class="form-control">
         </div>
-        <!-- <div class="col-lg-4 col-sm-12 col-md-6 mb-3 mb-md-0">
-            <select class="form-control" (change)="onCategoryChange($event)">
-                <option>Filter All Category</option>
-                <option [value]="category" *ngFor="let category of expenseCategories">{{category}}</option>
-            </select>
-        </div> -->
         <div class="col-lg-6 col-sm-12 col-md-6 text-end">
-            <p-button label="New Bill Balance" icon="pi pi-plus" class="mr-2" data-bs-toggle="modal"
-                data-bs-target="#exampleModal"></p-button>
+            <!-- <p-button label="New Bill Balance" icon="pi pi-plus" class="mr-2" data-bs-toggle="modal"
+                data-bs-target="#exampleModal"></p-button> -->
         </div>
     </div>
 
@@ -94,6 +88,7 @@
                         <tr>
                             <th>S no</th>
                             <th>Customer Name</th>
+                            <th>Bill No</th>
                             <th>Phone</th>
                             <th>Date</th>
                             <th>Total Bill</th>
@@ -107,26 +102,29 @@
                             *ngFor="let balance of filteredItems | paginate: { itemsPerPage: 5, currentPage: currentPage }; let i = index">
                             <td>{{i+1}}</td>
                             <td>
-                                <span>{{balance?.name}}</span>
+                                <span>{{balance?.customerName}}</span>
+                            </td>
+                            <td>
+                                <span>{{balance?.billNo}}</span>
                             </td>
                             <td>
                                 <span>{{balance?.phone}}</span>
                             </td>
                             <td>
-                                <span>{{balance?.bill_balance_date | date:'shortDate'}}</span>
+                                <span>{{balance?.createdAt | date:'shortDate'}}</span>
                             </td>
                             <td>
-                                <span>{{balance?.totalAmount}}</span>
+                                <span>Rs.{{balance?.finalTotal}}</span>
                             </td>
                             <td>
-                                <span>{{balance?.paidAmount}}</span>
+                                <span>Rs.{{balance?.paidAmount}}</span>
                             </td>
                             <td>
-                                <span>{{balance?.balanceAmount}}</span>
+                                <span>Rs.{{balance?.finalTotal - balance?.paidAmount}}</span>
                             </td>
                             <td>
-                                <button class="btn btn-danger mb-2"
-                                    (click)="onDelete(balance)">Paid</button>
+                                <button data-bs-toggle="modal"
+                                data-bs-target="#exampleModal" (click)="onBillPayment(balance)" class="btn btn-info mb-2">Pay</button>
                             </td>
                         </tr>
                         <tr *ngIf="balanceList.length == 0">
@@ -147,50 +145,22 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Add expense</h5>
+                <h5 class="modal-title">Pay Bill Amount</h5>
                 <button type="btn btn-primary" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <mat-form-field class="mt-5 mb-2 full-width">
-                    <mat-label>Enter Customer Name</mat-label>
-                    <input matInput type="text" [(ngModel)]="newBillBalance.name">
-                </mat-form-field>
-
-                <mat-form-field class="mb-2 full-width">
-                    <mat-label>Enter Customer phone</mat-label>
-                    <input matInput type="number" [(ngModel)]="newBillBalance.phone">
-                </mat-form-field>
-
-                <mat-form-field class="example-form-field mb-2 full-width">
-                    <mat-label>Choose a date</mat-label>
-                    <input matInput [(ngModel)]="newBillBalance.bill_balance_date" [matDatepicker]="datepicker">
-                    <mat-hint>MM/DD/YYYY</mat-hint>
-                    <mat-datepicker-toggle matIconSuffix [for]="datepicker"></mat-datepicker-toggle>
-                    <mat-datepicker #datepicker>
-                        <mat-datepicker-actions>
-                            <button mat-button matDatepickerCancel>Cancel</button>
-                            <button mat-raised-button color="primary" matDatepickerApply>Apply</button>
-                        </mat-datepicker-actions>
-                    </mat-datepicker>
-                </mat-form-field>
-
-                <mat-form-field class="mb-2 full-width">
-                    <mat-label>Enter Total Amount</mat-label>
-                    <input matInput type="number" [(ngModel)]="newBillBalance.totalAmount">
-                </mat-form-field>
-
-                <mat-form-field class="mb-2 full-width">
-                    <mat-label>Enter Paid Amount</mat-label>
-                    <input matInput type="number" [(ngModel)]="newBillBalance.paidAmount">
-                </mat-form-field>
-
+            <div class="modal-body">       
+                <div class="row">
+                    <div class="col">
+                        <input placeholder="Enter amount" type="number" class="form-control" [(ngModel)]="addNewAmount">
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button"
-                    [disabled]="checkBillValidation()"
-                    data-bs-dismiss="modal" (click)="onAddBill()" class="btn btn-primary">Save changes</button>
+                    [disabled]="!addNewAmount"
+                    data-bs-dismiss="modal" (click)="onSaveBill()" class="btn btn-primary">Save changes</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>

@@ -20,19 +20,6 @@ export class BillBalanceTrackerComponent {
   itemsPerPage = 10;
   userDetails: any = {};
   Query: any = {};
-  newBillBalance: any = {
-    name: '',
-    phone: '',
-    bill_balance_date: new Date()
-  };
-  expenseCategories = [
-    "Electricity",
-    "Labour",
-    "Travel",
-    "Rent",
-    "Advance",
-    "Others"
-  ]
   isLoading: boolean = true;
   selectedDates: { startDate: moment.Moment, endDate: moment.Moment };
   ranges: any = {
@@ -56,6 +43,9 @@ export class BillBalanceTrackerComponent {
   paidAmountSum = 0;
   balanceAmountSum = 0;
   filteredItems: any = []
+  selectedBillDetails:any;
+  addNewAmount:any = undefined;
+
   isInvalidDate = (m: moment.Moment) => {
     return this.invalidDates.some(d => d.isSame(m, 'day'))
   }
@@ -70,90 +60,30 @@ export class BillBalanceTrackerComponent {
     this.userDetails = this.authService.getUserDetails();
   }
 
-  onEdit(expense: any) {
-    expense.isEdit = true
-  }
-
-  onDelete(expense: any) {
+  onSaveBill() {
+    const _id = this.selectedBillDetails._id;
+    delete this.selectedBillDetails._id
+    this.selectedBillDetails = {
+      ...this.selectedBillDetails,
+      paidAmount : Number(this.selectedBillDetails.paidAmount)+this.addNewAmount
+    }
     const formData = {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
-      "collectionName": 'bill_balance',
-      "queryData": {}
+      "collectionName": 'invoices',
+      "collectionData": this.selectedBillDetails
     }
     this.isLoading = true;
-    this.entityService.deleteEntityById(expense._id, formData).subscribe((res: any) => {
-      this.isLoading = false;
-      if (res.status == 200) {
-        Swal.fire('Balance Bill Paid Successfully!', '', 'success').then(() => {
-          this.getBills();
-        })
-      }
-    }, (err: any) => {
-      this.isLoading = false;
-
-      this.errorHandlingService.errorAlertMsg(err);
-    })
-  }
-
-  onCancel(expense: any) {
-    expense.isEdit = false;
-  }
-
-  onSave(balance: any) {
-    balance.isEdit = false;
-    const _id = balance._id;
-    delete balance._id
-    const formData = {
-      "schema": '',
-      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
-      "collectionName": 'bill_balance',
-      "collectionData": balance
-    }
-    this.isLoading = true;
-
     this.entityService.updateEntityById(_id, formData).subscribe((res: any) => {
       this.isLoading = false;
       if (res.status == 200) {
         Swal.fire('Bill Balance Updated!', '', 'success');
+        this.selectedBillDetails = {};
+        this.addNewAmount = undefined;
+        this.getBills({});
       }
     }, (err: any) => {
       this.isLoading = false;
-      this.errorHandlingService.errorAlertMsg(err);
-    })
-  }
-
-  onAddService() {
-
-  }
-
-  onAddBill() {
-    const clientOffset = new Date().getTimezoneOffset();
-    const adjustedDate = new Date(this.newBillBalance.bill_balance_date.getTime() - clientOffset * 60000);
-    this.newBillBalance = {
-      ...this.newBillBalance,
-      bill_balance_date : adjustedDate
-    }
-    const formData = {
-      "schema": '',
-      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
-      "collectionName": 'bill_balance',
-      "collectionData": { ...this.newBillBalance, balanceAmount: (this.newBillBalance.totalAmount - this.newBillBalance.paidAmount) }
-    }
-    this.isLoading = true;
-    console.log(formData)
-    this.entityService.addNewEntity(formData).subscribe((res: any) => {
-      this.isLoading = false;
-      if (res.status == 200) {
-        this.newBillBalance = {
-          bill_balance_date: new Date()
-        }
-        this.errorHandlingService.errorAlertMsg(res);
-        this.getBills();
-      }
-    }, (err) => {
-      this.isLoading = false;
-
       this.errorHandlingService.errorAlertMsg(err);
     })
   }
@@ -162,7 +92,7 @@ export class BillBalanceTrackerComponent {
     const formData = {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
-      "collectionName": 'bill_balance',
+      "collectionName": 'invoices',
       "queryData": query || {}
     }
     this.isLoading = true;
@@ -170,7 +100,9 @@ export class BillBalanceTrackerComponent {
       this.isLoading = false;
       if (res) {
         console.log(res)
-        this.balanceList = res.data;
+        this.balanceList = res.data.filter((data:any)=>{
+          return data.paymentStatus == 'part'
+        });
         this.filteredItems = [...this.balanceList];
         this.calculateBillAmounts(this.balanceList);
       }
@@ -185,19 +117,12 @@ export class BillBalanceTrackerComponent {
     this.paidAmountSum = 0;
     this.balanceAmountSum = 0;
     data.forEach((item: any) => {
-      this.totalAmountSum += item.totalAmount;
+      this.totalAmountSum += item.finalTotal;
       this.paidAmountSum += item.paidAmount;
-      this.balanceAmountSum += item.balanceAmount;
+      this.balanceAmountSum += (item.finalTotal - item.paidAmount)
     });
   }
 
-  onCategoryChange(event: any) {
-    if (event.target.value != 'Filter All Category') {
-      this.getBills({ selectedCategory: event.target.value });
-    } else {
-      this.getBills();
-    }
-  }
 
   get pagedServicesList(): any[] {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
@@ -236,12 +161,8 @@ export class BillBalanceTrackerComponent {
     }
   }
 
-  checkBillValidation() {
-    if (this.newBillBalance.name != '' && this.newBillBalance.phone != '' &&
-      this.newBillBalance.totalAmount && this.newBillBalance.paidAmount && this.newBillBalance.bill_balance_date
-    ) {
-      return false
-    }
-    return true
+  onBillPayment(billDetails:any){
+    this.selectedBillDetails = billDetails;
+    this.addNewAmount = undefined;
   }
 }
