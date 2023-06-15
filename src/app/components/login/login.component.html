@@ -1,24 +1,25 @@
-
 <app-custom-loader *ngIf="isLoading"></app-custom-loader>
 
 <div class="centre-container">
-
-    <div class="card card-width-40 card-width-sm-80">
-        <div class="card-header">
-          Customer Info Central
-        </div>
-        <div class="card-body">
-            <div class="mt-3">
-                <input class="form-control" type="text" placeholder="Email" [(ngModel)]="email">
-            </div>
-            <div class="mt-3">
-                <input class="form-control" type="password" placeholder="Password" [(ngModel)]="password">
-            </div>
-            <div class="mt-3">
-                <button (click)="onLoginBtnClick()" mat-flat-button class="primary-bg">{{'Login' | uppercase}}</button>
-            </div>
-        </div>
+  <div class="card card-width-40 card-width-sm-80">
+    <div class="card-header">
+      Customer Info Central
     </div>
-
-    
+    <div class="card-body">
+      <div class="mt-3">
+        <input class="form-control" type="text" placeholder="Email" [(ngModel)]="email">
+      </div>
+      <div class="mt-3">
+        <div class="password-input">
+          <input class="form-control" type="{{ showPassword ? 'text' : 'password' }}" placeholder="Password" [(ngModel)]="password">
+          <button mat-icon-button class="password-toggle" (click)="togglePasswordVisibility()">
+            <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </div>
+      </div>
+      <div class="mt-3">
+        <button (click)="onLoginBtnClick()" mat-flat-button class="primary-bg">{{ 'Login' | uppercase }}</button>
+      </div>
+    </div>
+  </div>
 </div>

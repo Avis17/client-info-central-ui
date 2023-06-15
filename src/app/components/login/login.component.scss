@@ -12,3 +12,21 @@
     background-position: center;
     background-image: url('https://clipart-library.com/images_k/people-with-transparent-background/people-with-transparent-background-10.png');
 }
+
+.password-input {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+  }
+  
+  .password-input input {
+    padding-right: 2.5rem; /* Adjust this value based on the icon size and padding */
+  }
+  
+  .password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 0; /* Adjust this value based on the desired icon position */
+    transform: translateY(-50%);
+  }
+  

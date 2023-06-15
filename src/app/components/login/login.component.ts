@@ -15,6 +15,11 @@ export class LoginComponent {
   email : string = ""
   password : string = '';
   isLoading:boolean  = false;
+  showPassword: boolean = false;
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
 
   constructor(private cryptService:CryptoService,private toastr: ToastrService, private navigationService: NavigationService, private authService:AuthGuardService){
     let userDetails:any = authService.getSessionUserDetails()

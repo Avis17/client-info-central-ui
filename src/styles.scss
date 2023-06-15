@@ -119,3 +119,11 @@ $fontWeights: 400 600 700 800;
     background-color: $primary !important;
 }
 
+.no-arrow::-webkit-inner-spin-button,
+.no-arrow::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.no-arrow {
+  -moz-appearance: textfield;
+}

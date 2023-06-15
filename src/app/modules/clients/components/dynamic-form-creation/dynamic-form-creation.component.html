@@ -16,21 +16,36 @@
 							<mat-form-field class="">
 								<mat-label>{{ field.field_name }}</mat-label>
 								<input matInput type="text" [formControlName]="field.field_key">
-							</mat-form-field>
+								<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('required')">This field is required.</mat-error>
+								<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('noSpecialCharacters')">Special characters are not allowed.</mat-error>
+							  </mat-form-field>
 						</div>
 
 						<div *ngSwitchCase="'email'">
 							<mat-form-field class="">
 								<mat-label>{{ field.field_name }}</mat-label>
 								<input matInput type="email" [formControlName]="field.field_key">
-							</mat-form-field>
+								<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('required')">This field is required.</mat-error>
+								<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('email')">Please enter a valid email address.</mat-error>
+							  </mat-form-field>
 						</div>
 
 						<div *ngSwitchCase="'number'">
-							<mat-form-field class="">
-								<mat-label>{{ field.field_name }}</mat-label>
-								<input matInput type="number" [formControlName]="field.field_key">
-							</mat-form-field>
+							<div *ngIf="field.field_key != 'phone'">
+								<mat-form-field class="">
+									<mat-label>{{ field.field_name }}</mat-label>
+									<input matInput type="number" [formControlName]="field.field_key">
+									<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('required')">This field is required.</mat-error>
+								</mat-form-field>
+							</div>
+							<div *ngIf="field.field_key == 'phone'">
+								<mat-form-field class="">
+									<mat-label>{{ field.field_name }}</mat-label>
+									<input matInput class="no-arrow" type="number" [formControlName]="field.field_key">
+									<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('required')">This field is required.</mat-error>
+									<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('pattern')">Please enter a 10-digit phone number.</mat-error>
+								  </mat-form-field>
+							</div>
 						</div>
 
 						<div class="" *ngSwitchCase="'radio'">
@@ -54,6 +69,7 @@
 									<button mat-raised-button color="primary" matDatepickerApply>Apply</button>
 								  </mat-datepicker-actions>
 								</mat-datepicker>
+								<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('required')">This field is required.</mat-error>
 							  </mat-form-field>
 
 						</div>
@@ -69,6 +85,7 @@
 								</div>
 							</div>
 						</div>
+						
 						<div *ngSwitchCase="'select'">
 							<label>{{ field.field_name }}</label>
 							<mat-form-field>
@@ -77,12 +94,15 @@
 									<mat-option *ngFor="let option of field.field_options" [value]="option">{{ option
 										}}</mat-option>
 								</mat-select>
+								<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('required')">This field is required.</mat-error>
 							</mat-form-field>
 						</div>
 
 						<div *ngSwitchCase="'multipleValues'">
-							<label>Add Options - (After typed option, click enter
-								:-)</label>
+							<!-- <label>Add Options - (After typed option, click enter
+								:-)</label> -->
+								<label>{{ field.field_name }}</label>
+								<div class="hint">(Type an option and press Enter)</div>
 							<div class="card p-fluid">
 								<p-chips [formControlName]="field.field_key"
 									placeholder="Hint: friend1-12345678, friend2-12345678"></p-chips>
@@ -96,6 +116,7 @@
 								<textarea matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize"
 									cdkAutosizeMinRows="3" [formControlName]="field.field_key"
 									cdkAutosizeMaxRows="5"></textarea>
+									<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('required')">This field is required.</mat-error>
 							</mat-form-field>
 						</div>
 

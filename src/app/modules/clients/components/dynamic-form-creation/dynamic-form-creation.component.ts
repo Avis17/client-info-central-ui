@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
+import { ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
+
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { AuthGuardService } from 'src/app/services/auth-guard.service';
@@ -7,6 +9,18 @@ import { EntityService } from '../../services/entity.service';
 import { ErrorHandlingService } from 'src/app/services/error-handling.service';
 import { CommonService } from 'src/app/services/common.service';
 import { NavigationService } from 'src/app/services/navigation.service';
+
+
+const noSpecialCharactersValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  const value: string = control.value;
+  const regex: RegExp = /^[a-zA-Z0-9 ]+$/; // Regular expression to allow only alphanumeric characters and spaces
+  if (!regex.test(value)) {
+    return { noSpecialCharacters: true };
+  }
+  return null;
+};
+const phoneNumberValidator = Validators.pattern('^[0-9]{10}$');
+
 
 @Component({
   selector: 'app-dynamic-form-creation',
@@ -30,10 +44,8 @@ export class DynamicFormCreationComponent {
 
   createFormGroup() {
     for (const field of this.userDetails?.app_meta_details?.table_fileds) {
-      // this.createEntitySchema(field);
       const fieldKey = field.field_key;
       const fieldValue = '';
-      const validators = [Validators.required];
       let formControl;
       switch (field.field_type) {
         case 'checkbox':
@@ -45,29 +57,35 @@ export class DynamicFormCreationComponent {
           });
           formControl = this.formBuilder.array(checkboxOptions);
           break;
-        case 'text':
-          formControl = this.formBuilder.control(fieldValue, validators);
-          break;
+          case 'text':
+            formControl = new FormControl(fieldValue, [Validators.required, noSpecialCharactersValidator]);
+            break;
         case 'email':
-          formControl = this.formBuilder.control(fieldValue, validators);
+          formControl = this.formBuilder.control(fieldValue, [Validators.required, Validators.email]);
           break;
         case 'number':
-          formControl = this.formBuilder.control(null, validators);
-          break;
+          if(field.field_key == 'phone') 
+          {
+            formControl = this.formBuilder.control('', [Validators.required, phoneNumberValidator])
+            break;
+          }else{
+            formControl = this.formBuilder.control(null, [Validators.required]);
+            break;
+          }
         case 'radio':
-          formControl = this.formBuilder.control(fieldValue, validators);
+          formControl = this.formBuilder.control(fieldValue, [Validators.required]);
           break;
         case 'date':
-          formControl = this.formBuilder.control(new Date(fieldValue), validators);
+          formControl = this.formBuilder.control(new Date(fieldValue), [Validators.required]);
           break;
         case 'multipleValues':
-          formControl = this.formBuilder.control('', validators);
+          formControl = this.formBuilder.control('', [Validators.required]);
           break;
         case 'dropdown':
-          formControl = this.formBuilder.control(fieldValue, validators);
+          formControl = this.formBuilder.control(fieldValue, [Validators.required]);
           break;
         default:
-          formControl = this.formBuilder.control(fieldValue, validators);
+          formControl = this.formBuilder.control(fieldValue, [Validators.required]);
           break;
       }
       this.formGroup.addControl(fieldKey, formControl);
