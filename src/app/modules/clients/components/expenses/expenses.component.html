@@ -55,7 +55,7 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>S no</th>
+                            <th>S No</th>
                             <th>Expense Category</th>
                             <th>Date</th>
                             <th>Expense Amount</th>
@@ -63,20 +63,22 @@
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody class="mb-8">
                         <tr
                             *ngFor="let expense of filteredItems | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; let i = index">
                             <td>{{i+1}}</td>
-                            <td>
-                                <span *ngIf="!expense.isEdit">{{expense?.selectedCategory}}</span>
-                                <ng-select *ngIf="expense.isEdit" class="form-select custom-select" [searchable]="true"
-                                    [(ngModel)]="expense.selectedCategory">
-                                    <ng-option *ngFor="let category of expenseCategories"
-                                        [value]="category">{{category}}</ng-option>
-                                </ng-select>
+                            <td style="width: 20%;">
+                                <span *ngIf="!expense.isEdit">{{expense?.selectedCategory.label}}</span>
+
+                                  <!-- <p-dropdown *ngIf="expense.isEdit" [options]="expenseCategories" [(ngModel)]="expense.selectedCategory" [filter]="true" placeholder="Select an option"></p-dropdown> -->
+
+                                  <p-dropdown *ngIf="expense.isEdit"
+                                  [style]="{'width':'100%','overflow':'visible'}" appendTo="body" 
+                                  [options]="expenseCategories" [(ngModel)]="newexpense.selectedCategory" optionLabel="label" [filter]="true" [showClear]="true" placeholder="Select a Category">
+                                </p-dropdown>
                             </td>
                             <td>
-                                <span>{{expense?.expense_date | date:'shortDate'}}</span>
+                                <span>{{expense?.expense_date | dateformat}}</span>
                             </td>
                             <td>
                                 <span *ngIf="!expense.isEdit">{{expense?.expense_price}}</span>
@@ -123,15 +125,16 @@
                 </button>
             </div>
             <div class="modal-body">
-                <ng-select class="form-select custom-select mb-5" [searchable]="true"
-                    [(ngModel)]="newexpense.selectedCategory">
-                    <ng-option *ngFor="let category of expenseCategories" [value]="category">{{category}}</ng-option>
-                </ng-select>
+                
+                <div class="mt-5 mb-5">
+                    <p-dropdown [options]="expenseCategories" [(ngModel)]="newexpense.selectedCategory" optionLabel="label" [filter]="true" [showClear]="true" placeholder="Select a Category">
+                    </p-dropdown>
+                </div>
 
                 <input [(ngModel)]="newexpense.expense_comments" type="text" class="form-control mb-5"
                     placeholder="Enter expense Additional Information">
 
-                <input [(ngModel)]="newexpense.expense_price" type="number" class="form-control mb-5"
+                <input [(ngModel)]="newexpense.expense_price" type="number" class="form-control mb-5 no-arrow"
                     placeholder="Enter expense Amount">
 
                 <mat-form-field class="example-form-field mb-5">
@@ -150,7 +153,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button"
-                    [disabled]="newexpense.selectedCategory == 'Default Category' || !newexpense.expense_price"
+                    [disabled]="!newexpense.selectedCategory || !newexpense.expense_price"
                     data-bs-dismiss="modal" (click)="onAddexpense()" class="btn btn-primary">Save changes</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>

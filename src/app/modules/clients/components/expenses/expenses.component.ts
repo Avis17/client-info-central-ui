@@ -24,18 +24,30 @@ export class ExpensesComponent {
   Query:any = {};
   totalExpenseSum : number = 0;
   newexpense:any = {
-    selectedCategory: 'Default Category',
+    selectedCategory: '',
     expense_comments: '',
     expense_price: '',
     expense_date : new Date()
   };  
   expenseCategories = [
-    "Electricity",
-    "Labour",
-    "Travel",
-    "Rent",
-    "Advance",
-    "Others"
+    {
+      label : "Electricity"
+    },
+    {
+      label : "Labour"
+    },
+    {
+      label : "Travel"
+    },
+    {
+      label : "Rent"
+    },
+    {
+      label : "Advance"
+    },
+    {
+      label : "Others"
+    }
   ]
   isLoading:boolean  = true;
   selectedDates: { startDate: moment.Moment, endDate: moment.Moment };
@@ -56,6 +68,8 @@ export class ExpensesComponent {
     ]
   }
   invalidDates: moment.Moment[] = [moment().add(2, 'days'), moment().add(3, 'days'), moment().add(5, 'days')];
+  searchFilterString:string = ''
+  filteredOptions: any = [];
 
   isInvalidDate = (m: moment.Moment) => {
     return this.invalidDates.some(d => d.isSame(m, 'day'))
@@ -69,6 +83,12 @@ export class ExpensesComponent {
     private entityService:EntityService
   ){
     this.userDetails = this.authService.getUserDetails();
+  }
+
+  filterOptions() {
+    this.filteredOptions = this.expenseCategories.filter((option:any) =>
+      option['label'].toLowerCase().includes(this.searchFilterString.toLowerCase())
+    );
   }
 
   onEdit(expense: any) {

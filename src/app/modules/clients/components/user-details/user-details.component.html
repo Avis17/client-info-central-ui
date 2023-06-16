@@ -7,7 +7,7 @@
         data-bs-target="#exampleModal"></p-button>
     </div>
     <div class="row">
-        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" (click)="onClickCardBox('customers')">
+        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" (click)="onClickCardBox('invoices')">
             <div class="card card-1 border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -24,13 +24,13 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" (click)="onClickCardBox('invoices')">
+        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" (click)="onClickCardBox('products')">
             <div class="card card-5 border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs card-text-color text-uppercase mb-1">
-                                Services
+                                Products
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{servicesList?.length}}</div>
                         </div>
@@ -41,7 +41,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" (click)="onClickCardBox('services')">
+        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer">
             <div class="card card-2 border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">

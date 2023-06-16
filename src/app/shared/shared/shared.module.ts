@@ -29,6 +29,8 @@ import { CustomLoaderComponent } from 'src/app/components/custom-loader/custom-l
 import { NgxPaginationModule } from 'ngx-pagination';
 import { FooterComponent } from 'src/app/components/footer/footer.component';
 import { TitlecasePipe } from 'src/app/pipes/titlecase.pipe';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { DateformatPipe } from 'src/app/pipes/dateformat.pipe';
 
 @NgModule({
   declarations: [
@@ -37,7 +39,8 @@ import { TitlecasePipe } from 'src/app/pipes/titlecase.pipe';
     SearchPipe,
     TitlecasePipe,
     CustomLoaderComponent,
-    FooterComponent
+    FooterComponent,
+    DateformatPipe
   ],
   imports: [
     CommonModule,
@@ -64,7 +67,8 @@ import { TitlecasePipe } from 'src/app/pipes/titlecase.pipe';
     MatDatepickerModule,
     MatNativeDateModule,
     ProgressSpinnerModule,
-    NgxPaginationModule
+    NgxPaginationModule,
+    MatAutocompleteModule
   ],
   exports: [
     CommonModule,
@@ -97,7 +101,9 @@ import { TitlecasePipe } from 'src/app/pipes/titlecase.pipe';
     MatNativeDateModule,
     CustomLoaderComponent,
     NgxPaginationModule,
-    FooterComponent
+    FooterComponent,
+    MatAutocompleteModule,
+    DateformatPipe
   ]
 })
 export class SharedModule { }

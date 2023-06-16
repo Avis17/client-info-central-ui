@@ -134,25 +134,130 @@ export class BillingComponent implements OnDestroy {
           ],
           margin: [0, 0, 0, 20] // Add margin to increase spacing
         },
-        {
-          text: 'Customer Details',
-          style: 'sectionHeader'
-        },
+        // {
+        //   text: 'Customer Details',
+        //   style: 'sectionHeader'
+        // },
         {
           columns: [
             // Customer Details
+            // [
+            //   {
+            //     text: this.invoice.customerName,
+            //     bold: true,
+            //     fontSize: 12,
+            //     marginBottom: 5
+            //   },
+            //   { text: this.invoice.address, fontSize: 10, marginBottom: 5 },
+            //   { text: this.invoice.email, fontSize: 10, marginBottom: 5 },
+            //   { text: this.invoice.phone, fontSize: 10, marginBottom: 5 },
+            //   { text: this.invoice.gstNo || '', fontSize: 10 }
+            // ],
             [
               {
-                text: this.invoice.customerName,
-                bold: true,
-                fontSize: 12,
+                columns: [
+                  {
+                    width: 'auto',
+                    text: 'Customer Name: ',
+                    bold: true,
+                    fontSize: 12,
+                    margin:[0,0,3,0]
+                  },
+                  {
+                    width: 'auto',
+                    text: this.invoice.customerName,
+                    fontSize: 10,
+                    alignment: 'center',
+                    margin: [0, 2, 0, 5] // Add a small margin at the top and right
+
+                  }
+                ],
                 marginBottom: 5
               },
-              { text: this.invoice.address, fontSize: 10, marginBottom: 5 },
-              { text: this.invoice.email, fontSize: 10, marginBottom: 5 },
-              { text: this.invoice.phone, fontSize: 10, marginBottom: 5 },
-              { text: this.invoice.gstNo || '', fontSize: 10 }
+              {
+                columns: [
+                  {
+                    width: 'auto',
+                    text: 'Address: ',
+                    bold: true,
+                    fontSize: 12,
+                    margin:[0,0,3,0]
+                  },
+                  {
+                    width: 'auto',
+                    text: this.invoice.address,
+                    fontSize: 10,
+                    alignment: 'center',
+                    margin: [0, 2, 0, 5] // Add a small margin at the top and right
+
+                  }
+                ],
+                marginBottom: 5
+              },
+              {
+                columns: [
+                  {
+                    width: 'auto',
+                    text: 'Email: ',
+                    bold: true,
+                    fontSize: 12,
+                    margin:[0,0,3,0]
+                  },
+                  {
+                    width: 'auto',
+                    text:  this.invoice.email,
+                    fontSize: 10,
+                    alignment: 'center',
+                    margin: [0, 2, 0, 5] // Add a small margin at the top and right
+
+                  }
+                ],
+                marginBottom: 5
+              },
+              {
+                columns: [
+                  {
+                    width: 'auto',
+                    text: 'Phone: ',
+                    bold: true,
+                    fontSize: 12,
+                    margin:[0,0,3,0]
+                  },
+                  {
+                    width: 'auto',
+                    text:  this.invoice.phone,
+                    fontSize: 10,
+                    alignment: 'center',
+                    margin: [0, 2, 0, 5] // Add a small margin at the top and right
+
+                  }
+                ],
+                marginBottom: 5
+              },
+              {
+                columns: [
+                  {
+                    width: 'auto',
+                    text: 'GST No: ',
+                    bold: true,
+                    fontSize: 12,
+                    margin:[0,0,3,0]
+                  },
+                  {
+                    width: 'auto',
+                    text: this.invoice.gstNo || '',
+                    fontSize: 10,
+                    alignment: 'center',
+                    margin: [0, 2, 0, 5] // Add a small margin at the top and right
+
+                  }
+                ]
+              }
             ],
+            
+            // Use the content array in your pdfmake configuration
+            
+            // Use the content array in your pdfmake configuration            
             // Invoice Details
             [
               {
@@ -167,19 +272,14 @@ export class BillingComponent implements OnDestroy {
                 bold: true,
                 fontSize: 12,
                 alignment: 'right'
-              },
-              // {
-              //   text: `Due Date: ${new Date().toLocaleDateString()}`,
-              //   bold: true,
-              //   fontSize: 12,
-              //   alignment: 'right'
-              // }
+              }
             ]
           ]
         },
         {
           text: 'Invoice Items',
-          style: 'sectionHeader'
+          style: 'sectionHeader',
+          color: '#CC5803', // Red color
         },
         {
           table: {
@@ -199,10 +299,10 @@ export class BillingComponent implements OnDestroy {
                 { text: 'GST', colSpan: 3, alignment: 'right', bold: true, fillColor: '#eaeaea' },
                 {},
                 {},
-                { text: this.invoice.cgst + '%', alignment: 'right', fillColor: '#eaeaea' }
+                { text: this.invoice.cgst  + '%', alignment: 'right', fillColor: '#eaeaea' }
               ],
               [
-                { text: 'Total', colSpan: 3, alignment: 'right', bold: true, fillColor: '#eaeaea' },
+                { text: 'Total', colSpan: 3, alignment: 'right', bold: true, fillColor: '#eaeaea', color: '#CC5803' },
                 {},
                 {},
                 { text: "Rs." + this.invoice.finalTotal, alignment: 'right', fillColor: '#eaeaea', color: '#CC5803' }
@@ -221,11 +321,13 @@ export class BillingComponent implements OnDestroy {
         },
         {
           text: 'Terms & Conditions',
-          style: 'sectionHeader'
+          style: 'sectionHeader',
+          color: '#CC5803', // Red color
+
         },
-        this.termsList.map((term: any) => {
+        this.termsList.map((term: any, index: number) => {
           return {
-            text: term.terms,
+            text: `${index + 1}. ${term.terms}`, // Add the serial number using the index
             fontSize: 10,
             margin: [0, 0, 0, 5] // Add margin to increase spacing
           };
@@ -242,7 +344,7 @@ export class BillingComponent implements OnDestroy {
                   image: this.userDetails?.app_meta_details?.billingdetails?.signature,
                   margin: [0, 60, 0, 3],
                 },
-                { text: 'Authorized Signature', fontSize: 12, bold: true },
+                { text: 'Authorized Signature', fontSize: 12, bold: true, color: '#CC5803'},
                 // { text: 'Your Name', fontSize: 10 }
               ],
               alignment: 'right'
@@ -251,7 +353,7 @@ export class BillingComponent implements OnDestroy {
           margin: [0, 20, 0, 0], // Add margin to increase spacing
           columnGap: 10 // Adjust the gap between columns if needed
         },
-        { text: 'For Payment:-', margins: [0, 0, 0, 4] },
+        { text: 'For Payment:-', margins: [0, 0, 0, 4], color: '#CC5803' },
         {
           qr: paymentUrl,
           fit: 80, // Set the desired size of the QR code

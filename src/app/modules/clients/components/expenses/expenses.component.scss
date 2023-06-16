@@ -75,3 +75,11 @@
 .full-width {
     width: 100% !important;
 }
+
+::ng-deep .p-dropdown {
+    width: 100% !important;
+}
+
+::ng-deep .p-dropdown-items-wrapper{
+    max-height: 300px !important;
+}

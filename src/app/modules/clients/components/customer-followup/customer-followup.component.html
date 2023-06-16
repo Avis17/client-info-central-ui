@@ -84,7 +84,7 @@
     <div class="col-lg-8 col-md-12 col-sm-12 mt-5 mb-5">
         <div class="card ml-2" style="min-height: 100%;" pDroppable="customers" (onDrop)="drop()">
             <p-table #tableref [value]="selectedCustomers" [paginator]="true" [rows]="5"
-                [showCurrentPageReport]="true" [reorderableColumns]="true"
+                [showCurrentPageReport]="true" [reorderableColumns]="true" [alwaysShowPaginator]="false"
                 [columns]="cols" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
                 [rowsPerPageOptions]="[5, 10, 25, 50]" [tableStyle]="{ 'width': 'auto', 'min-width' : '100%' }" paginatorPosition="top">
                 <ng-template pTemplate="header">
@@ -106,9 +106,16 @@
                         <td style="text-align: center;">{{ customer.phone }}</td>
                         <td style="text-align: center;">{{ customer.interest }}</td>
                         <td style="text-align: center;">{{ customer.place }}</td>
-                        <td style="text-align: center;">{{ customer.createdAt | date:'shortDate'}}</td>
+                        <td style="text-align: center;">{{ customer.createdAt | dateformat}}</td>
                         <td style="text-align: center;">
                             <button class="btn btn-info" (click)="returnToDraggable(customer)">Return</button>
+                        </td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage" let-columns>
+                    <tr>
+                        <td [attr.colspan]="columns.length" style="text-align: center;">
+                            No records found.
                         </td>
                     </tr>
                 </ng-template>

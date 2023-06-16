@@ -9,53 +9,50 @@
             (click)="onAddUSer()"></p-button>
     </div>
 </p-toolbar>
-   <div class="card m-4 mb-8" *ngIf="entities.length > 0">
-        <p-table #tableref [value]="entities" [paginator]="true" [columns]="cols" [rows]="5"
-         [showCurrentPageReport]="true"
-            [tableStyle]="{ 'min-width': '60rem' }"
-            [reorderableColumns]="true"
-            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-            [rowsPerPageOptions]="[5, 10, 25, 50]">
-    
-            <ng-template pTemplate="header" let-columns>
-                <tr>
-                    <th style="width:10%; text-align: center !important;">S No</th>
-                    <ng-container *ngFor="let col of cols">
-                        <th *ngIf="!isArrayCheck(col.field)" [pSortableColumn]="col.field"
-                        style="flex-grow: 1; text-align: center !important;"
-                        >
-                            {{ col.header }}
-                            <p-sortIcon [field]="col.field"></p-sortIcon>
-                        </th>
-                    </ng-container>
-                </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
-                <tr>
-                    <td style="text-align: center;">{{rowIndex+1}}</td>
-                    <ng-container *ngFor="let col of columns">
+<div class="card m-4 mb-8" *ngIf="entities.length > 0">
+    <p-table #tableref [value]="entities" [paginator]="true" [columns]="cols" [rows]="5" [showCurrentPageReport]="true"
+        [tableStyle]="{ 'min-width': '60rem' }" [reorderableColumns]="true" [alwaysShowPaginator]="false"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+        [rowsPerPageOptions]="[5, 10, 25, 50]">
+
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <th style="width:10%; text-align: center !important;">S No</th>
+                <ng-container *ngFor="let col of cols">
+                    <th *ngIf="!isArrayCheck(col.field)" [pSortableColumn]="col.field"
+                        style="flex-grow: 1; text-align: center !important;">
+                        {{ col.header }}
+                        <p-sortIcon [field]="col.field"></p-sortIcon>
+                    </th>
+                </ng-container>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
+            <tr>
+                <td style="text-align: center;">{{rowIndex+1}}</td>
+                <ng-container *ngFor="let col of columns">
                     <td style="text-align: center;" *ngIf="!isArrayCheck(col.field)">
-                            <ng-container *ngIf="isDateField(rowData[col.field])">{{
-                                rowData[col.field] | date:'shortDate' }}</ng-container>
-                            <ng-container *ngIf="!isDateField(rowData[col.field])">
-                                <ng-container *ngIf="rowData['isUniqueField'] != col.field">
-                                    {{rowData[col.field] }}
-                                </ng-container>
-                                <ng-container *ngIf="rowData['isUniqueField'] == col.field">
-                                    <a class="nav-link" (click)="onNavClick(rowData[col.field], col.field)">{{rowData[col.field] }}</a>
-                                </ng-container>
+                        <ng-container *ngIf="isDateField(rowData[col.field])">{{
+                            rowData[col.field] | dateformat }}</ng-container>
+                        <ng-container *ngIf="!isDateField(rowData[col.field])">
+                            <ng-container *ngIf="rowData['isUniqueField'] != col.field">
+                                {{rowData[col.field] }}
                             </ng-container>
-                            <!-- <ng-container *ngIf="isArrayCheck(rowData[col.field])">{{ rowData[col.field] | arrayDestructure
-                                }}</ng-container>     -->
+                            <ng-container *ngIf="rowData['isUniqueField'] == col.field">
+                                <a class="nav-link"
+                                    (click)="onNavClick(rowData[col.field], col.field)">{{rowData[col.field] }}</a>
+                            </ng-container>
+                        </ng-container>
                     </td>
                 </ng-container>
-                </tr>
-            </ng-template>
-            <!-- <ng-template pTemplate="paginatorleft">
-                <p-button type="button" icon="pi pi-plus" styleClass="p-button-text"></p-button>
-            </ng-template> -->
-            <!-- <ng-template pTemplate="paginatorright">
-                <p-button type="button" icon="pi pi-cloud" styleClass="p-button-text"></p-button>
-            </ng-template> -->
-        </p-table>
-    </div>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage" let-columns>
+            <tr>
+                <td [attr.colspan]="columns.length" style="text-align: center;">
+                    No records found.
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
