@@ -164,16 +164,10 @@ export class CustomerFollowupComponent implements OnDestroy{
     return this.customerList.findIndex((c) => c === customer);
   }
 
-  updateStatus(customer: any) {
-    // Perform status update for the selected customer
-    // You can update the 'interest' property of the customer object here
-    this.showUpdate = false;
-  }
-
   updateInterest(customer: any) {
     // Perform any additional logic or API call to update the interest of the customer
+    customer.isEdit = false;
     this.onUpdate(customer)
-    this.showUpdate = true;
   }
 
   applyFilterGlobal($event: any, stringVal: string) {

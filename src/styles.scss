@@ -127,3 +127,18 @@ $fontWeights: 400 600 700 800;
 .no-arrow {
   -moz-appearance: textfield;
 }
+
+.md-drppicker .btn {
+    background-color: $primary !important; /* Set the desired background color */
+    color: white !important; /* Set the desired text color */
+  }
+
+  
+::ng-deep .md-drppicker .clear svg{
+    display: none !important;
+}
+
+::ng-deep .md-drppicker .btn.btn-default{
+    margin-right: 10px !important;
+    color: #000 !important;
+}

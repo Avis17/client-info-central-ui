@@ -4,19 +4,20 @@
     <div class="row align-end">
         <div class="col-lg-6 col-md-6 col-sm-12">
             <input type="text" class="form-control custom-date" ngxDaterangepickerMd [(ngModel)]="selectedDates"
-                [showCustomRangeLabel]="true" [alwaysShowCalendars]="true" (ngModelChange)="ngModelDateChange($event)"
+                [showCustomRangeLabel]="true"
+                [locale]="{ format: 'DD-MM-YYYY', daysOfWeek: ['S', 'M', 'T', 'W', 'T', 'F', 'S']}"
+                [alwaysShowCalendars]="true" (ngModelChange)="ngModelDateChange($event)"
                 [ranges]="ranges" [linkedCalendars]="true" [isInvalidDate]="isInvalidDate" [showClearButton]="true"
                 placeholder="Filter by dates" />
         </div>
     </div>
     <div class="row flex-wrap justify-content-center mt-4">
-       
         <p-card header="Dashboard" [subheader]="selectedPeriod">
             <ng-template pTemplate="header">
             </ng-template>
             <div class="col-12">
                 <div class="row">
-                    <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" (click)="onClickCardBox('customers')">
+                    <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" matTooltip="export list of customers" matTooltipPosition="above" (click)="onClickCardBox('customers')">
                         <div class="card card-1 border-left-primary shadow h-100 py-2">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
@@ -34,7 +35,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" (click)="onClickCardBox('invoices')">
+                    <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" matTooltip="export list of invoices" matTooltipPosition="above" (click)="onClickCardBox('invoices')">
                         <div class="card card-5 border-left-primary shadow h-100 py-2">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
@@ -51,7 +52,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" (click)="onClickCardBox('products')">
+                    <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" matTooltip="export list of products" matTooltipPosition="above" (click)="onClickCardBox('products')">
                         <div class="card card-2 border-left-primary shadow h-100 py-2">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
@@ -191,32 +192,49 @@
             </div>
           
         </p-card>
-
-       
-        <div class="col-lg-12 col-md-12">
+        <div class="col-lg-12 col-md-12 mt-4">
             <div class="row">
-                <div class="col-12" *ngIf="listOfServices.length > 0">
-                    <ng-container>
-                        <div class="card p-5 mb-3">
-                            <div class="text-end mb-3">
-                                <h3 class="chart-text-color">{{serviceChartDetails?.chartName | uppercase}}</h3>
+                <div class="col-sm-12 col-md-6 col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-8 col-sm-12">
+                            <div class="row">
+                                <div class="col-sm-12 col-md-6 col-lg-6" *ngFor="let chart of dynamicChartDetails; let i=index">
+                                    <ng-container>
+                                        <div class="card p-5 mb-3" *ngIf="entities.length > 0">
+                                            <div class="text-end mb-3">
+                                                <h3 class="chart-text-color">{{chart.chartName | uppercase}}</h3>
+                                            </div>
+                                            <p-chart [type]="chart.chartType" height="300" [data]="chart.chartData"
+                                                [options]="chart.chartOptions" (onDataSelect)="onChartPointSelect($event, chart.chartFieldName, chart.chartData)"></p-chart>
+                                        </div>
+                                    </ng-container>
+                                </div>
                             </div>
-                            <p-chart [type]="serviceChartDetails?.chartType" height="300"
-                                [data]="serviceChartDetails?.chartData"
-                                [options]="serviceChartDetails?.chartOptions"></p-chart>
-                        </div>
-                    </ng-container>
-                </div>
-                <div class="col-sm-12 col-md-6 col-lg-4" *ngFor="let chart of dynamicChartDetails; let i=index">
-                    <ng-container>
-                        <div class="card p-5 mb-3" *ngIf="entities.length > 0">
-                            <div class="text-end mb-3">
-                                <h3 class="chart-text-color">{{chart.chartName | uppercase}}</h3>
+                            <div class="row">
+                                <div class="col-12" *ngIf="listOfServices.length > 0">
+                                    <ng-container>
+                                        <div class="card p-5 mb-3">
+                                            <div class="text-end mb-3">
+                                                <h3 class="chart-text-color">{{serviceChartDetails?.chartName | uppercase}}</h3>
+                                            </div>
+                                            <p-chart [type]="serviceChartDetails?.chartType" height="300"
+                                                [data]="serviceChartDetails?.chartData"
+                                                [options]="serviceChartDetails?.chartOptions"></p-chart>
+                                        </div>
+                                    </ng-container>
+                                </div>
                             </div>
-                            <p-chart [type]="chart.chartType" height="300" [data]="chart.chartData"
-                                [options]="chart.chartOptions" (onDataSelect)="onChartPointSelect($event, chart.chartFieldName, chart.chartData)"></p-chart>
                         </div>
-                    </ng-container>
+                        <div class="col-lg-4 col-sm-12">
+                            <!-- <h4>Services List</h4> -->
+                           <div class="card p-5">
+                            <div class="mt-5" *ngFor="let list of progressServiceList">
+                                <h4>{{list.name}} - ({{list.categoryName}})</h4>
+                                <p-progressBar [style]="{'background':'#4BCBEB'}" [value]="list.percent" [matTooltip]="list.count" matTooltipPosition="above"></p-progressBar>
+                            </div>
+                           </div>
+                        </div>
+                    </div>
 
                 </div>
             </div>
@@ -225,5 +243,5 @@
 </div>
 
 <div class="mb-8">
-    <app-user-table [tableData]="getStringfiyData(entities)" [queryData]="tableQuery"></app-user-table>
+    <!-- <app-user-table [tableData]="getStringfiyData(entities)" [queryData]="tableQuery"></app-user-table> -->
 </div>

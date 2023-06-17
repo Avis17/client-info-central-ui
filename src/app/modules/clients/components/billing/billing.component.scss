@@ -20,6 +20,12 @@ form {
     margin-bottom: 10rem;
 }
 
+.is-invalid {
+    border: 1px solid red;
+    background-color: #ffe6e6;
+    color: red;
+  }
+
 .page-spinner {
     position: fixed;
     top: 30%;

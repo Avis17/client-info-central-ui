@@ -28,6 +28,7 @@ export class UserDetailsComponent {
   servicesList: any = []
   totalRevenue: number = 0;
   isLoading: boolean = true;
+  totalServicesList:any [];
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -40,6 +41,7 @@ export class UserDetailsComponent {
     private authenticationService: AuthGuardService
   ) {
     this.userDetails = this.authenticationService.getUserDetails();
+    this.totalServicesList = this.userDetails.app_meta_details.servicesList.categories;
     this.entitySchema = entityService.getEntitySchema();
     this.userId = this.activatedRoute.snapshot.paramMap.get('id') || '';
     this.userId = decodeURIComponent(this.userId)
@@ -84,6 +86,8 @@ export class UserDetailsComponent {
           })
         } else {
           this.inVoicesList = []
+          this.servicesList = []
+          this.totalRevenue = 0;
         }
 
       }
@@ -125,12 +129,12 @@ export class UserDetailsComponent {
     return ''
   }
 
-  onServiceOptionChange(event: any, selectedObj: any) {
+  onServiceOptionChange(event: any, categoryName:any, selectedObj: any) {
     if (event.target.checked) {
-      this.listOfServices.push({ ...selectedObj, createdAt: new Date() })
+      this.listOfServices.push({ ...selectedObj, createdAt: new Date(), categoryName : categoryName })
     } else {
       this.listOfServices = this.listOfServices.filter((data: any) => {
-        return data.service_name != selectedObj.service_name
+        return data.itemName != selectedObj.itemName
       })
     }
   }

@@ -6,6 +6,8 @@ import { EntityService } from '../../services/entity.service';
 import { NavigationService } from 'src/app/services/navigation.service';
 import { ErrorHandlingService } from 'src/app/services/error-handling.service';
 import { CommonService } from 'src/app/services/common.service';
+import { AppMetaCreationService } from 'src/app/modules/admin/services/app-meta-creation.service';
+import Swal from 'sweetalert2';
 (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
 
 
@@ -22,10 +24,10 @@ export class BillingComponent implements OnDestroy {
   isFinalTotalClicked = false;
   invoicedetails: any;
   isLoading: boolean = false;
-  paymentStatus : string = '';
+  paymentStatus: string = '';
   partPaymentAmount: string = '';
-  invoiceuser:any;
-  servicesList:any = []
+  invoiceuser: any;
+  servicesList: any = []
 
   constructor(
     private authService: AuthGuardService,
@@ -33,10 +35,24 @@ export class BillingComponent implements OnDestroy {
     private navigationService: NavigationService,
     private errorHandlingService: ErrorHandlingService,
     private commonService: CommonService,
+    private appMetaService: AppMetaCreationService
   ) {
     // this.generatePDF_Format_2();
     this.userDetails = this.authService.getUserDetails();
-    this.servicesList = [...this.userDetails?.app_meta_details?.servicesList] || []
+    this.termsList = this.userDetails.app_meta_details.terms || [
+      { terms: "Order can be return in max 10 days." },
+      { terms: "Warrenty of the product will be subject to the manufacturer terms and conditions." },
+      { terms: "This is system generated invoice." }
+    ];
+    this.servicesList = this.userDetails?.app_meta_details?.servicesList?.categories.map((data:any) => {
+      data.items.forEach((item: any) => {
+        item.categoryName = data.categoryName
+      })
+      return data.items
+    }).reduce((initialValue: any, data: any) => {
+      return initialValue = [...initialValue, ...data]
+    }, [])
+    console.log(this.servicesList)
     this.invoicedetails = entityService.getInvoiceDetails();
     if (this.invoicedetails) {
       console.log(this.invoicedetails)
@@ -49,21 +65,17 @@ export class BillingComponent implements OnDestroy {
   }
 
   invoice = new Invoice();
-  termsList: any = [
-    { terms: "Order can be return in max 10 days." },
-    { terms: "Warrenty of the product will be subject to the manufacturer terms and conditions." },
-    { terms: "This is system generated invoice." }
-  ]
-  isBillCreated : boolean = false;
-  isInvlidPartAmount :boolean = false;
+  termsList: any;
+  isBillCreated: boolean = false;
+  isInvlidPartAmount: boolean = false;
 
   ngOnDestroy(): void {
     this.entityService.setinvoiceDetails({})
   }
 
-  onProductChange(event:any, index:number){
+  onProductChange(event: any, index: number) {
     console.log(event)
-    this.invoice.products[index].price = this.servicesList.find((data:any)=> event.target.value == data.service_name)?.service_price;
+    this.invoice.products[index].price = this.servicesList.find((data: any) => event.target.value == data.itemName)?.itemPrice;
   }
 
   createPDFData() {
@@ -161,7 +173,7 @@ export class BillingComponent implements OnDestroy {
                     text: 'Customer Name: ',
                     bold: true,
                     fontSize: 12,
-                    margin:[0,0,3,0]
+                    margin: [0, 0, 3, 0]
                   },
                   {
                     width: 'auto',
@@ -181,7 +193,7 @@ export class BillingComponent implements OnDestroy {
                     text: 'Address: ',
                     bold: true,
                     fontSize: 12,
-                    margin:[0,0,3,0]
+                    margin: [0, 0, 3, 0]
                   },
                   {
                     width: 'auto',
@@ -201,11 +213,11 @@ export class BillingComponent implements OnDestroy {
                     text: 'Email: ',
                     bold: true,
                     fontSize: 12,
-                    margin:[0,0,3,0]
+                    margin: [0, 0, 3, 0]
                   },
                   {
                     width: 'auto',
-                    text:  this.invoice.email,
+                    text: this.invoice.email,
                     fontSize: 10,
                     alignment: 'center',
                     margin: [0, 2, 0, 5] // Add a small margin at the top and right
@@ -221,11 +233,11 @@ export class BillingComponent implements OnDestroy {
                     text: 'Phone: ',
                     bold: true,
                     fontSize: 12,
-                    margin:[0,0,3,0]
+                    margin: [0, 0, 3, 0]
                   },
                   {
                     width: 'auto',
-                    text:  this.invoice.phone,
+                    text: this.invoice.phone,
                     fontSize: 10,
                     alignment: 'center',
                     margin: [0, 2, 0, 5] // Add a small margin at the top and right
@@ -241,7 +253,7 @@ export class BillingComponent implements OnDestroy {
                     text: 'GST No: ',
                     bold: true,
                     fontSize: 12,
-                    margin:[0,0,3,0]
+                    margin: [0, 0, 3, 0]
                   },
                   {
                     width: 'auto',
@@ -254,9 +266,9 @@ export class BillingComponent implements OnDestroy {
                 ]
               }
             ],
-            
+
             // Use the content array in your pdfmake configuration
-            
+
             // Use the content array in your pdfmake configuration            
             // Invoice Details
             [
@@ -299,7 +311,7 @@ export class BillingComponent implements OnDestroy {
                 { text: 'GST', colSpan: 3, alignment: 'right', bold: true, fillColor: '#eaeaea' },
                 {},
                 {},
-                { text: this.invoice.cgst  + '%', alignment: 'right', fillColor: '#eaeaea' }
+                { text: this.invoice.cgst + '%', alignment: 'right', fillColor: '#eaeaea' }
               ],
               [
                 { text: 'Total', colSpan: 3, alignment: 'right', bold: true, fillColor: '#eaeaea', color: '#CC5803' },
@@ -344,7 +356,7 @@ export class BillingComponent implements OnDestroy {
                   image: this.userDetails?.app_meta_details?.billingdetails?.signature,
                   margin: [0, 60, 0, 3],
                 },
-                { text: 'Authorized Signature', fontSize: 12, bold: true, color: '#CC5803'},
+                { text: 'Authorized Signature', fontSize: 12, bold: true, color: '#CC5803' },
                 // { text: 'Your Name', fontSize: 10 }
               ],
               alignment: 'right'
@@ -381,24 +393,24 @@ export class BillingComponent implements OnDestroy {
     };
   }
 
-  validateAmount(){
-    if(Number(this.partPaymentAmount) > this.invoice.finalTotal){
+  validateAmount() {
+    if (Number(this.partPaymentAmount) > this.invoice.finalTotal) {
       this.isInvlidPartAmount = true;
       return;
     }
     this.isInvlidPartAmount = false;
   }
 
-  onSavePaymentDetails(){
+  onSavePaymentDetails() {
     const formData = {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
       "collectionName": 'invoices',
-      "collectionData": {...this.invoice, paymentStatus:this.paymentStatus, paidAmount:this.paymentStatus == 'part' ? this.partPaymentAmount : this.invoice.finalTotal}
+      "collectionData": { ...this.invoice, paymentStatus: this.paymentStatus, paidAmount: this.paymentStatus == 'part' ? this.partPaymentAmount : this.invoice.finalTotal }
     }
     this.isLoading = true;
     let _id = this.invoiceuser._id || '';
-    this.entityService.updateEntityById(_id,formData).subscribe(
+    this.entityService.updateEntityById(_id, formData).subscribe(
       (res: any) => {
         this.isLoading = false;
         if (res.status == 200) {
@@ -419,7 +431,7 @@ export class BillingComponent implements OnDestroy {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
       "collectionName": 'invoices',
-      "collectionData": this.invoice
+      "collectionData": {...this.invoice, billedBy:this.userDetails.email}
     }
     this.isLoading = true;
     this.entityService.addNewEntity(formData).subscribe(
@@ -443,7 +455,7 @@ export class BillingComponent implements OnDestroy {
 
 
     // Define the document definition for the invoice
-    var documentDefinition:any = {
+    var documentDefinition: any = {
       content: [
         {
           columns: [
@@ -510,7 +522,7 @@ export class BillingComponent implements OnDestroy {
             ],
           },
           layout: {
-            fillColor: function (rowIndex:any, node:any, columnIndex:any) {
+            fillColor: function (rowIndex: any, node: any, columnIndex: any) {
               return rowIndex === 0 ? '#f2f2f2' : null;
             },
           },
@@ -622,8 +634,36 @@ export class BillingComponent implements OnDestroy {
     this.termsList.splice(index, 1)
   }
 
-  onAddTerms(){
-    this.termsList.push({terms:""})
+  onAddTerms() {
+    this.termsList.push({ terms: "" })
+  }
+
+  onSaveTermsList() {
+    let query = {
+      _id: this.userDetails.app_meta_details._id,
+      data: {
+        ...this.userDetails.app_meta_details,
+        terms: this.termsList
+      }
+    }
+    delete query.data._id;
+    delete query.data.__v;
+    this.isLoading = true;
+    this.appMetaService.updateAppMetaById(query).subscribe((res: any) => {
+      this.isLoading = false;
+      if (res.status == 200) {
+        this.authService.setUserDetails(
+          {
+            ...this.userDetails,
+            app_meta_details: res.data
+          }
+        )
+        Swal.fire("Terms List Updated successfully!")
+      }
+    }, (err: any) => {
+      this.isLoading = false;
+      this.errorHandlingService.errorAlertMsg(err);
+    })
   }
 
   onValidateTc() {
@@ -671,10 +711,13 @@ class Product {
   name: string;
   price: number;
   qty: number;
-  constructor(name?: any, price?: any, qty?: any) {
+  categoryName: string;
+
+  constructor(name?: any, price?: any, category?: any, qty?: any) {
     this.name = name;
     this.price = price;
-    this.qty = qty;
+    this.categoryName = category,
+      this.qty = qty;
   }
 }
 class Invoice {
@@ -705,7 +748,7 @@ class Invoice {
       this.address = place ? place : address;
       this.phone = contact;
       services.forEach((data: any) => {
-        this.products.push(new Product(data.service_name, data.service_price, 1))
+        this.products.push(new Product(data.itemName, data.itemPrice, data.categoryName, 1))
       })
     } else {
     }

@@ -18,9 +18,9 @@
 								<input matInput type="text" [formControlName]="field.field_key">
 								<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('required')">This field is required.</mat-error>
 								<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('noSpecialCharacters')">Special characters are not allowed.</mat-error>
-							  </mat-form-field>
+								<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('onlyAlphabets')">Numbers are not allowed.</mat-error>  
+							</mat-form-field>
 						</div>
-
 						<div *ngSwitchCase="'email'">
 							<mat-form-field class="">
 								<mat-label>{{ field.field_name }}</mat-label>
@@ -29,7 +29,6 @@
 								<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('email')">Please enter a valid email address.</mat-error>
 							  </mat-form-field>
 						</div>
-
 						<div *ngSwitchCase="'number'">
 							<div *ngIf="field.field_key != 'phone'">
 								<mat-form-field class="">
@@ -43,7 +42,7 @@
 									<mat-label>{{ field.field_name }}</mat-label>
 									<input matInput class="no-arrow" type="number" [formControlName]="field.field_key">
 									<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('required')">This field is required.</mat-error>
-									<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('pattern')">Please enter a 10-digit phone number.</mat-error>
+									<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('phoneNumberInvalid')">Please enter a 10-digit phone number.</mat-error>
 								  </mat-form-field>
 							</div>
 						</div>
@@ -134,17 +133,20 @@
 					<div class="d-flex justify-content-end">
 						<input type="text" style="width: 50%;" class="form-control" placeholder="Search Service" [ngModelOptions]="{standalone: true}" [(ngModel)]="searchItem">
 					</div>
-					<div class="row">
-						<div class="col-sm-12 col-lg-6 my-3" *ngFor="let option of userDetails?.app_meta_details?.servicesList | search:searchItem;let j = index">
-							<span>
-								<input class="form-check-input" type="checkbox" (change)="onServiceOptionChange($event, option)">
-								{{ option.service_name }} - <span style="color: blueviolet;">Rs.{{option.service_price}}</span>
-							</span>
+					<div class="row mt-4" >
+						<div class="col-sm-12 col-lg-6 my-3" *ngFor="let category of servicesList | search:searchItem;let j = index">
+							<h4 class="text-decoration-underline">Category - {{category.categoryName}}</h4>
+							<div  *ngFor="let option of category.items">
+								<span>
+									<input class="form-check-input" type="checkbox" (change)="onServiceOptionChange($event, category.categoryName, option)">
+									{{ option.itemName }} - <span style="color: blueviolet;">Rs.{{option.itemPrice}}</span>
+								</span>
+							</div>
 						</div>
 					</div>
 				</div>
 				<div class="mt-4 mb-3">
-					<button class="btn btn-primary" [disabled]="!formGroup.valid" type="submit">Submit</button>
+					<button class="btn btn-primary" [disabled]="!formGroup.valid || listOfServices.length == 0" type="submit">Submit</button>
 				</div>
 			</form>
 		</mat-card-content>

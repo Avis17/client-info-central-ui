@@ -19,7 +19,22 @@ const noSpecialCharactersValidator: ValidatorFn = (control: AbstractControl): Va
   }
   return null;
 };
-const phoneNumberValidator = Validators.pattern('^[0-9]{10}$');
+const onlyAlphabetsValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  const value: string = control.value;
+  const regex: RegExp = /^[a-zA-Z]+$/; // Regular expression to allow only alphabetic characters
+  if (!regex.test(value)) {
+    return { onlyAlphabets: true };
+  }
+  return null;
+};
+const phoneNumberValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  const value: string = control.value;
+  const isValidPhoneNumber: boolean = /^\d{10}$/.test(value); // Regular expression to check for 10 digits
+  if (!isValidPhoneNumber) {
+    return { phoneNumberInvalid: true };
+  }
+  return null;
+};
 
 
 @Component({
@@ -35,7 +50,8 @@ export class DynamicFormCreationComponent {
   isUniqueArr: any = [];
   listOfServices: any = [];
   searchItem: string = ''
-  isLoading:boolean  = false;
+  isLoading: boolean = false;
+  servicesList:any = [];
 
   ngOnInit() {
     this.formGroup = this.formBuilder.group({});
@@ -57,18 +73,22 @@ export class DynamicFormCreationComponent {
           });
           formControl = this.formBuilder.array(checkboxOptions);
           break;
-          case 'text':
+        case 'text':
+          if (field.field_key == 'name') {
+            formControl = new FormControl(fieldValue, [Validators.required, noSpecialCharactersValidator, onlyAlphabetsValidator]);
+            break;
+          } else {
             formControl = new FormControl(fieldValue, [Validators.required, noSpecialCharactersValidator]);
             break;
+          }
         case 'email':
           formControl = this.formBuilder.control(fieldValue, [Validators.required, Validators.email]);
           break;
         case 'number':
-          if(field.field_key == 'phone') 
-          {
+          if (field.field_key == 'phone') {
             formControl = this.formBuilder.control('', [Validators.required, phoneNumberValidator])
             break;
-          }else{
+          } else {
             formControl = this.formBuilder.control(null, [Validators.required]);
             break;
           }
@@ -79,7 +99,7 @@ export class DynamicFormCreationComponent {
           formControl = this.formBuilder.control(new Date(fieldValue), [Validators.required]);
           break;
         case 'multipleValues':
-          formControl = this.formBuilder.control('', [Validators.required]);
+          formControl = this.formBuilder.control('');
           break;
         case 'dropdown':
           formControl = this.formBuilder.control(fieldValue, [Validators.required]);
@@ -106,6 +126,8 @@ export class DynamicFormCreationComponent {
     this.isUniqueArr = this.userDetails.app_meta_details.table_fileds.filter((data: any) => {
       return data.isUnique == true
     })
+    this.servicesList = this.userDetails.app_meta_details.servicesList.categories;
+
   }
 
   createEntitySchema(field: any) {
@@ -124,12 +146,12 @@ export class DynamicFormCreationComponent {
     this.navigationService.navigateWithoutLocationChange(commands);
   }
 
-  onServiceOptionChange(event: any, selectedObj: any) {
+  onServiceOptionChange(event: any, categoryName:any , selectedObj: any) {
     if (event.target.checked) {
-      this.listOfServices.push({ ...selectedObj, createdAt: new Date() })
+      this.listOfServices.push({ ...selectedObj, createdAt: new Date(), categoryName : categoryName })
     } else {
       this.listOfServices = this.listOfServices.filter((data: any) => {
-        return data.service_name != selectedObj.service_name
+        return data.itemName != selectedObj.itemName
       })
     }
   }

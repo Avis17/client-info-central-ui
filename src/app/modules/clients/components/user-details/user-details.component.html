@@ -7,7 +7,7 @@
         data-bs-target="#exampleModal"></p-button>
     </div>
     <div class="row">
-        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" (click)="onClickCardBox('invoices')">
+        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" matTooltip="export list of invoices" matTooltipPosition="above" (click)="onClickCardBox('invoices')">
             <div class="card card-1 border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -24,7 +24,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" (click)="onClickCardBox('products')">
+        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" matTooltip="export list of products" matTooltipPosition="above" (click)="onClickCardBox('products')">
             <div class="card card-5 border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -91,15 +91,15 @@
                             <div style="text-align: start;">
                                 <div class="row ml-3">
                                     <ng-container *ngFor="let obj of clientInfo[key.field_key]">
-                                        <div class="col-lg-5 col-sm-12 p-0 card-box" [ngClass]="{'no-card-box': obj.fieldValue === false}">
+                                        <div class="col-lg-12 col-sm-12 p-0">
                                           <div class="col-12" *ngIf="obj.fieldValue">
                                             <ng-container>
-                                              <label class="m-0 f-500">{{ obj.fieldName | titlecase }}</label>
+                                              <span class="m-0 f-500 card-box">{{ obj.fieldName | titlecase }}</span>
                                             </ng-container>
                                           </div>
                                           <div class="col-12" *ngIf="obj.fieldValue === undefined">
                                             <ng-container>
-                                              <label class="m-0 f-500">{{ obj }}</label>
+                                              <span class="m-0 f-500 card-box">{{ obj }}</span>
                                             </ng-container>
                                           </div>
                                         </div>
@@ -118,23 +118,13 @@
     </div>
     <div class="col-lg-8 col-sm-12 mt-5 mb-5">
         <div>
-            <h1 class="text-decoration-underline text-center">List Of Previous Services</h1>
-            <!-- <p-timeline [value]="inVoicesList">
-                <ng-template pTemplate="content" let-event>
-                    <small class="p-text-secondary">{{ event.createdAt | date : 'medium' }}</small>
-                </ng-template>
-                <ng-template pTemplate="opposite" let-event>
-                    Bill No - {{ event.billNo }} <br>
-                    Amount - {{ event.finalTotal }}
-                </ng-template>
-            </p-timeline> -->
             <p-timeline [value]="inVoicesList" align="alternate" styleClass="customized-timeline">
                 <ng-template pTemplate="content" let-event>
                     <span class="custom-marker shadow-2" [style.backgroundColor]="event.color">
                         <i ngClass="pi pi-check"></i>
                     </span>
                 </ng-template>
-                <ng-template pTemplate="content" let-event>
+                <ng-template pTemplate="content" let-event >
                     <p-card [header]="'Bill No - '+ event.billNo" [subheader]="event.createdAt">
                         <h3 style="font-weight: 500;">
                             Bill Amount - Rs.{{ event.finalTotal }}
@@ -142,12 +132,12 @@
                         <mat-chip-set class="example-chip"  cdkDropListOrientation="horizontal"
                             >
                             <mat-chip class="example-box" *ngFor="let service of event.products">
-                                {{service.name}} - <label>{{service.price}}</label>
+                                {{service.name}} - <label>Rs.{{service.price}}</label>
                             </mat-chip>
                         </mat-chip-set>
 
                         <a class="mt-3 cursor-pointer" (click)="onDownloadBill(event)">Download Invoice</a>
-
+                        <h5 class="mt-5">Billed By - {{event.billedBy || ''}}</h5>
                         <!-- <button pButton label="Read more" class="p-button-text"></button> -->
                     </p-card>
                 </ng-template>
@@ -167,17 +157,17 @@
             </div>
             <div class="modal-body">
                 <div>
-                    <div class="row mt-4">
-                        <div class="col-sm-12 col-lg-6"
-                            *ngFor="let option of userDetails?.app_meta_details?.servicesList;let j = index">
-                            <label>
-                                <input class="form-check-input" type="checkbox"
-                                    (change)="onServiceOptionChange($event, option)">
-                                {{ option.service_name }} - <span
-                                    style="color: blueviolet;">Rs.{{option.service_price}}</span>
-                            </label>
-                        </div>
-                    </div>
+                    <div class="row mt-4" >
+						<div class="col-sm-12 col-lg-6 my-3" *ngFor="let category of totalServicesList;let j = index">
+							<h4 class="text-decoration-underline">Category - {{category.categoryName}}</h4>
+							<div  *ngFor="let option of category.items">
+								<span>
+									<input class="form-check-input" type="checkbox" (change)="onServiceOptionChange($event, category.categoryName, option)">
+									{{ option.itemName }} - <span style="color: blueviolet;">Rs.{{option.itemPrice}}</span>
+								</span>
+							</div>
+						</div>
+					</div>
                 </div>
             </div>
             <div class="modal-footer">

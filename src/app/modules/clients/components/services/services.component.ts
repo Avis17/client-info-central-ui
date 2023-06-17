@@ -22,10 +22,10 @@ export class ServicesComponent implements CanComponentDeactivate {
   itemsPerPage = 10;
   searchText :any = '';
   isLoading:boolean  = false;
-
+  newCategoryName : string = ''
   constructor(private authService: AuthGuardService, private cryptService: CryptoService, private appMetaService: AppMetaCreationService, private errorHandlingService: ErrorHandlingService) {
     this.userDetails = this.authService.getUserDetails();
-    this.servicesList = [...this.userDetails?.app_meta_details?.servicesList] || []
+    this.servicesList = [...this.userDetails?.app_meta_details?.servicesList.categories] || []
   }
 
   updateServicesData(resolve: any) {
@@ -33,7 +33,9 @@ export class ServicesComponent implements CanComponentDeactivate {
       _id: this.userDetails.app_meta_details._id,
       data: {
         ...this.userDetails.app_meta_details,
-        servicesList: this.servicesList
+        servicesList: {
+          categories : this.servicesList
+        }
       }
     }
     delete query.data._id;
@@ -63,25 +65,57 @@ export class ServicesComponent implements CanComponentDeactivate {
     service.isEdit = true
   }
 
-  onDelete(service: any) {
-    this.servicesList = this.servicesList.filter((data: any) => {
-      return data != service
-    })
+  onDelete(service: any,category:any,index:number) {
+    // this.servicesList.find((data:any)=>{
+    //   return data.categoryName == category.categoryName
+    // }).items.removeAt(index)
+    category.items.splice(index, 1)
   }
 
-  onCancel(service: any) {
-    this.servicesList = [...this.userDetails.app_meta_details.servicesList];
-    service.isEdit = false;
+  onCancel(service: any, category:any,index:number) {
+    if(service.itemName != '' && service.itemPrice != ''){
+      service.isEdit = false;
+    }else{
+      category.items.splice(index, 1);
+    }
   }
 
-  onSave(service: any) {
-    service.isEdit = false
+  onSave(service: any,category:any,index:number) {
+    if(service.itemName != '' && service.itemPrice != ''){
+      service.isEdit = false;
+    }
   }
 
   onAddService() {
     this.servicesList.push(this.newService);
     this.newService = {}
     console.log(this.servicesList)
+  }
+
+  onAddServiceOnCategory(category:any){
+    category.items.push({
+      itemName: '',
+      itemPrice : '',
+      isEdit : true
+    })
+  }
+
+  onAddNewCategory(){
+    this.servicesList.push({
+      categoryName : this.newCategoryName,
+      items : [
+        {
+          itemName: '',
+          itemPrice : '',
+          isEdit : true
+        }
+      ]
+    })
+    this.newCategoryName = ''
+  }
+
+  onRemoveCategory(category:any, index:number){
+    this.servicesList.splice(index, 1)
   }
 
   canDeactivate(): any {

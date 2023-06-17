@@ -4,11 +4,6 @@
 <nav class="navbar navbar-expand-sm navbar-dark bg-secondary d-flex justify-content-between">
     <a class="navbar-brand" href="#">INVOICE GENERATOR</a>
     <div>
-        <!-- <button type="button" class="btn btn-secondary btn-block mb-3 ml-3"
-            (click)="generatePDF('download')">Download Invoice</button>
-        <button type="button" class="btn btn-secondary btn-block mb-3 ml-3"
-            (click)="generatePDF('print')">Print
-            Invoice</button> -->
         <button type="submit" class="btn btn-warning ml-3" data-bs-toggle="modal" data-bs-target="#exampleModal">Update
             T&C</button>
     </div>
@@ -83,7 +78,7 @@
                                                 id="productName" [(ngModel)]="product.name" #ProductName="ngModel"
                                                 (change)="onProductChange($event, i)"
                                                 required>
-                                                <option *ngFor="let service of servicesList" [value]="service.service_name">{{service.service_name}}</option>
+                                                <option *ngFor="let service of servicesList" [value]="service.itemName">{{service.itemName}}</option>
                                             </select>                                   
                                         </td>
                                         <td>
@@ -238,7 +233,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" data-bs-dismiss="modal" [disabled]="onValidateTc()" class="btn btn-info">Save changes</button>
+                <button type="button" data-bs-dismiss="modal" [disabled]="onValidateTc()" (click)="onSaveTermsList()" class="btn btn-info">Save changes</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>

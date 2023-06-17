@@ -103,4 +103,10 @@ th {
 
 ::ng-deep .md-drppicker .btn.btn-default{
     margin-right: 10px !important;
+    color: #000 !important;
+}
+
+
+::ng-deep .p-progressbar .p-progressbar-value {
+    background : #fa9f1b !important
 }

@@ -63,7 +63,8 @@
         <div class="col-lg-6 col-md-6 col-sm-12">
             <input type="text" class="form-control custom-date" ngxDaterangepickerMd [(ngModel)]="selectedDates"
                 [showCustomRangeLabel]="true" [alwaysShowCalendars]="true" (ngModelChange)="ngModelDateChange($event)"
-                [ranges]="ranges" [linkedCalendars]="true" [isInvalidDate]="isInvalidDate" [showClearButton]="true"
+                [ranges]="ranges"                 [locale]="{ format: 'DD-MM-YYYY', daysOfWeek: ['S', 'M', 'T', 'W', 'T', 'F', 'S']}"
+                [linkedCalendars]="true" [isInvalidDate]="isInvalidDate" [showClearButton]="true"
                 placeholder="Filter by dates" />
         </div>
     </div>

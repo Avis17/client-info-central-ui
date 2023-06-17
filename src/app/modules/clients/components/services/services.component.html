@@ -3,57 +3,82 @@
 <div class="m-sm-1 m-lg-5">
     <div class="row">
         <div class="col-sm-12 col-md-6 col-lg-6 mb-3">
-          <input type="text" placeholder="Search service" [(ngModel)]="searchText" class="form-control">
+            <input type="text" placeholder="Search service" [(ngModel)]="searchText" class="form-control">
         </div>
         <div class="col-sm-12 col-md-6 col-lg-6 mb-2 text-end">
-          <p-button label="Create Service" icon="pi pi-plus" class="mr-2"
-            data-bs-toggle="modal" data-bs-target="#exampleModal"></p-button>
+            <p-button label="Create Category" icon="pi pi-plus" class="mr-2" data-bs-toggle="modal"
+                data-bs-target="#exampleModal"></p-button>
         </div>
-      </div>
-      
+    </div>
+
     <div class="card">
         <div class="card-header">
             List Of Services
         </div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>S no</th>
-                            <th>Service Name</th>
-                            <th>Service Price</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let service of (servicesList | search:searchText) | paginate: { itemsPerPage: 5, currentPage: currentPage }; let i = index">
-                            <td>{{i+1}}</td>
-                            <td>
-                                <span *ngIf="!service.isEdit">{{service?.service_name}}</span>
-                                <input [(ngModel)]="service.service_name" *ngIf="service.isEdit" type="text"
-                                    class="form-control" placeholder="Enter Service Name">
-                            </td>
-                            <td>
-                                <span *ngIf="!service.isEdit">{{service?.service_price}}</span>
-                                <input [(ngModel)]="service.service_price" *ngIf="service.isEdit" type="number"
-                                    class="form-control" placeholder="Enter Service Price">
-                            </td>
-                            <td>
-                                <button *ngIf="!service.isEdit" class="btn btn-warning mr-3 mb-2"
-                                    (click)="onEdit(service)">Edit</button>
-                                <button *ngIf="!service.isEdit" class="btn btn-danger mb-2"
-                                    (click)="onDelete(service)">Delete</button>
-                                <button *ngIf="service.isEdit" class="btn btn-info mr-3 mb-2"
-                                    (click)="onCancel(service)">Cancel</button>
-                                <button *ngIf="service.isEdit" class="btn btn-success mb-2"
-                                    (click)="onSave(service)">Save</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+            <div *ngFor="let category of servicesList;let j=index" class="mb-4">
+                <mat-accordion class="example-headers-align" multi>
+                    <mat-expansion-panel>
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                {{category.categoryName}}
+                            </mat-panel-title>
+                            <mat-panel-description>
+                                <!-- Type your name and age -->
+                            </mat-panel-description>
+                        </mat-expansion-panel-header>
+
+                        <div style="text-align: end;">
+                            <!-- <div class="m-3">
+                            </div> -->
+                            <a style="cursor: pointer; text-decoration: underline;margin-right: 2rem;" (click)="onRemoveCategory(category, j)">remove Category</a>
+                            <p-button label="Add Service" icon="pi pi-plus" class="mr-2" (click)="onAddServiceOnCategory(category)"></p-button> 
+                        </div>
+                        <!-- content goes here -->
+                        <div class="table-responsive mt-3">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>S No</th>
+                                        <th>Service Name</th>
+                                        <th>Service Price</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        *ngFor="let service of (category.items | search:searchText) | paginate: { itemsPerPage: 5, currentPage: currentPage }; let i = index">
+                                        <td>{{i+1}}</td>
+                                        <td>
+                                            <span *ngIf="!service.isEdit">{{service?.itemName}}</span>
+                                            <input [(ngModel)]="service.itemName" *ngIf="service.isEdit" type="text"
+                                                class="form-control w-200" placeholder="Enter Service Name">
+                                        </td>
+                                        <td>
+                                            <span *ngIf="!service.isEdit">{{service?.itemPrice}}</span>
+                                            <input [(ngModel)]="service.itemPrice" *ngIf="service.isEdit" type="number"
+                                                class="form-control w-200" placeholder="Enter Service Price">
+                                        </td>
+                                        <td>
+                                            <button *ngIf="!service.isEdit" class="btn btn-warning mr-3 mb-2"
+                                                (click)="onEdit(service)">Edit</button>
+                                            <button *ngIf="!service.isEdit" class="btn btn-danger mb-2"
+                                                (click)="onDelete(service, category, i)">Delete</button>
+                                            <button *ngIf="service.isEdit" class="btn btn-info mr-3 mb-2"
+                                                (click)="onCancel(service,category, i)">Cancel</button>
+                                            <button *ngIf="service.isEdit" class="btn btn-success mb-2"
+                                                (click)="onSave(service, category, i)">Save</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+                        </div>
+
+                    </mat-expansion-panel>
+                </mat-accordion>
             </div>
+
         </div>
     </div>
 
@@ -61,23 +86,25 @@
 
 <div class="modal" id="exampleModal" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Add Service</h5>
-          <button type="btn btn-primary" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Category</h5>
+                <button type="btn btn-primary" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                    <mat-form-field class="" style="width: 100%;">
+                        <mat-label>Enter Category Name</mat-label>
+                        <input matInput type="text" [(ngModel)]="newCategoryName">
+                        <mat-error *ngIf="newCategoryName == ''">This field is required.</mat-error>
+                    </mat-form-field>
+            </div>
+            <div class="modal-footer">
+                <button type="button" [disabled]="newCategoryName == ''"
+                    data-bs-dismiss="modal" (click)="onAddNewCategory()" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
-        <div class="modal-body">
-            <input [(ngModel)]="newService.service_name"  type="text"
-            class="form-control mt-2 mb-3" placeholder="Enter Service Name">
-            <input [(ngModel)]="newService.service_price" type="number"
-            class="form-control mb-3" placeholder="Enter Service Price">
-        </div>
-        <div class="modal-footer">
-          <button type="button" [disabled]="!newService.service_name || !newService.service_price" data-bs-dismiss="modal" (click)="onAddService()" class="btn btn-primary">Save changes</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-      </div>
     </div>
-  </div>
+</div>

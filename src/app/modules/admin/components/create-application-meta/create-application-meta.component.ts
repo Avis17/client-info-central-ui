@@ -3,7 +3,7 @@ import { AuthGuardService } from 'src/app/services/auth-guard.service';
 import { ToastrService } from 'ngx-toastr';
 import { NavigationService } from 'src/app/services/navigation.service';
 import { StepperOrientation, MatStepperModule } from '@angular/material/stepper';
-import { FormControl, FormGroup, FormArray, FormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormArray, FormBuilder, Validators, AbstractControl } from '@angular/forms';
 import { AppMetaCreationService } from '../../services/app-meta-creation.service';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
@@ -75,6 +75,11 @@ export class CreateApplicationMetaComponent implements OnInit {
   ]
 
   fieldsList: any = [];
+  termsList: any = [
+    { terms: "Order can be return in max 10 days." },
+    { terms: "Warrenty of the product will be subject to the manufacturer terms and conditions." },
+    { terms: "This is system generated invoice." }
+  ]
 
   firstFormGroup: FormGroup;
   secondFormGroup: FormGroup;
@@ -84,6 +89,8 @@ export class CreateApplicationMetaComponent implements OnInit {
   isSecondFormValid = false;
   isThirdFormValid = false;
   isServiceFormValid = false;
+
+  serviceForm: FormGroup;
 
   @ViewChild('modal') private fieldModalComponent: ModalComponent
   @ViewChild('modal1') private chartModalComponent: ModalComponent
@@ -130,6 +137,7 @@ export class CreateApplicationMetaComponent implements OnInit {
 
   constructor(
     private _formBuilder: FormBuilder,
+    private formBuilder: FormBuilder,
     private navigationService: NavigationService,
     private authGuardService: AuthGuardService,
     private toastr: ToastrService,
@@ -203,6 +211,27 @@ export class CreateApplicationMetaComponent implements OnInit {
 
   ngOnInit() {
     this.getAppCategories();
+    this.serviceForm = this.formBuilder.group({
+      categories: this.formBuilder.array([
+        this.createCategory()
+      ])
+    });
+  }
+
+  createCategory(): FormGroup {
+    return this.formBuilder.group({
+      categoryName: ['', Validators.required],
+      items: this.formBuilder.array([
+        this.createItem()
+      ])
+    });
+  }
+
+  createItem(): FormGroup {
+    return this.formBuilder.group({
+      itemName: ['', Validators.required],
+      itemPrice: ['', Validators.required]
+    });
   }
 
   addServiceListGroup(){
@@ -335,7 +364,7 @@ export class CreateApplicationMetaComponent implements OnInit {
     })
     console.log(isUniqueThere)
     if(isUniqueThere.length >= 1){
-      let data = { ...this.firstFormGroup.value, ...this.secondFormGroup.value, ...this.servicesFormGroup.value , ...this.thirdFormGroup.value, billingdetails: {...this.furthFormGroup.value} }
+      let data = { ...this.firstFormGroup.value, ...this.secondFormGroup.value, servicesList : {...this.serviceForm.value} , ...this.thirdFormGroup.value, billingdetails: {...this.furthFormGroup.value}, terms : this.termsList }
       this.isLoading = true;
       this.appMetaService.createNewAppMeta(data).subscribe((res: any) => {
         this.isLoading = false;
@@ -351,4 +380,36 @@ export class CreateApplicationMetaComponent implements OnInit {
     }
    
   }
-}
+
+  // new functionality
+  getCategoryControls(): FormGroup[] {
+    return (this.serviceForm.get('categories') as FormArray).controls as FormGroup[];
+  }
+
+  getCategoryItems(category: FormGroup): FormArray {
+    return category.get('items') as FormArray;
+  }
+
+
+  addCategory() {
+    const categories = this.serviceForm.get('categories') as FormArray;
+    categories.push(this.createCategory());
+  }
+
+
+  addItem(category: FormGroup) {
+    const items = category.get('items') as FormArray;
+    items.push(this.createItem());
+  }
+
+  removeCategory(index: number) {
+    const categories = this.serviceForm.get('categories') as FormArray;
+    categories.removeAt(index);
+  }
+  
+  removeItem(category: FormGroup, index: number) {
+    const items = category.get('items') as FormArray;
+    items.removeAt(index);
+  }
+
+  }

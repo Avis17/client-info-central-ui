@@ -43,7 +43,8 @@
 
     <div class="row">
         <div class="col-lg-6 col-sm-12 col-md-6 mb-3 mb-md-0">
-            <input type="text" placeholder="Search Followup" (input)="applyFilterGlobal($event, 'contains')" [(ngModel)]="searchText" class="form-control mb-3">
+            <input type="text" placeholder="Search Followup" (input)="applyFilterGlobal($event, 'contains')"
+                [(ngModel)]="searchText" class="form-control mb-3">
         </div>
         <div class="col-lg-6 col-sm-12 col-md-6 text-end mb-3">
             <p-button label="New Customer Enquiry" icon="pi pi-plus" class="mr-2" data-bs-toggle="modal"
@@ -53,21 +54,40 @@
 
     <div class="col-lg-4 col-md-12 col-sm-12 mt-5 mb-5 card">
         <div *ngIf="customerList.length > 0">
-            <div *ngFor="let customer of (customerList | search:searchText) | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }">
+            <div
+                *ngFor="let customer of (customerList | search:searchText) | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }">
                 <div class="product-item p-3 row" pDraggable="customers" (onDragStart)="dragStart(customer)"
                     (onDragEnd)="dragEnd()">
-                    <div class="customer-info col-lg-8 col-sm-12">
-                        <h5 class="mb-2 highlight">{{ customer.name | titlecase}}</h5>
-                        <p><span>Phone:</span> {{ customer.phone }}</p>
-                        <p><span>Status:</span> {{ customer.interest }}</p>
-                        <p><span>Place:</span> {{ customer.place }}</p>
-                        <p class="wrapped-text"><span>Enquiry:</span> {{ customer.comments }}</p>
-                    </div>
-                    <div class="customer-action col-lg-4 col-sm-12 box-center">
-                        <button class="follow-up-button" *ngIf="showUpdate"
-                            (click)="updateStatus(customer)">Update</button>
-                        <p-dropdown [options]="statusOptions" *ngIf="!showUpdate" [(ngModel)]="customer.interest"
-                            (onChange)="updateInterest(customer)"></p-dropdown>
+                    <div class="customer-info col-lg-12 col-sm-12">
+                        <h4 class="mb-2 highlight text-decoration-underline">{{ customer.name | titlecase}}</h4>
+                       
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-12">
+                                <p><span>Phone:</span> {{ customer.phone }}</p>
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                                <p><span>Status:</span> {{ customer.interest }}</p>
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                                <p><span>Place:</span> {{ customer.place }}</p>
+                            </div>
+                            <div class="col-lg-6 col-sm-12">
+                                <p class="wrapped-text"><span>Enquiry:</span> {{ customer.comments }}</p>
+                            </div>
+                        </div>
+                        <button class="follow-up-button" *ngIf="!customer.isEdit"
+                            (click)="customer.isEdit = true">Update</button>
+                        <div class="row">
+                            <div class="col">
+                                <p-dropdown [options]="statusOptions" *ngIf="customer.isEdit"
+                                    [(ngModel)]="customer.interest"
+                                    (onChange)="updateInterest(customer)"></p-dropdown>
+                            </div>
+                            <div class="col">
+                                <button class="btn btn-info" *ngIf="customer.isEdit"
+                                    (click)="customer.isEdit = false">Cancel</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <hr>
@@ -83,10 +103,11 @@
     </div>
     <div class="col-lg-8 col-md-12 col-sm-12 mt-5 mb-5">
         <div class="card ml-2" style="min-height: 100%;" pDroppable="customers" (onDrop)="drop()">
-            <p-table #tableref [value]="selectedCustomers" [paginator]="true" [rows]="5"
-                [showCurrentPageReport]="true" [reorderableColumns]="true" [alwaysShowPaginator]="false"
-                [columns]="cols" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                [rowsPerPageOptions]="[5, 10, 25, 50]" [tableStyle]="{ 'width': 'auto', 'min-width' : '100%' }" paginatorPosition="top">
+            <p-table #tableref [value]="selectedCustomers" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
+                [reorderableColumns]="true" [columns]="cols"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [rowsPerPageOptions]="[5, 10, 25, 50]" [tableStyle]="{ 'width': 'auto', 'min-width' : '100%' }"
+                paginatorPosition="top">
                 <ng-template pTemplate="header">
                     <tr *ngIf="selectedCustomers.length > 0">
                         <th style="text-align: center !important;">S No</th>
@@ -154,11 +175,13 @@
 
                 <mat-form-field class="full-width">
                     <mat-label>Enquiry</mat-label>
-                    <textarea [(ngModel)]="newCustomerFollowup.comments" matInput placeholder="Enter Customer Enquiry"></textarea>
+                    <textarea [(ngModel)]="newCustomerFollowup.comments" matInput
+                        placeholder="Enter Customer Enquiry"></textarea>
                 </mat-form-field>
             </div>
             <div class="modal-footer">
-                <button type="button" data-bs-dismiss="modal" [disabled]="checkValidations()" (click)="onAddNewFollowUp()" class="btn btn-primary">Save
+                <button type="button" data-bs-dismiss="modal" [disabled]="checkValidations()"
+                    (click)="onAddNewFollowUp()" class="btn btn-primary">Save
                     changes</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>

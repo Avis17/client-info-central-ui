@@ -24,6 +24,8 @@ import { DragDropModule } from 'primeng/dragdrop';
 import { CustomerFollowupComponent } from './components/customer-followup/customer-followup.component';
 import { TagModule } from 'primeng/tag';
 import { DropdownModule } from 'primeng/dropdown';
+import { ProgressBarModule } from 'primeng/progressbar';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 
 
@@ -54,7 +56,9 @@ import { DropdownModule } from 'primeng/dropdown';
     TagModule,
     DragDropModule,
     DropdownModule,
-    NgxDaterangepickerMd.forRoot()
+    ProgressBarModule,
+    NgxDaterangepickerMd.forRoot(),
+    MatExpansionModule
   ],
   providers: [CanDeactivateGuard]
 })

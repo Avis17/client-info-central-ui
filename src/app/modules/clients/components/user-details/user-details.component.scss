@@ -77,15 +77,27 @@ label{
 
 .card-box{
     background: lightgray;
-    border-radius: 25px;
-    padding: 2px !important;
-    margin: 10px !important;
+    padding: 5px 20px;
+    border-radius: 20px;
+    color: darkslategrey;
 }
 
 .no-card-box {
     /* Add your desired styles for the false condition */
     /* For example, you can set display: none; to hide the element */
     display: none !important;
+}
+
+::ng-deep .p-card-subtitle{
+    text-align: start !important;
+}
+
+::ng-deep .p-card-title{
+    text-align: start !important;
+}
+
+::ng-deep .p-card-content{
+    text-align: start !important;
 }
   
 .f-500{

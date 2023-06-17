@@ -58,7 +58,9 @@ export class HomeComponent implements OnInit {
   serviceChartDays: any;
   netProfitAndExpenses: any;
   invalidDates: moment.Moment[] = [moment().add(2, 'days'), moment().add(3, 'days'), moment().add(5, 'days')];
-  selectedPeriod :any = 'Overall Datas'
+  selectedPeriod: any = 'Overall Datas';
+  customDayLabels = ['S', 'M', 'T', 'W', 'Th', 'F', 'S'];
+  progressServiceList: any = []
   isInvalidDate = (m: moment.Moment) => {
     return this.invalidDates.some(d => d.isSame(m, 'day'))
   }
@@ -82,7 +84,9 @@ export class HomeComponent implements OnInit {
       return data.products
     })
     this.listOfServices = this.flattenArray(response);
-    let barDetails: any = this.getDestructuredBarChart(this.listOfServices, 'name');
+    this.progressServiceList = this.getServiceStats(this.listOfServices);
+    console.log(this.progressServiceList)
+    let barDetails: any = this.getDestructuredBarChart(this.listOfServices, 'categoryName');
     let serviceChartData = {
       labels: barDetails.labels,
       datasets: [
@@ -141,6 +145,43 @@ export class HomeComponent implements OnInit {
   flattenArray(arr: any) {
     return arr.flat(Infinity);
   }
+
+  getServiceStats(services: any[]): any[] {
+    const serviceStats: { [name: string]: { count: number, percent: string, categoryName: string } } = {};
+
+    const totalCount = services.length;
+
+    for (const service of services) {
+      const serviceName = service.name;
+
+      if (serviceStats[serviceName]) {
+        serviceStats[serviceName].count++;
+      } else {
+        serviceStats[serviceName] = {
+          count: 1,
+          percent: '',
+          categoryName: service.categoryName
+        };
+      }
+    }
+
+    const result: any[] = [];
+    for (const serviceName in serviceStats) {
+      const serviceCount = serviceStats[serviceName].count;
+      const servicePercent = ((serviceCount / totalCount) * 100).toFixed(2);
+      const categoryName = serviceStats[serviceName].categoryName;
+
+      result.push({
+        name: serviceName,
+        count: serviceCount,
+        percent: servicePercent,
+        categoryName: categoryName
+      });
+    }
+
+    return result;
+  }
+
 
 
   getAllAggregateDatas(queryData?: any) {
@@ -233,7 +274,7 @@ export class HomeComponent implements OnInit {
         "collectionName": 'invoices',
         "queryData": queryData
       };
-  
+
       this.entityService.getAllServiceChartDatas(formData).subscribe(
         (res: any) => {
           if (res) {
@@ -249,7 +290,7 @@ export class HomeComponent implements OnInit {
       );
     });
   }
-  
+
   getCustomersInvoicesEntity(queryData?: any) {
     const formData = {
       "schema": '',
@@ -257,7 +298,7 @@ export class HomeComponent implements OnInit {
       "collectionName": 'customers',
       "queryData": queryData || {}
     };
-  
+
     return new Promise((resolve, reject) => {
       this.entityService.getCustomersInvoicesEntity(formData).subscribe(
         (res: any) => {
@@ -283,30 +324,30 @@ export class HomeComponent implements OnInit {
       );
     });
   }
-  
-  onChartPointSelect(event: any, chartName:any, dataArr:any) {
+
+  onChartPointSelect(event: any, chartName: any, dataArr: any) {
     // Access the selected value from the event object
     const index = event.element.index;
-    let filterdDetails:any;
+    let filterdDetails: any;
     let key = dataArr.labels[index].toLowerCase();
-  
-    if(this.isArrayCheck(chartName)){
-      filterdDetails = this.entities.filter((value:any)=>{
-        return value[chartName].some((data:any) => data.fieldName === key && data.fieldValue);
+
+    if (this.isArrayCheck(chartName)) {
+      filterdDetails = this.entities.filter((value: any) => {
+        return value[chartName].some((data: any) => data.fieldName === key && data.fieldValue);
       })
     }
-    else if(this.isDateField(dataArr.labels[index])){
-      filterdDetails = this.entities.filter((value:any)=>{
+    else if (this.isDateField(dataArr.labels[index])) {
+      filterdDetails = this.entities.filter((value: any) => {
         return this.getDateFormated(new Date(value[chartName])) == key
       })
-    } else{
-      filterdDetails = this.entities.filter((value:any)=>{
+    } else {
+      filterdDetails = this.entities.filter((value: any) => {
         return value[chartName] == dataArr.labels[index]
       })
     }
-    this.exportAsXLSX(filterdDetails, chartName);   
+    this.exportAsXLSX(filterdDetails, chartName);
   }
-  
+
   isDateField(value: any): boolean {
     return !isNaN(Date.parse(value));
   }
@@ -319,12 +360,12 @@ export class HomeComponent implements OnInit {
         "collectionName": 'invoices',
         "queryData": queryData
       };
-  
+
       this.entityService.getNetProfitAndExpense(formData).subscribe(
         (res: any) => {
           if (res) {
             this.netProfitAndExpenses = res.data;
-            if(this.netProfitAndExpenses.netProfit){
+            if (this.netProfitAndExpenses.netProfit) {
               this.netProfitAndExpenses.netProfit = this.netProfitAndExpenses?.netProfit?.toFixed(2);
             }
             console.log(this.netProfitAndExpenses);
@@ -447,23 +488,23 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  getDateFormated(date:any){
+  getDateFormated(date: any) {
     return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
   }
 
-  getMomentDateFormated(startDate: any, endDate: any){
+  getMomentDateFormated(startDate: any, endDate: any) {
     const formattedStartDate = new Date(startDate).toLocaleDateString('en-GB', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric'
     });
-  
+
     const formattedEndDate = new Date(new Date(endDate).getTime() - 86400000).toLocaleDateString('en-GB', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric'
     });
-  
+
     return formattedStartDate + " - " + formattedEndDate;
   }
 

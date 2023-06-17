@@ -31,6 +31,7 @@ import { FooterComponent } from 'src/app/components/footer/footer.component';
 import { TitlecasePipe } from 'src/app/pipes/titlecase.pipe';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { DateformatPipe } from 'src/app/pipes/dateformat.pipe';
+import {MatTooltipModule} from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -68,7 +69,8 @@ import { DateformatPipe } from 'src/app/pipes/dateformat.pipe';
     MatNativeDateModule,
     ProgressSpinnerModule,
     NgxPaginationModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatTooltipModule
   ],
   exports: [
     CommonModule,
@@ -103,7 +105,8 @@ import { DateformatPipe } from 'src/app/pipes/dateformat.pipe';
     NgxPaginationModule,
     FooterComponent,
     MatAutocompleteModule,
-    DateformatPipe
+    DateformatPipe,
+    MatTooltipModule
   ]
 })
 export class SharedModule { }
