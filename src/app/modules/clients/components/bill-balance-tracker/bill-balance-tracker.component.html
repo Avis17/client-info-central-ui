@@ -154,13 +154,14 @@
             <div class="modal-body">       
                 <div class="row">
                     <div class="col">
-                        <input placeholder="Enter amount" type="number" class="form-control" [(ngModel)]="addNewAmount">
+                        <input placeholder="Enter amount" type="number" (input)="chechValidAmount()" class="form-control" [(ngModel)]="addNewAmount">
+                        <span *ngIf="isInvalidPayAmount" style="color: red;">Entered amount greater than Balance Amount</span>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button"
-                    [disabled]="!addNewAmount"
+                    [disabled]="!addNewAmount || isInvalidPayAmount"
                     data-bs-dismiss="modal" (click)="onSaveBill()" class="btn btn-primary">Save changes</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>

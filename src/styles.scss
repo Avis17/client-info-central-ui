@@ -142,3 +142,10 @@ $fontWeights: 400 600 700 800;
     margin-right: 10px !important;
     color: #000 !important;
 }
+
+::ng-deep .p-card{
+    background-color: #E1E5EE !important;
+    color: #495057 !important;
+    box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12) !important;
+    border-radius: 6px !important;
+}

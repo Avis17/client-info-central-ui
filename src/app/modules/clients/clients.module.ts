@@ -26,6 +26,8 @@ import { TagModule } from 'primeng/tag';
 import { DropdownModule } from 'primeng/dropdown';
 import { ProgressBarModule } from 'primeng/progressbar';
 import {MatExpansionModule} from '@angular/material/expansion';
+import { NewBillComponent } from './components/new-bill/new-bill.component';
+import { TabViewModule } from 'primeng/tabview';
 
 
 
@@ -44,6 +46,7 @@ import {MatExpansionModule} from '@angular/material/expansion';
     BillBalanceTrackerComponent,
     RebillComponent,
     CustomerFollowupComponent,
+    NewBillComponent,
   ],
   imports: [
     CommonModule,
@@ -58,7 +61,8 @@ import {MatExpansionModule} from '@angular/material/expansion';
     DropdownModule,
     ProgressBarModule,
     NgxDaterangepickerMd.forRoot(),
-    MatExpansionModule
+    MatExpansionModule,
+    TabViewModule
   ],
   providers: [CanDeactivateGuard]
 })

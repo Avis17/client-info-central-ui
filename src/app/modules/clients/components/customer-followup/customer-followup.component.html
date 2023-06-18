@@ -11,7 +11,25 @@
                                 Total Pending Enquiry
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                &#8377; {{customerList.length}}</div>
+                                {{customerList.length}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer">
+            <div class="card card-3 border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs card-text-color text-uppercase mb-1">
+                                Total Interested Enquiry
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{getInterestedCount()}}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-user fa-2x text-gray-300"></i>
@@ -29,7 +47,7 @@
                                 Total Completed Enquiry
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                &#8377; {{selectedCustomers.length}}</div>
+                                {{selectedCustomers.length}}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-user fa-2x text-gray-300"></i>
@@ -141,9 +159,6 @@
                     </tr>
                 </ng-template>
             </p-table>
-            <tr *ngIf="selectedCustomers.length == 0" class="mt-5">
-                <td style="text-align: center;display: block;margin: 10px;" colspan="5">No Active customers!</td>
-            </tr>
         </div>
     </div>
 </div>

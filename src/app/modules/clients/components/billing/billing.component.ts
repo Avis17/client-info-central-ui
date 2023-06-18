@@ -39,6 +39,7 @@ export class BillingComponent implements OnDestroy {
   ) {
     // this.generatePDF_Format_2();
     this.userDetails = this.authService.getUserDetails();
+    this.getBillNo({});
     this.termsList = this.userDetails.app_meta_details.terms || [
       { terms: "Order can be return in max 10 days." },
       { terms: "Warrenty of the product will be subject to the manufacturer terms and conditions." },
@@ -52,7 +53,6 @@ export class BillingComponent implements OnDestroy {
     }).reduce((initialValue: any, data: any) => {
       return initialValue = [...initialValue, ...data]
     }, [])
-    console.log(this.servicesList)
     this.invoicedetails = entityService.getInvoiceDetails();
     if (this.invoicedetails) {
       console.log(this.invoicedetails)
@@ -68,6 +68,7 @@ export class BillingComponent implements OnDestroy {
   termsList: any;
   isBillCreated: boolean = false;
   isInvlidPartAmount: boolean = false;
+  billNo:Number = 1;
 
   ngOnDestroy(): void {
     this.entityService.setinvoiceDetails({})
@@ -449,6 +450,7 @@ export class BillingComponent implements OnDestroy {
         this.errorHandlingService.errorAlertMsg(err);
       }
     );
+    this.addBilNo({billdetails:{no:this.invoice.billNo}});
   }
 
   generatePDF_Format_2() {
@@ -703,6 +705,49 @@ export class BillingComponent implements OnDestroy {
 
   getTax(taxname: any) {
     this.invoice.cgstAmount = (this.invoice.subTotal * this.invoice.cgst) / 100
+  }
+
+  getBillNo(query: any) {
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'invoiceNo',
+      "queryData": {}
+    }
+    this.isLoading = true;
+    this.entityService.getAllEntities(formData).subscribe((res: any) => {
+      this.isLoading = false;
+      if (res) {
+        if(res.data.length > 0){
+          this.invoice.billNo = Number(res.data[0].billdetails.no)+1;
+        }else{
+          this.addBilNo({billdetails:{no:1}})
+        }
+       console.log(res)
+      }
+    }, (err: any) => {
+      this.isLoading = false;
+      this.errorHandlingService.errorAlertMsg(err);
+    })
+  }
+
+  addBilNo(data:any){
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'invoiceNo',
+      "collectionData": data
+    }
+    this.isLoading = true;
+    this.entityService.addNewEntity(formData).subscribe((res: any) => {
+      this.isLoading = false;
+      if (res.status == 200) {
+        // Swal.fire()
+      }
+    }, (err) => {
+      this.isLoading = false;
+      this.errorHandlingService.errorAlertMsg(err);
+    })
   }
 
 }

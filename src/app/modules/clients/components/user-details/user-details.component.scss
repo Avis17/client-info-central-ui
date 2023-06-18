@@ -6,7 +6,7 @@ label{
 }
 
 ::ng-deep .p-card-header{
-    background-color: bisque !important;
+    background-color: #E1E5EE !important;
 }
 
 .img-size{
@@ -86,6 +86,14 @@ label{
     /* Add your desired styles for the false condition */
     /* For example, you can set display: none; to hide the element */
     display: none !important;
+}
+
+::ng-deep .p-card-header{
+    width: 50% !important;
+}
+
+::ng-deep .p-timeline-event-content{
+    margin-bottom: 10px !important;
 }
 
 ::ng-deep .p-card-subtitle{

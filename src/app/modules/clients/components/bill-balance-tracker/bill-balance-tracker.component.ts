@@ -45,7 +45,7 @@ export class BillBalanceTrackerComponent {
   filteredItems: any = []
   selectedBillDetails:any;
   addNewAmount:any = undefined;
-
+  isInvalidPayAmount = false;
   isInvalidDate = (m: moment.Moment) => {
     return this.invalidDates.some(d => d.isSame(m, 'day'))
   }
@@ -117,9 +117,9 @@ export class BillBalanceTrackerComponent {
     this.paidAmountSum = 0;
     this.balanceAmountSum = 0;
     data.forEach((item: any) => {
-      this.totalAmountSum += item.finalTotal;
-      this.paidAmountSum += item.paidAmount;
-      this.balanceAmountSum += (item.finalTotal - item.paidAmount)
+      this.totalAmountSum += Number(item.finalTotal);
+      this.paidAmountSum += Number(item.paidAmount);
+      this.balanceAmountSum += (Number(item.finalTotal) - Number(item.paidAmount))
     });
   }
 
@@ -164,5 +164,13 @@ export class BillBalanceTrackerComponent {
   onBillPayment(billDetails:any){
     this.selectedBillDetails = billDetails;
     this.addNewAmount = undefined;
+  }
+
+  chechValidAmount(){
+    if(this.addNewAmount > (Number(this.selectedBillDetails.finalTotal) - Number(this.selectedBillDetails.paidAmount))){
+      this.isInvalidPayAmount = true
+    }else{
+      this.isInvalidPayAmount = false
+    }
   }
 }

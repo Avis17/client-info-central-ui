@@ -23,7 +23,7 @@
                             </div>
                             <div class="col-lg-6 col-sm-12 mb-3">
                                 <label for="email">GST No (If any)</label>
-                                <input type="text" class="form-control" name="billNo" id="billNo"
+                                <input type="text" class="form-control" name="gstNo" id="gstNo"
                                     [(ngModel)]="invoice.gstNo">
                             </div>
                         </div>
@@ -58,7 +58,7 @@
                 <div class="card border-secondary mt-2">
                     <div class="card-body">
                         <h4 class="card-title d-flex justify-content-between">Order Details <button type="button"
-                                class="btn btn-secondary" (click)="addProduct()">+</button></h4>
+                                class="btn btn-info" (click)="addProduct()">+</button></h4>
                         <div class="row table-responsive">
                             <table class="table">
                                 <thead>

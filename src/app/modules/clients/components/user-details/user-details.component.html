@@ -4,10 +4,11 @@
     <mat-icon class="cursor-pointer" (click)="onPreviousPage()">arrow_back</mat-icon>
     <div class="text-end mb-3">
         <p-button label="New Invoice" icon="pi pi-plus" class="mr-2" data-bs-toggle="modal"
-        data-bs-target="#exampleModal"></p-button>
+            data-bs-target="#exampleModal"></p-button>
     </div>
     <div class="row">
-        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" matTooltip="export list of invoices" matTooltipPosition="above" (click)="onClickCardBox('invoices')">
+        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" matTooltip="export list of invoices"
+            matTooltipPosition="above" (click)="onClickCardBox('invoices')">
             <div class="card card-1 border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -24,7 +25,8 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" matTooltip="export list of products" matTooltipPosition="above" (click)="onClickCardBox('products')">
+        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" matTooltip="export list of products"
+            matTooltipPosition="above" (click)="onClickCardBox('products')">
             <div class="card card-5 border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -58,93 +60,82 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="row m-3 mb-8" *ngIf="clientInfo">
-    <div class="col-lg-4 col-sm-12">
-        <p-card [header]="clientInfo['name']" [subheader]="getDate(clientInfo['createdAt'])">
-            <ng-template pTemplate="header" >
-                <img alt="Card" class="img-size" src="../../../../../assets/clients/png/client.png" />
-            </ng-template>
-            <div class="row" *ngFor="let key of clientInfoKeys">
-                <div class="col-lg-6 col-sm-12">
-                    <div class="key">
-                        <ng-container
-                            *ngIf="key.field_key != 'createdAt' && key.field_key != 'updatedAt' && key.field_key != 'name' && key.field_key != '__v'">
-                            <label>{{key.field_name | uppercase}}</label>
-                        </ng-container>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-sm-12" *ngIf="!isArrayCheck(clientInfo[key.field_key])">
-                    <div class="value">
-                        <ng-container
-                            *ngIf="key.field_key != 'createdAt' && key.field_key != 'updatedAt' && key.field_key != 'name' && key.field_key != '__v'">
-                            <h3 class="wrapped-text">{{clientInfo[key.field_key]}}</h3>
-                        </ng-container>
-                    </div>
-                </div>
-                <div class="col-lg-12 col-sm-12" *ngIf="isArrayCheck(clientInfo[key.field_key])">
-                    <div class="value">
-                        <ng-container
-                            *ngIf="key.field_key != 'createdAt' && key.field_key != 'updatedAt' && key.field_key != 'name' && key.field_key != '__v'">
-                            <div style="text-align: start;">
-                                <div class="row ml-3">
-                                    <ng-container *ngFor="let obj of clientInfo[key.field_key]">
-                                        <div class="col-lg-12 col-sm-12 p-0">
-                                          <div class="col-12" *ngIf="obj.fieldValue">
-                                            <ng-container>
-                                              <span class="m-0 f-500 card-box">{{ obj.fieldName | titlecase }}</span>
-                                            </ng-container>
-                                          </div>
-                                          <div class="col-12" *ngIf="obj.fieldValue === undefined">
-                                            <ng-container>
-                                              <span class="m-0 f-500 card-box">{{ obj }}</span>
-                                            </ng-container>
-                                          </div>
-                                        </div>
-                                      </ng-container>
+        <div class="card m-3 mb-8" *ngIf="clientInfo">
+            <p-tabView>
+                <p-tabPanel header="Profile">
+                    <p-card [header]="clientInfo['name']" [subheader]="getDate(clientInfo['createdAt'])">
+                        <ng-template pTemplate="header">
+                            <img alt="Card" class="img-size" src="../../../../../assets/clients/png/client.png" />
+                        </ng-template>
+                        <div class="row" *ngFor="let key of clientInfoKeys">
+                            <div class="col-lg-4 col-sm-6">
+                                <div class="key">
+                                    <ng-container
+                                        *ngIf="key.field_key != 'createdAt' && key.field_key != 'updatedAt' && key.field_key != 'name' && key.field_key != '__v'">
+                                        <label>{{key.field_name | uppercase}}</label>
+                                    </ng-container>
                                 </div>
                             </div>
-                        </ng-container>
-                    </div>
-                </div>
-            </div>
-            <ng-template pTemplate="footer">
-                <!-- <p-button label="Save" icon="pi pi-check"></p-button>
-                <p-button label="Cancel" icon="pi pi-times" styleClass="p-button-secondary" [style]="{ 'margin-left': '.5em' }"></p-button> -->
-            </ng-template>
-        </p-card>
-    </div>
-    <div class="col-lg-8 col-sm-12 mt-5 mb-5">
-        <div>
-            <p-timeline [value]="inVoicesList" align="alternate" styleClass="customized-timeline">
-                <ng-template pTemplate="content" let-event>
-                    <span class="custom-marker shadow-2" [style.backgroundColor]="event.color">
-                        <i ngClass="pi pi-check"></i>
-                    </span>
-                </ng-template>
-                <ng-template pTemplate="content" let-event >
-                    <p-card [header]="'Bill No - '+ event.billNo" [subheader]="event.createdAt">
-                        <h3 style="font-weight: 500;">
-                            Bill Amount - Rs.{{ event.finalTotal }}
-                        </h3>
-                        <mat-chip-set class="example-chip"  cdkDropListOrientation="horizontal"
-                            >
-                            <mat-chip class="example-box" *ngFor="let service of event.products">
-                                {{service.name}} - <label>Rs.{{service.price}}</label>
-                            </mat-chip>
-                        </mat-chip-set>
-
-                        <a class="mt-3 cursor-pointer" (click)="onDownloadBill(event)">Download Invoice</a>
-                        <h5 class="mt-5">Billed By - {{event.billedBy || ''}}</h5>
-                        <!-- <button pButton label="Read more" class="p-button-text"></button> -->
+                            <div class="col-lg-8 col-sm-6" *ngIf="!isArrayCheck(clientInfo[key.field_key])">
+                                <div class="value">
+                                    <ng-container
+                                        *ngIf="key.field_key != 'createdAt' && key.field_key != 'updatedAt' && key.field_key != 'name' && key.field_key != '__v'">
+                                        <h3 class="wrapped-text">{{clientInfo[key.field_key]}}</h3>
+                                    </ng-container>
+                                </div>
+                            </div>
+                            <div class="col-lg-8 col-sm-6" *ngIf="isArrayCheck(clientInfo[key.field_key])">
+                                <ng-container>
+                                        <mat-chip-set class="example-chip" cdkDropListOrientation="horizontal">
+                                            <ng-container *ngFor="let obj of clientInfo[key.field_key]">
+                                                <mat-chip class="example-box" *ngIf="obj.fieldValue">
+                                                    <label>{{ obj.fieldName | titlecase }}</label>
+                                                </mat-chip>
+                                                <mat-chip class="example-box" *ngIf="obj.fieldValue === undefined">
+                                                    <label >{{ obj }}</label>
+                                                </mat-chip>
+                                            </ng-container>
+                                        </mat-chip-set>
+                                </ng-container>
+                            </div>
+                        </div>
+                        <ng-template pTemplate="footer">
+                            <!-- <p-button label="Save" icon="pi pi-check"></p-button>
+                            <p-button label="Cancel" icon="pi pi-times" styleClass="p-button-secondary" [style]="{ 'margin-left': '.5em' }"></p-button> -->
+                        </ng-template>
                     </p-card>
-                </ng-template>
-            </p-timeline>
+                </p-tabPanel>
+                <p-tabPanel header="Previous Purchase">
+                    <p-timeline [value]="inVoicesList" align="alternate" styleClass="customized-timeline">
+                        <ng-template pTemplate="content" let-event>
+                            <span class="custom-marker shadow-2" [style.backgroundColor]="event.color">
+                                <i ngClass="pi pi-check"></i>
+                            </span>
+                        </ng-template>
+                        <ng-template pTemplate="content" let-event>
+                            <p-card [header]="'Bill No - '+ event.billNo" [subheader]="event.createdAt">
+                                <h3 style="font-weight: 500;">
+                                    Bill Amount - Rs.{{ event.finalTotal }}
+                                </h3>
+                                <mat-chip-set class="example-chip" cdkDropListOrientation="horizontal">
+                                    <mat-chip class="example-box" *ngFor="let service of event.products">
+                                        {{service.name}} - <label>Rs.{{service.price}}</label>
+                                    </mat-chip>
+                                </mat-chip-set>
+
+                                <a class="mt-3 cursor-pointer" (click)="onDownloadBill(event)">Download Invoice</a>
+                                <h5 class="mt-5">Billed By - {{event.billedBy || ''}}</h5>
+                                <!-- <button pButton label="Read more" class="p-button-text"></button> -->
+                            </p-card>
+                        </ng-template>
+                    </p-timeline>
+                </p-tabPanel>
+            </p-tabView>
         </div>
     </div>
 </div>
+
 
 <div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -157,23 +148,24 @@
             </div>
             <div class="modal-body">
                 <div>
-                    <div class="row mt-4" >
-						<div class="col-sm-12 col-lg-6 my-3" *ngFor="let category of totalServicesList;let j = index">
-							<h4 class="text-decoration-underline">Category - {{category.categoryName}}</h4>
-							<div  *ngFor="let option of category.items">
-								<span>
-									<input class="form-check-input" type="checkbox" (change)="onServiceOptionChange($event, category.categoryName, option)">
-									{{ option.itemName }} - <span style="color: blueviolet;">Rs.{{option.itemPrice}}</span>
-								</span>
-							</div>
-						</div>
-					</div>
+                    <div class="row mt-4">
+                        <div class="col-sm-12 col-lg-6 my-3" *ngFor="let category of totalServicesList;let j = index">
+                            <h4 class="text-decoration-underline">Category - {{category.categoryName}}</h4>
+                            <div *ngFor="let option of category.items">
+                                <span>
+                                    <input class="form-check-input" type="checkbox"
+                                        (change)="onServiceOptionChange($event, category.categoryName, option)">
+                                    {{ option.itemName }} - <span
+                                        style="color: blueviolet;">Rs.{{option.itemPrice}}</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button"
-                    [disabled]=""
-                    data-bs-dismiss="modal" (click)="onAddNewInvoice()"  class="btn btn-primary">Save changes</button>
+                <button type="button" [disabled]="" data-bs-dismiss="modal" (click)="onAddNewInvoice()"
+                    class="btn btn-primary">Save changes</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>

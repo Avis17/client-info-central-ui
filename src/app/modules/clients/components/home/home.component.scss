@@ -110,3 +110,7 @@ th {
 ::ng-deep .p-progressbar .p-progressbar-value {
     background : #fa9f1b !important
 }
+
+::ng-deep .p-progressbar .p-progressbar-label{
+    display: none !important;
+}

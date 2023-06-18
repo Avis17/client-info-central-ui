@@ -230,7 +230,7 @@
                            <div class="card p-5">
                             <div class="mt-5" *ngFor="let list of progressServiceList">
                                 <h4>{{list.name}} - ({{list.categoryName}})</h4>
-                                <p-progressBar [style]="{'background':'#4BCBEB'}" [value]="list.percent" [matTooltip]="list.count" matTooltipPosition="above"></p-progressBar>
+                                <p-progressBar [style]="{'background':'#4BCBEB'}" [value]="list.percent" [matTooltip]="'Total Count - '+list.count" matTooltipPosition="above"></p-progressBar>
                             </div>
                            </div>
                         </div>

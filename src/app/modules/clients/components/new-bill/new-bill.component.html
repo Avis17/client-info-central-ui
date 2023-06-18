@@ -1,0 +1,107 @@
+<div class="mb-8">
+    <div class="invoice" #content>
+        <div class="header">
+          <div>
+            <!-- <img class="logo" src="path/to/company-logo.png" alt="Company Logo"> -->
+            <div class="company-name">Company Name</div>
+          </div>
+    
+          <div class="invoice-details">
+            <div>
+              <span>Invoice No:</span>
+              <span>1452</span>
+            </div>
+            <div>
+              <span>Invoice Date:</span>
+              <span>June 14, 2023</span>
+            </div>
+          </div> 
+          
+          
+        </div>
+      
+        <div class="details">
+          <div class="details-box">
+            <!-- Company Details -->
+            <h3>Company Details</h3>
+            <div>Company Name</div>
+            <div>Address Line 1</div>
+            <div>Address Line 2</div>
+            <div>City, State - Postal Code</div>
+          </div>
+          <div class="details-box">
+            <!-- Billing Customer Details -->
+            <h3>Billing Customer Details</h3>
+            <div class="customer-details">
+              <div>Customer Name</div>
+              <div>Address Line 1</div>
+              <div>Address Line 2</div>
+              <div>City, State - Postal Code</div>
+            </div>
+          </div>
+        </div>
+      
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>HSN Code</th>
+              <th>Qty</th>
+              <th>Rate</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Insert items purchased here -->
+            <tr>
+              <td>Item 1</td>
+              <td>12345</td>
+              <td>2</td>
+              <td>10.00</td>
+              <td>20.00</td>
+            </tr>
+            <tr>
+              <td>Item 2</td>
+              <td>67890</td>
+              <td>1</td>
+              <td>15.00</td>
+              <td>15.00</td>
+            </tr>
+          </tbody>
+        </table>
+      
+        <div class="total">
+          <div>Total: $35.00</div>
+          <div>SGST: $1.75</div>
+          <div>CGST: $1.75</div>
+          <div>Grand Total: $38.50</div>
+        </div>
+      
+        <div class="gst-details">
+          <!-- GST Details -->
+          <div>GSTIN: XXXXXXXXX</div>
+          <div>Place of Supply: XXXXXXX</div>
+        </div>
+      
+        <div class="signature">
+          <div class="account-details">
+            <!-- Account Details -->
+            <h3>Account Details</h3>
+            <div class="bank-details">
+              Bank Name: ABC Bank
+              <br>
+              Account No: 1234567890
+              <br>
+              IFSC Code: ABCD1234
+            </div>
+          </div>
+          <div class="signature-box">
+            <!-- Digital Signature -->
+            <h3>Digital Signature</h3>
+            <!-- <img src="path/to/digital-signature.png" alt="Digital Signature" width="150px"> -->
+          </div>
+        </div>
+      </div>
+    
+      <button (click)="generatePDF()">Generate PDF</button>
+</div>

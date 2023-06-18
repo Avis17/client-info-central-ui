@@ -1,0 +1,102 @@
+.invoice {
+    border: 1px solid #ccc;
+    padding: 20px;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .logo {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .company-name,
+  .details-box h3,
+  .customer-details,
+  .table th,
+  .account-details h3,
+  .signature {
+    color: blue;
+  }
+  
+  .company-name {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .invoice-details {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+  }
+  
+  .invoice-details span {
+    font-weight: bold;
+    margin-right: 5px;
+  }
+  
+  .details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  
+  .details-box {
+    width: 49%;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  .table th,
+  .table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+  }
+  
+  .table tbody {
+    min-height: unset;
+  }
+  
+  .total {
+    text-align: right;
+    margin-bottom: 10px;
+  }
+  
+  .gst-details {
+    text-align: right;
+    border-top: 1px solid #ccc;
+    padding-top: 10px;
+  }
+  
+  .signature {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .account-details,
+  .signature-box {
+    width: 49%;
+    border: 1px solid #ccc;
+    padding: 10px;
+  }
+  
+  .customer-details {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .bank-details {
+    font-weight: bold;
+    margin-top: 10px;
+  }

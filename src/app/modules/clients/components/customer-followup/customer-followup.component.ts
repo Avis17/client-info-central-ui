@@ -134,6 +134,13 @@ export class CustomerFollowupComponent implements OnDestroy{
     })
   }
 
+  getInterestedCount(){
+    let count = this.customerList.filter((data:any)=>{
+      return data.interest == "interested"
+    })
+    return count.length
+  }
+
   dragStart(customer: any) {
     this.draggedCustomer = customer;
   }

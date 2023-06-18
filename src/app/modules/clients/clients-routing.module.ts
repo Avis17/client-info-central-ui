@@ -12,6 +12,7 @@ import { ExpensesComponent } from './components/expenses/expenses.component';
 import { BillBalanceTrackerComponent } from './components/bill-balance-tracker/bill-balance-tracker.component';
 import { CustomerFollowupComponent } from './components/customer-followup/customer-followup.component';
 import { RebillComponent } from './components/rebill/rebill.component';
+import { NewBillComponent } from './components/new-bill/new-bill.component';
 
 const routes:Routes = [
   {
@@ -54,7 +55,12 @@ const routes:Routes = [
       {
         path : 'followup',
         component : CustomerFollowupComponent,
-      },      {
+      }, 
+      {
+        path : 'newbill',
+        component : NewBillComponent,
+      },      
+      {
         path : 'user-details/:id',
         component : UserDetailsComponent
       }
