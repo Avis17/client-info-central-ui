@@ -64,6 +64,9 @@ export class LoginComponent {
       if(err.status == 401){
         this.toastr.error("Invalid credentials, try again!", 'Error')
         return
+      }else if(err.status == 403){
+        this.toastr.error("User is already logged in!", 'Error');
+        return
       }else{
         this.toastr.error("Server error, Try again later please..!", 'Error')
       }

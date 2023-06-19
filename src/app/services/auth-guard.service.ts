@@ -3,6 +3,7 @@ import { CanActivate, Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { CookieService } from 'ngx-cookie-service';
 import { environment } from 'src/environment/environment';
+import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root'
@@ -75,10 +76,16 @@ export class AuthGuardService {
   }
 
   logout(){
-    this.clearSession()
-    this.removeToken();
-    this.clearUserDetails();
-    this.router.navigate(["/"])
+    this.http.post(this.URL+"logout", {email : this.userDetails.email}).subscribe((res:any)=>{
+      if(res){
+        this.clearSession()
+        this.removeToken();
+        this.clearUserDetails();
+        this.router.navigate(["/"])
+      }
+    }, (err:any)=>{
+      
+    })
   }
 
   logoutWithoutNavigate(){

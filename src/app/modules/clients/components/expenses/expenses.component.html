@@ -37,10 +37,8 @@
                 [(ngModel)]="searchText" class="form-control mb-3">
         </div>
         <div class="col-lg-4 col-sm-12 col-md-6 mb-3 mb-md-0">
-            <select class="form-control" (change)="onCategoryChange($event)">
-                <option>Filter All Category</option>
-                <option [value]="category" *ngFor="let category of expenseCategories">{{category}}</option>
-            </select>
+            <p-dropdown [options]="expenseCategories" (ngModelChange)="onCategoryChange($event)" optionLabel="label" [filter]="true" [showClear]="true" placeholder="Select a Category">
+            </p-dropdown>
         </div>
         <div class="col-lg-3 col-sm-12 col-md-6 text-end mb-3">
             <p-button label="New Expense" icon="pi pi-plus" class="mr-2" data-bs-toggle="modal"

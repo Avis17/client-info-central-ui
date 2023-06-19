@@ -10,11 +10,15 @@ import {  HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptorInterceptor } from './interceptor/token-interceptor.interceptor';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from './shared/shared/shared.module';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
+    ResetPasswordComponent,
+    ForgotPasswordComponent,
   ],
   imports: [
     BrowserModule,
