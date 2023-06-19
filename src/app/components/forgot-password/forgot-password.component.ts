@@ -15,7 +15,7 @@ export class ForgotPasswordComponent {
   onSubmit() {
     const data = { email: this.email };
 
-    this.http.post('http://localhost:2000/forgot-password', data).subscribe(
+    this.http.post('https://customer-info-central.onrender.com/forgot-password', data).subscribe(
       (response) => {
         console.log(response);
         this.isResetSent = true;

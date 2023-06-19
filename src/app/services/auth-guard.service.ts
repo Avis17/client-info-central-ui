@@ -19,7 +19,7 @@ export class AuthGuardService {
 
 
   getSessionUserDetails(){
-    let user = sessionStorage.getItem("user");
+    let user = localStorage.getItem("user");
     if(user){
       user = JSON.parse(user)
     }
@@ -27,7 +27,7 @@ export class AuthGuardService {
   }
 
   setSessionUserDetails(data:any){
-    sessionStorage.setItem("user", JSON.stringify(data));
+    localStorage.setItem("user", JSON.stringify(data));
   }
 
   canActivate(): boolean {
@@ -64,7 +64,7 @@ export class AuthGuardService {
   }
 
   setToken(token: string): void {
-    this.cookieService.set('token', token, { expires: 40 / (24 * 60) }); // Set expiration to 20  minutes (20 minutes / (24 hours * 60 minutes))
+    this.cookieService.set('token', token);
   }
 
   removeToken(): void {
