@@ -10,24 +10,24 @@ import Swal from 'sweetalert2';
 })
 export class AuthGuardService {
 
-  userDetails : any = {
-    authorizeTo : ''
+  userDetails: any = {
+    authorizeTo: ''
   };
 
   URL = environment.apiUrl;
-  constructor(private router: Router, private http:HttpClient, private cookieService: CookieService) { }
+  constructor(private router: Router, private http: HttpClient, private cookieService: CookieService) { }
 
 
-  getSessionUserDetails(){
-    let user = localStorage.getItem("user");
-    if(user){
+  getSessionUserDetails() {
+    let user = sessionStorage.getItem("user");
+    if (user) {
       user = JSON.parse(user)
     }
     return user ? user : false;
   }
 
-  setSessionUserDetails(data:any){
-    localStorage.setItem("user", JSON.stringify(data));
+  setSessionUserDetails(data: any) {
+    sessionStorage.setItem("user", JSON.stringify(data));
   }
 
   canActivate(): boolean {
@@ -39,24 +39,24 @@ export class AuthGuardService {
     return true;
   }
 
-  setUserDetails(details:any){
+  setUserDetails(details: any) {
     this.userDetails = details
   }
-  getUserDetails(){
+  getUserDetails() {
     return this.userDetails
   }
 
-  clearUserDetails(){
+  clearUserDetails() {
     this.userDetails = {}
   }
 
 
-  login(user:any){
-    return this.http.post(this.URL+"login", user);
+  login(user: any) {
+    return this.http.post(this.URL + "login", user);
   }
 
-  register(user:any){
-    return this.http.post(this.URL+"app/cic/users/v1/signin", user);
+  register(user: any) {
+    return this.http.post(this.URL + "app/cic/users/v1/signin", user);
   }
 
   getToken(): string {
@@ -64,47 +64,54 @@ export class AuthGuardService {
   }
 
   setToken(token: string): void {
-    this.cookieService.set('token', token);
+    // this.cookieService.set('token', token);
+    const tokenExpirationTime = 30 * 60 * 1000; // 30 minutes in milliseconds
+    const expirationDate = new Date(Date.now() + tokenExpirationTime);
+    this.cookieService.set('token', token, { expires: expirationDate });
+
   }
 
   removeToken(): void {
     this.cookieService.delete('token');
   }
 
-  clearSession(){
-    localStorage.clear()
+  clearSession() {
+    sessionStorage.clear()
   }
 
-  logout(){
-    this.http.post(this.URL+"logout", {email : this.userDetails.email}).subscribe((res:any)=>{
-      if(res){
+  logout() {
+    this.http.post(this.URL + "logout", { email: this.userDetails.email }).subscribe((res: any) => {
+      if (res) {
         this.clearSession()
         this.removeToken();
         this.clearUserDetails();
         this.router.navigate(["/"])
       }
-    }, (err:any)=>{
-      
+    }, (err: any) => {
+      this.clearSession()
+      this.removeToken();
+      this.clearUserDetails();
+      this.router.navigate(["/"])
     })
   }
 
-  logoutWithoutNavigate(){
+  logoutWithoutNavigate() {
     this.clearSession()
     this.removeToken();
     this.clearUserDetails();
   }
 
-  canAdminActivate(){
+  canAdminActivate() {
     // console.log(this.userDetails)
-    if(this.userDetails.authorizeTo == 'admin' || this.userDetails.authorizeTo == 'developer'){
+    if (this.userDetails.authorizeTo == 'admin' || this.userDetails.authorizeTo == 'developer') {
       return true
     }
     this.router.navigate(['/dashboard']);
     return false;
   }
-  canClientActivate(){
+  canClientActivate() {
     // console.log(this.userDetails)
-    if(this.userDetails.authorizeTo == 'client'){
+    if (this.userDetails.authorizeTo == 'client') {
       return true
     }
     this.router.navigate(['/dashboard']);

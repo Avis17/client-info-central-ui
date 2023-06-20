@@ -167,12 +167,12 @@ export class ExpensesComponent {
   }
 
   onAddexpense(){
-    const clientOffset = new Date().getTimezoneOffset();
-    const adjustedDate = new Date(this.newexpense.expense_date.getTime() - clientOffset * 60000);
-    this.newexpense = {
-      ...this.newexpense,
-      expense_date : adjustedDate
-    }
+    // const clientOffset = new Date().getTimezoneOffset();
+    // const adjustedDate = new Date(this.newexpense.expense_date.getTime() - clientOffset * 60000);
+    // this.newexpense = {
+    //   ...this.newexpense,
+    //   expense_date : adjustedDate
+    // }
     const formData = {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',

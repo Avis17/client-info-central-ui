@@ -21,12 +21,13 @@ const noSpecialCharactersValidator: ValidatorFn = (control: AbstractControl): Va
 };
 const onlyAlphabetsValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const value: string = control.value;
-  const regex: RegExp = /^[a-zA-Z]+$/; // Regular expression to allow only alphabetic characters
+  const regex: RegExp = /^[a-zA-Z\s]+$/; // Regular expression to allow alphabetic characters and spaces
   if (!regex.test(value)) {
     return { onlyAlphabets: true };
   }
   return null;
 };
+
 const phoneNumberValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const value: string = control.value;
   const isValidPhoneNumber: boolean = /^\d{10}$/.test(value); // Regular expression to check for 10 digits

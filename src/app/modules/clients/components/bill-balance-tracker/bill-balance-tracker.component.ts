@@ -7,6 +7,7 @@ import { ErrorHandlingService } from 'src/app/services/error-handling.service';
 import { EntityService } from '../../services/entity.service';
 import Swal from 'sweetalert2';
 import * as moment from 'moment';
+import { NavigationService } from 'src/app/services/navigation.service';
 
 @Component({
   selector: 'app-bill-balance-tracker',
@@ -56,7 +57,8 @@ export class BillBalanceTrackerComponent {
     private appMetaService: AppMetaCreationService,
     private errorHandlingService: ErrorHandlingService,
     private commonService: CommonService,
-    private entityService: EntityService
+    private entityService: EntityService,
+    private navigationService: NavigationService,
   ) {
     this.userDetails = this.authService.getUserDetails();
   }
@@ -114,6 +116,7 @@ export class BillBalanceTrackerComponent {
   }
 
   calculateBillAmounts(data: any) {
+    console.log(data)
     this.totalAmountSum = 0;
     this.paidAmountSum = 0;
     this.balanceAmountSum = 0;
@@ -124,6 +127,10 @@ export class BillBalanceTrackerComponent {
     });
   }
 
+  onDownloadBill(data: any) {
+    this.entityService.setinvoiceDetails(data);
+    this.navigationService.navigateWithoutLocationChange(['client/bill-download']);
+  }
 
   get pagedServicesList(): any[] {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;

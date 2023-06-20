@@ -69,10 +69,19 @@ export class BillingComponent implements OnDestroy {
   isBillCreated: boolean = false;
   isInvlidPartAmount: boolean = false;
   billNo:Number = 1;
-
+  currentBillNo:any;
   ngOnDestroy(): void {
     this.entityService.setinvoiceDetails({})
   }
+
+  getTodaysDate(): string {
+    const date = new Date();
+    const year = date.getFullYear().toString();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Adding 1 to month since it is zero-based
+    const day = date.getDate().toString().padStart(2, '0');
+    return year + month + day;
+  }
+  
 
   onProductChange(event: any, index: number) {
     console.log(event)
@@ -281,7 +290,7 @@ export class BillingComponent implements OnDestroy {
                 alignment: 'right'
               },
               {
-                text: `Date: ${new Date().toLocaleDateString()}`,
+                text: `Date: ${new Date().toLocaleDateString('en-GB')}`,
                 bold: true,
                 fontSize: 12,
                 alignment: 'right'
@@ -450,7 +459,8 @@ export class BillingComponent implements OnDestroy {
         this.errorHandlingService.errorAlertMsg(err);
       }
     );
-    this.addBilNo({billdetails:{no:this.invoice.billNo}});
+    
+    this.addBilNo({billdetails:{no:this.currentBillNo}});
   }
 
   generatePDF_Format_2() {
@@ -719,7 +729,8 @@ export class BillingComponent implements OnDestroy {
       this.isLoading = false;
       if (res) {
         if(res.data.length > 0){
-          this.invoice.billNo = Number(res.data[0].billdetails.no)+1;
+          this.currentBillNo = Number(res.data[0].billdetails.no)+1
+          this.invoice.billNo = this.getTodaysDate()+"-"+this.currentBillNo;
         }else{
           this.addBilNo({billdetails:{no:1}})
         }
@@ -778,7 +789,7 @@ class Invoice {
   address: string;
   phone: number;
   email: string;
-  billNo: number = 0;
+  billNo: string = '';
   subTotal: number = 0;
   cgst: number = 0;
   cgstAmount: number = 0;

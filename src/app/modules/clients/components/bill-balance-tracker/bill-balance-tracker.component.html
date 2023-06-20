@@ -59,8 +59,8 @@
             </div>
         </div>
     </div>
-    <div class="row align-end mb-3">
-        <div class="col-lg-6 col-md-6 col-sm-12">
+    <div class="row mb-3">
+        <div class="col-lg-6 col-md-6 col-sm-12 mb-3 mb-md-0">
             <div class="input-group position-static">
                 <input type="text" class="form-control custom-date"
                   [locale]="{ format: 'DD-MM-YYYY', daysOfWeek: ['S', 'M', 'T', 'W', 'T', 'F', 'S']}"
@@ -75,16 +75,17 @@
                   </div>
               </div>
         </div>
-    </div>
-    <div class="row mb-3">
         <div class="col-lg-6 col-sm-12 col-md-6 mb-3 mb-md-0">
             <input type="text" (input)="updateFilteredItems($event)" placeholder="Search bill details" [(ngModel)]="searchText" class="form-control">
         </div>
-        <div class="col-lg-6 col-sm-12 col-md-6 text-end">
-            <!-- <p-button label="New Bill Balance" icon="pi pi-plus" class="mr-2" data-bs-toggle="modal"
-                data-bs-target="#exampleModal"></p-button> -->
-        </div>
     </div>
+    <!-- <div class="row mb-3">
+        <div class="col-lg-6 col-sm-12 col-md-6 mb-3 mb-md-0">
+        </div>
+        <div class="col-lg-6 col-sm-12 col-md-6 text-end">
+           
+        </div>
+    </div> -->
 
     <div class="card">
         <div class="card-header">
@@ -95,7 +96,7 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>S no</th>
+                            <th>S No</th>
                             <th>Customer Name</th>
                             <th>Bill No</th>
                             <th>Phone</th>
@@ -133,7 +134,8 @@
                             </td>
                             <td>
                                 <button data-bs-toggle="modal"
-                                data-bs-target="#exampleModal" (click)="onBillPayment(balance)" class="btn btn-info mb-2">Pay</button>
+                                data-bs-target="#exampleModal" (click)="onBillPayment(balance)" class="btn btn-info mb-2 mr-3">Pay</button>
+                                <button class="btn btn-warning mb-2" (click)="onDownloadBill(balance)">Download Invoice</button>
                             </td>
                         </tr>
                         <tr *ngIf="balanceList.length == 0">
@@ -162,8 +164,15 @@
             <div class="modal-body">       
                 <div class="row">
                     <div class="col">
-                        <input placeholder="Enter amount" type="number" (input)="chechValidAmount()" class="form-control" [(ngModel)]="addNewAmount">
-                        <span *ngIf="isInvalidPayAmount" style="color: red;">Entered amount greater than Balance Amount</span>
+                        <mat-form-field class="mt-5 mb-2 full-width">
+                            <mat-label>Enter Payment Amount</mat-label>
+                            <input matInput type="number" class="no-arrow"  (input)="chechValidAmount()" [(ngModel)]="addNewAmount">
+                            <!-- <mat-error *ngIf="isInvalidPayAmount">Entered amount greater than Balance Amount</mat-error> -->
+                        </mat-form-field>
+                        <span *ngIf="isInvalidPayAmount" style="color: red;">Entered amount should not greater than Balance Amount.</span>
+
+                        <!-- <input placeholder="Enter amount" type="number" (input)="chechValidAmount()" class="form-control" [(ngModel)]="addNewAmount"> -->
+                        <!-- <span *ngIf="isInvalidPayAmount" style="color: red;">Entered amount greater than Balance Amount</span> -->
                     </div>
                 </div>
             </div>

@@ -392,6 +392,10 @@ export class HomeComponent implements OnInit {
   }
 
   isDateField(value: any): boolean {
+    if (typeof value !== 'string') {
+      return false; // Return false if the value is not a string
+    }
+  
     const date = new Date(value);
     return date instanceof Date && !isNaN(date.getTime());
   }

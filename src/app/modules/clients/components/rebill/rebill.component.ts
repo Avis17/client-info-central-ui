@@ -41,13 +41,304 @@ export class RebillComponent implements OnInit{
     this.generatePDF();
   }
 
+  // createPDFData() {
+  //   const upiId = this.userDetails?.app_meta_details?.billingdetails?.upiId || ''; // Replace with your actual UPI ID
+  //   const paymentAmount = this.invoiceDetails.finalTotal; // Retrieve the payment amount from the invoice
+
+  //   // Generate the payment URL using the UPI ID and amount
+  //   const paymentUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=Your%20Company&mc=your-merchant-code&tid=your-transaction-id&tr=your-transaction-reference-id&tn=Invoice%20Payment&am=${paymentAmount}&cu=INR`;
+
+  //   const logo = this.userDetails?.app_meta_details?.billingdetails?.logo;
+  //   const logoStack = [];
+  //   if (logo && logo != 'undefined') {
+  //     logoStack.push({
+  //       image: logo,
+  //       width: 100,
+  //       height: 100
+  //     });
+  //   }
+  //   return {
+  //     content: [
+  //       {
+  //         columns: [
+  //           {
+  //             width: 'auto',
+  //             stack: logoStack,
+  //             alignment: 'left',
+  //             margin: [0, 0, 20, 0]
+  //           },
+  //           {
+  //             stack: [
+  //               {
+  //                 text: 'INVOICE',
+  //                 fontSize: 24,
+  //                 bold: true,
+  //                 alignment: 'right',
+  //                 color: '#1C4E80', // Blue color
+  //                 margin: [0, 0, 0, 10]
+  //               },
+  //               {
+  //                 text: this.userDetails?.app_meta_details?.company_name,
+  //                 fontSize: 16,
+  //                 bold: true,
+  //                 alignment: 'right',
+  //                 color: '#CC5803', // Red color
+  //                 margin: [0, 0, 0, 5]
+  //               },
+  //               {
+  //                 text: this.userDetails?.app_meta_details?.billingdetails?.company_address,
+  //                 fontSize: 10,
+  //                 alignment: 'right',
+  //                 margin: [0, 0, 0, 5]
+  //               },
+  //               {
+  //                 text: this.userDetails?.app_meta_details?.billingdetails?.city + ', ' + this.userDetails?.app_meta_details?.billingdetails?.state + ', ' + this.userDetails?.app_meta_details?.billingdetails?.country,
+  //                 fontSize: 10,
+  //                 alignment: 'right'
+  //               },
+  //               {
+  //                 text: this.userDetails?.app_meta_details?.billingdetails?.gstNo,
+  //                 fontSize: 10,
+  //                 alignment: 'right'
+  //               }
+  //             ],
+  //             alignment: 'right'
+  //           }
+  //         ],
+  //         margin: [0, 0, 0, 20] // Add margin to increase spacing
+  //       },
+  //       {
+  //         text: 'Customer Details',
+  //         style: 'sectionHeader'
+  //       },
+  //       {
+  //         columns: [
+  //           [
+  //             {
+  //               columns: [
+  //                 {
+  //                   width: 'auto',
+  //                   text: 'Customer Name: ',
+  //                   bold: true,
+  //                   fontSize: 12,
+  //                   margin: [0, 0, 3, 0]
+  //                 },
+  //                 {
+  //                   width: 'auto',
+  //                   text: this.invoiceDetails.customerName,
+  //                   fontSize: 10,
+  //                   alignment: 'center',
+  //                   margin: [0, 2, 0, 5] // Add a small margin at the top and right
+
+  //                 }
+  //               ],
+  //               marginBottom: 5
+  //             },
+  //             {
+  //               columns: [
+  //                 {
+  //                   width: 'auto',
+  //                   text: 'Address: ',
+  //                   bold: true,
+  //                   fontSize: 12,
+  //                   margin: [0, 0, 3, 0]
+  //                 },
+  //                 {
+  //                   width: 'auto',
+  //                   text: this.invoiceDetails.address,
+  //                   fontSize: 10,
+  //                   alignment: 'center',
+  //                   margin: [0, 2, 0, 5] // Add a small margin at the top and right
+
+  //                 }
+  //               ],
+  //               marginBottom: 5
+  //             },
+  //             {
+  //               columns: [
+  //                 {
+  //                   width: 'auto',
+  //                   text: 'Email: ',
+  //                   bold: true,
+  //                   fontSize: 12,
+  //                   margin: [0, 0, 3, 0]
+  //                 },
+  //                 {
+  //                   width: 'auto',
+  //                   text: this.invoiceDetails.email,
+  //                   fontSize: 10,
+  //                   alignment: 'center',
+  //                   margin: [0, 2, 0, 5] // Add a small margin at the top and right
+
+  //                 }
+  //               ],
+  //               marginBottom: 5
+  //             },
+  //             {
+  //               columns: [
+  //                 {
+  //                   width: 'auto',
+  //                   text: 'Phone: ',
+  //                   bold: true,
+  //                   fontSize: 12,
+  //                   margin: [0, 0, 3, 0]
+  //                 },
+  //                 {
+  //                   width: 'auto',
+  //                   text: this.invoiceDetails.phone,
+  //                   fontSize: 10,
+  //                   alignment: 'center',
+  //                   margin: [0, 2, 0, 5] // Add a small margin at the top and right
+
+  //                 }
+  //               ],
+  //               marginBottom: 5
+  //             },
+  //             {
+  //               columns: [
+  //                 {
+  //                   width: 'auto',
+  //                   text: 'GST No: ',
+  //                   bold: true,
+  //                   fontSize: 12,
+  //                   margin: [0, 0, 3, 0]
+  //                 },
+  //                 {
+  //                   width: 'auto',
+  //                   text: this.invoiceDetails.gstNo || '',
+  //                   fontSize: 10,
+  //                   alignment: 'center',
+  //                   margin: [0, 2, 0, 5] // Add a small margin at the top and right
+
+  //                 }
+  //               ]
+  //             }
+  //           ],
+  //           // Invoice Details
+  //           [
+  //             {
+  //               text: `Invoice Number: ${this.invoiceDetails?.billNo}`,
+  //               bold: true,
+  //               fontSize: 12,
+  //               color: '#CC5803', // Red color
+  //               alignment: 'right'
+  //             },
+  //             {
+  //               text: `Date: ${new Date(this.invoiceDetails?.createdAt).toLocaleDateString('en-GB')}`,
+  //               bold: true,
+  //               fontSize: 12,
+  //               alignment: 'right'
+  //             }
+  //           ]
+  //         ]
+  //       },
+  //       {
+  //         text: 'Invoice Items',
+  //         style: 'sectionHeader'
+  //       },
+  //       {
+  //         table: {
+  //           headerRows: 1,
+  //           widths: ['*', 'auto', 'auto', 'auto'],
+  //           body: [
+  //             [{ text: 'Description', style: 'tableHeader' }, { text: 'Price', style: 'tableHeader' }, { text: 'Quantity', style: 'tableHeader' }, { text: 'Amount', style: 'tableHeader' }],
+  //             ...this.invoiceDetails?.products.map((p:any) => [p.name, p.price, p.qty, (p.price * p.qty).toFixed(2)]),
+  //             [{ text: '', colSpan: 4, fillColor: '#ffffff' }], // Empty row
+  //             [
+  //               { text: 'Subtotal', colSpan: 3, alignment: 'right', bold: true, fillColor: '#eaeaea' },
+  //               {},
+  //               {},
+  //               { text: this.invoiceDetails?.subTotal, alignment: 'right', fillColor: '#eaeaea' }
+  //             ],
+  //             [
+  //               { text: 'GST', colSpan: 3, alignment: 'right', bold: true, fillColor: '#eaeaea' },
+  //               {},
+  //               {},
+  //               { text: this.invoiceDetails?.cgst + '%', alignment: 'right', fillColor: '#eaeaea' }
+  //             ],
+  //             [
+  //               { text: 'Total', colSpan: 3, alignment: 'right', bold: true, fillColor: '#eaeaea' },
+  //               {},
+  //               {},
+  //               { text: "Rs." + this.invoiceDetails?.finalTotal, alignment: 'right', fillColor: '#eaeaea', color: '#CC5803' }
+  //             ]
+  //           ]
+  //         },
+  //         layout: {
+  //           vLineWidth: function (i: any, node: any) { return 0; }, // Remove vertical borders
+  //           hLineWidth: function (i: any, node: any) { return 0; }, // Remove horizontal borders
+  //           paddingLeft: function (i: any, node: any) { return 8; }, // Add left padding to align text
+  //           paddingRight: function (i: any, node: any) { return 8; }, // Add right padding to align text
+  //           paddingTop: function (i: any, node: any) { return 8; }, // Add top padding to all rows except the header
+  //           paddingBottom: function (i: any, node: any) { return 8; } // Add bottom padding to all rows except the header
+  //         },
+  //         margin: [0, 10, 0, 20] // Add margin to increase spacing
+  //       },
+  //       {
+  //         text: 'Terms & Conditions',
+  //         style: 'sectionHeader'
+  //       },
+  //       this.termsList.map((term: any, index: number) => {
+  //         return {
+  //           text: `${index + 1}. ${term.terms}`, // Add the serial number using the index
+  //           fontSize: 10,
+  //           margin: [0, 0, 0, 5] // Add margin to increase spacing
+  //         };
+  //       }),
+  //       {
+  //         columns: [
+  //           { width: '*', text: '' }, // Empty column to push signature to the right
+  //           {
+  //             width: 'auto',
+  //             stack: [
+  //               {
+  //                 width: 150,
+  //                 alignment: "right",
+  //                 image: this.userDetails?.app_meta_details?.billingdetails?.signature,
+  //                 margin: [0, 60, 0, 3],
+  //               },
+  //               { text: 'Authorized Signature', fontSize: 12, bold: true },
+  //               // { text: 'Your Name', fontSize: 10 }
+  //             ],
+  //             alignment: 'right'
+  //           }
+  //         ],
+  //         margin: [0, 20, 0, 0], // Add margin to increase spacing
+  //         columnGap: 10 // Adjust the gap between columns if needed
+  //       },
+  //       { text: 'For Payment:-', margins: [0, 0, 0, 4] },
+  //       {
+  //         qr: paymentUrl,
+  //         fit: 80, // Set the desired size of the QR code
+  //         alignment: 'left',
+  //         foreground: '#1C4E80',
+  //         margin: [0, 10, 0, 10] // Add margin to increase spacing
+  //       },
+  //     ],
+  //     styles: {
+  //       tableHeader: {
+  //         fillColor: '#eaeaea',
+  //         color: '#333333',
+  //         bold: true,
+  //         fontSize: 12,
+  //       },
+  //       sectionHeader: {
+  //         bold: true,
+  //         fontSize: 12,
+  //         margin: [0, 10, 0, 5] // Add margin to increase spacing
+  //       }
+  //     },
+  //     defaultStyle: {
+  //       fontSize: 10
+  //     }
+  //   };
+  // }
+
   createPDFData() {
-    const upiId = this.userDetails?.app_meta_details?.billingdetails?.upiId || ''; // Replace with your actual UPI ID
-    const paymentAmount = this.invoiceDetails.finalTotal; // Retrieve the payment amount from the invoice
-
-    // Generate the payment URL using the UPI ID and amount
+    const upiId = this.userDetails?.app_meta_details?.billingdetails?.upiId || '';
+    const paymentAmount = this.invoiceDetails.finalTotal;
     const paymentUrl = `upi://pay?pa=${encodeURIComponent(upiId)}&pn=Your%20Company&mc=your-merchant-code&tid=your-transaction-id&tr=your-transaction-reference-id&tn=Invoice%20Payment&am=${paymentAmount}&cu=INR`;
-
+  
     const logo = this.userDetails?.app_meta_details?.billingdetails?.logo;
     const logoStack = [];
     if (logo && logo != 'undefined') {
@@ -57,6 +348,7 @@ export class RebillComponent implements OnInit{
         height: 100
       });
     }
+  
     return {
       content: [
         {
@@ -74,7 +366,7 @@ export class RebillComponent implements OnInit{
                   fontSize: 24,
                   bold: true,
                   alignment: 'right',
-                  color: '#1C4E80', // Blue color
+                  color: '#1C4E80',
                   margin: [0, 0, 0, 10]
                 },
                 {
@@ -82,7 +374,7 @@ export class RebillComponent implements OnInit{
                   fontSize: 16,
                   bold: true,
                   alignment: 'right',
-                  color: '#CC5803', // Red color
+                  color: '#CC5803',
                   margin: [0, 0, 0, 5]
                 },
                 {
@@ -105,7 +397,7 @@ export class RebillComponent implements OnInit{
               alignment: 'right'
             }
           ],
-          margin: [0, 0, 0, 20] // Add margin to increase spacing
+          margin: [0, 0, 0, 20]
         },
         {
           text: 'Customer Details',
@@ -115,27 +407,110 @@ export class RebillComponent implements OnInit{
           columns: [
             [
               {
-                text: this.invoiceDetails?.customerName,
-                bold: true,
-                fontSize: 12,
+                columns: [
+                  {
+                    width: 'auto',
+                    text: 'Customer Name: ',
+                    bold: true,
+                    fontSize: 12,
+                    margin: [0, 0, 3, 0]
+                  },
+                  {
+                    width: 'auto',
+                    text: this.invoiceDetails.customerName,
+                    fontSize: 10,
+                    alignment: 'center',
+                    margin: [0, 2, 0, 5]
+                  }
+                ],
                 marginBottom: 5
               },
-              { text: this.invoiceDetails?.address, fontSize: 10, marginBottom: 5 },
-              { text: this.invoiceDetails?.email, fontSize: 10, marginBottom: 5 },
-              { text: this.invoiceDetails?.phone, fontSize: 10, marginBottom: 5 },
-              { text: this.invoiceDetails?.gstNo || '', fontSize: 10 }
+              {
+                columns: [
+                  {
+                    width: 'auto',
+                    text: 'Address: ',
+                    bold: true,
+                    fontSize: 12,
+                    margin: [0, 0, 3, 0]
+                  },
+                  {
+                    width: 'auto',
+                    text: this.invoiceDetails.address,
+                    fontSize: 10,
+                    alignment: 'center',
+                    margin: [0, 2, 0, 5]
+                  }
+                ],
+                marginBottom: 5
+              },
+              {
+                columns: [
+                  {
+                    width: 'auto',
+                    text: 'Email: ',
+                    bold: true,
+                    fontSize: 12,
+                    margin: [0, 0, 3, 0]
+                  },
+                  {
+                    width: 'auto',
+                    text: this.invoiceDetails.email,
+                    fontSize: 10,
+                    alignment: 'center',
+                    margin: [0, 2, 0, 5]
+                  }
+                ],
+                marginBottom: 5
+              },
+              {
+                columns: [
+                  {
+                    width: 'auto',
+                    text: 'Phone: ',
+                    bold: true,
+                    fontSize: 12,
+                    margin: [0, 0, 3, 0]
+                  },
+                  {
+                    width: 'auto',
+                    text: this.invoiceDetails.phone,
+                    fontSize: 10,
+                    alignment: 'center',
+                    margin: [0, 2, 0, 5]
+                  }
+                ],
+                marginBottom: 5
+              },
+              {
+                columns: [
+                  {
+                    width: 'auto',
+                    text: 'GST No: ',
+                    bold: true,
+                    fontSize: 12,
+                    margin: [0, 0, 3, 0]
+                  },
+                  {
+                    width: 'auto',
+                    text: this.invoiceDetails.gstNo || '',
+                    fontSize: 10,
+                    alignment: 'center',
+                    margin: [0, 2, 0, 5]
+                  }
+                ]
+              }
             ],
-            // Invoice Details
             [
               {
                 text: `Invoice Number: ${this.invoiceDetails?.billNo}`,
                 bold: true,
                 fontSize: 12,
-                color: '#CC5803', // Red color
+                color: '#CC5803',
                 alignment: 'right'
               },
               {
-                text: `Date: ${new Date().toLocaleDateString()}`,
+                text: `Date: ${new Date(this.invoiceDetails?.createdAt).toLocaleDateString('en-GB')}`,
                 bold: true,
                 fontSize: 12,
                 alignment: 'right'
@@ -153,8 +528,8 @@ export class RebillComponent implements OnInit{
             widths: ['*', 'auto', 'auto', 'auto'],
             body: [
               [{ text: 'Description', style: 'tableHeader' }, { text: 'Price', style: 'tableHeader' }, { text: 'Quantity', style: 'tableHeader' }, { text: 'Amount', style: 'tableHeader' }],
-              ...this.invoiceDetails?.products.map((p:any) => [p.name, p.price, p.qty, (p.price * p.qty).toFixed(2)]),
-              [{ text: '', colSpan: 4, fillColor: '#ffffff' }], // Empty row
+              ...this.invoiceDetails?.products.map((p: any) => [p.name, p.price, p.qty, (p.price * p.qty).toFixed(2)]),
+              [{ text: '', colSpan: 4, fillColor: '#ffffff' }],
               [
                 { text: 'Subtotal', colSpan: 3, alignment: 'right', bold: true, fillColor: '#eaeaea' },
                 {},
@@ -176,29 +551,29 @@ export class RebillComponent implements OnInit{
             ]
           },
           layout: {
-            vLineWidth: function (i: any, node: any) { return 0; }, // Remove vertical borders
-            hLineWidth: function (i: any, node: any) { return 0; }, // Remove horizontal borders
-            paddingLeft: function (i: any, node: any) { return 8; }, // Add left padding to align text
-            paddingRight: function (i: any, node: any) { return 8; }, // Add right padding to align text
-            paddingTop: function (i: any, node: any) { return 8; }, // Add top padding to all rows except the header
-            paddingBottom: function (i: any, node: any) { return 8; } // Add bottom padding to all rows except the header
+            vLineWidth: function (i: any, node: any) { return 0; },
+            hLineWidth: function (i: any, node: any) { return 0; },
+            paddingLeft: function (i: any, node: any) { return 8; },
+            paddingRight: function (i: any, node: any) { return 8; },
+            paddingTop: function (i: any, node: any) { return 8; },
+            paddingBottom: function (i: any, node: any) { return 8; }
           },
-          margin: [0, 10, 0, 20] // Add margin to increase spacing
+          margin: [0, 10, 0, 20]
         },
         {
           text: 'Terms & Conditions',
           style: 'sectionHeader'
         },
-        this.termsList.map((term: any) => {
+        ...this.termsList.map((term: any, index: number) => {
           return {
-            text: term.terms,
+            text: `${index + 1}. ${term.terms}`,
             fontSize: 10,
-            margin: [0, 0, 0, 5] // Add margin to increase spacing
+            margin: [0, 0, 0, 5]
           };
         }),
         {
           columns: [
-            { width: '*', text: '' }, // Empty column to push signature to the right
+            { width: '*', text: '' },
             {
               width: 'auto',
               stack: [
@@ -209,21 +584,20 @@ export class RebillComponent implements OnInit{
                   margin: [0, 60, 0, 3],
                 },
                 { text: 'Authorized Signature', fontSize: 12, bold: true },
-                // { text: 'Your Name', fontSize: 10 }
               ],
               alignment: 'right'
             }
           ],
-          margin: [0, 20, 0, 0], // Add margin to increase spacing
-          columnGap: 10 // Adjust the gap between columns if needed
+          margin: [0, 20, 0, 0],
+          columnGap: 10
         },
         { text: 'For Payment:-', margins: [0, 0, 0, 4] },
         {
           qr: paymentUrl,
-          fit: 80, // Set the desired size of the QR code
+          fit: 80,
           alignment: 'left',
           foreground: '#1C4E80',
-          margin: [0, 10, 0, 10] // Add margin to increase spacing
+          margin: [0, 10, 0, 10]
         },
       ],
       styles: {
@@ -236,20 +610,23 @@ export class RebillComponent implements OnInit{
         sectionHeader: {
           bold: true,
           fontSize: 12,
-          margin: [0, 10, 0, 5] // Add margin to increase spacing
+          margin: [0, 10, 0, 5]
         }
       },
       defaultStyle: {
-        fontSize: 10
+        fontSize: 10,
+        color: '#333333', // Default text color
+        font: 'Roboto' // Default font
       }
     };
   }
-
+  
+  
   generatePDF(action = 'open') {
     if(this.invoiceDetails){
       const docDefinition: any = this.createPDFData();
       pdfMake.createPdf(docDefinition).open();
-      this.navigationService.navigateWithoutLocationChange(['client/home']);
+      this.navigationService.navigateWithoutLocationChange(['client/balance']);
     }
   }
 }

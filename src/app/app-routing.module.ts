@@ -6,6 +6,7 @@ import { clientGuard } from './guards/client.guard';
 import { adminGuard } from './guards/admin.guard';
 import { ForgotPasswordComponent } from './components/forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { NewBillComponent } from './modules/clients/components/new-bill/new-bill.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
@@ -21,6 +22,10 @@ const routes: Routes = [
     loadChildren: () => import('./modules/admin/admin.module').then(m => m.AdminModule)
   },
   { path: 'forgot-password', component: ForgotPasswordComponent },
+  {
+    path : 'new-bill',
+    component : NewBillComponent
+  },
   // { path: 'reset-password', component: ResetPasswordComponent },
   { path: '*', pathMatch: 'full', redirectTo: 'dashboard'},
 ];

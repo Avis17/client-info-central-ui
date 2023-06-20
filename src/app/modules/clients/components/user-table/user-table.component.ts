@@ -74,7 +74,11 @@ export class UserTableComponent implements OnChanges, OnDestroy {
   }
 
   isDateField(value: any): boolean {
-    return !isNaN(Date.parse(value));
+    if (typeof value !== 'string') {
+      return false; // Return false if the value is not a string
+    }
+    const date = new Date(value);
+    return date instanceof Date && !isNaN(date.getTime());
   }
 
 
