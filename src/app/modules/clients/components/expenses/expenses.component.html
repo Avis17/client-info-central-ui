@@ -1,6 +1,6 @@
 <app-custom-loader *ngIf="isLoading"></app-custom-loader>
 
-<div class="m-sm-1 m-lg-5">
+<div class="m-sm-1 m-lg-5 mb-8">
     <div class="row mb-5" *ngIf="expensesList.length > 0">
         <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer">
             <div class="card card-1 border-left-primary shadow h-100 py-2">
@@ -22,13 +22,20 @@
         </div>
     </div>
     <div class="row align-end">
-        <div class="col-lg-6 col-md-6 col-sm-12 mt-3 mb-3">
-            <input type="text" class="form-control custom-date"
-            [locale]="{ format: 'DD-MM-YYYY', daysOfWeek: ['S', 'M', 'T', 'W', 'T', 'F', 'S']}"
-             ngxDaterangepickerMd [(ngModel)]="selectedDates"
-                [showCustomRangeLabel]="true" [alwaysShowCalendars]="true" (ngModelChange)="ngModelDateChange($event)"
-                [ranges]="ranges" [linkedCalendars]="true" [isInvalidDate]="isInvalidDate" [showClearButton]="true"
-                placeholder="Filter by dates" />
+        <div class="col-lg-7 col-md-7 col-sm-12 mt-3 mb-3">
+            <div class="input-group position-static">
+                <input type="text" class="form-control custom-date"
+                  [locale]="{ format: 'DD-MM-YYYY', daysOfWeek: ['S', 'M', 'T', 'W', 'T', 'F', 'S']}"
+                  ngxDaterangepickerMd [(ngModel)]="selectedDates"
+                  [showCustomRangeLabel]="true" [alwaysShowCalendars]="true" (ngModelChange)="ngModelDateChange($event)"
+                  [ranges]="ranges" [linkedCalendars]="true" [isInvalidDate]="isInvalidDate" [showClearButton]="true"
+                  placeholder="Filter by dates" />
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" style="height: 100%;">
+                      <i class="fa fa-calendar"></i>
+                    </span>
+                  </div>
+              </div>
         </div>
     </div>
     <div class="row">
@@ -37,7 +44,7 @@
                 [(ngModel)]="searchText" class="form-control mb-3">
         </div>
         <div class="col-lg-4 col-sm-12 col-md-6 mb-3 mb-md-0">
-            <p-dropdown [options]="expenseCategories" (ngModelChange)="onCategoryChange($event)" optionLabel="label" [filter]="true" [showClear]="true" placeholder="Select a Category">
+            <p-dropdown [virtualScroll]="true" [virtualScrollItemSize]="38" [options]="expenseCategories" (onChange)="onCategoryChange($event)" optionLabel="label" [filter]="true" [showClear]="true" placeholder="Select a Category">
             </p-dropdown>
         </div>
         <div class="col-lg-3 col-sm-12 col-md-6 text-end mb-3">
@@ -46,7 +53,7 @@
         </div>
     </div>
 
-    <div class="card">
+    <div class="card mb-8">
         <div class="card-header">
             List Of Expenses
         </div>
@@ -70,9 +77,8 @@
                             <td style="width: 20%;">
                                 <span *ngIf="!expense.isEdit">{{expense?.selectedCategory.label}}</span>
 
-                                  <!-- <p-dropdown *ngIf="expense.isEdit" [options]="expenseCategories" [(ngModel)]="expense.selectedCategory" [filter]="true" placeholder="Select an option"></p-dropdown> -->
-
                                   <p-dropdown *ngIf="expense.isEdit"
+                                  [virtualScroll]="true" [virtualScrollItemSize]="38"
                                   [style]="{'width':'100%','overflow':'visible'}" appendTo="body" 
                                   [options]="expenseCategories" [(ngModel)]="newexpense.selectedCategory" optionLabel="label" [filter]="true" [showClear]="true" placeholder="Select a Category">
                                 </p-dropdown>
@@ -127,7 +133,7 @@
             <div class="modal-body">
                 
                 <div class="mt-5 mb-5">
-                    <p-dropdown [options]="expenseCategories" [(ngModel)]="newexpense.selectedCategory" optionLabel="label" [filter]="true" [showClear]="true" placeholder="Select a Category">
+                    <p-dropdown [virtualScroll]="true" [virtualScrollItemSize]="38" [options]="expenseCategories" [(ngModel)]="newexpense.selectedCategory" optionLabel="label" [filter]="true" [showClear]="true" placeholder="Select a Category">
                     </p-dropdown>
                 </div>
 

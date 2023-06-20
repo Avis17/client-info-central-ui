@@ -3,12 +3,19 @@
 <div class="m-4">
     <div class="row align-end">
         <div class="col-lg-6 col-md-6 col-sm-12">
-            <input type="text" class="form-control custom-date" ngxDaterangepickerMd [(ngModel)]="selectedDates"
-                [showCustomRangeLabel]="true"
-                [locale]="{ format: 'DD-MM-YYYY', daysOfWeek: ['S', 'M', 'T', 'W', 'T', 'F', 'S']}"
-                [alwaysShowCalendars]="true" (ngModelChange)="ngModelDateChange($event)"
-                [ranges]="ranges" [linkedCalendars]="true" [isInvalidDate]="isInvalidDate" [showClearButton]="true"
-                placeholder="Filter by dates" />
+            <div class="input-group position-static">
+                <input type="text" class="form-control custom-date"
+                  [locale]="{ format: 'DD-MM-YYYY', daysOfWeek: ['S', 'M', 'T', 'W', 'T', 'F', 'S']}"
+                  ngxDaterangepickerMd [(ngModel)]="selectedDates"
+                  [showCustomRangeLabel]="true" [alwaysShowCalendars]="true" (ngModelChange)="ngModelDateChange($event)"
+                  [ranges]="ranges" [linkedCalendars]="true" [isInvalidDate]="isInvalidDate" [showClearButton]="true"
+                  placeholder="Filter by dates" />
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" style="height: 100%;">
+                      <i class="fa fa-calendar"></i>
+                    </span>
+                  </div>
+              </div>
         </div>
     </div>
     <div class="row flex-wrap justify-content-center mt-4">
@@ -230,7 +237,7 @@
                            <div class="card p-5">
                             <div class="mt-5" *ngFor="let list of progressServiceList">
                                 <h4>{{list.name}} - ({{list.categoryName}})</h4>
-                                <p-progressBar [style]="{'background':'#4BCBEB'}" [value]="list.percent" [matTooltip]="'Total Count - '+list.count" matTooltipPosition="above"></p-progressBar>
+                                <p-progressBar  [value]="list.percent" [matTooltip]="'Total Count - '+list.count" matTooltipPosition="above"></p-progressBar>
                             </div>
                            </div>
                         </div>

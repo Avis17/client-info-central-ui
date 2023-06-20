@@ -71,9 +71,11 @@ export class ExpensesComponent {
   searchFilterString:string = ''
   filteredOptions: any = [];
 
-  isInvalidDate = (m: moment.Moment) => {
-    return this.invalidDates.some(d => d.isSame(m, 'day'))
-  }
+  isInvalidDate = (current: moment.Moment) => {
+    const currentDate = moment();
+    return current.isAfter(currentDate, 'day'); // Disable future dates
+  };
+
   constructor(
     private authService: AuthGuardService, 
     private cryptService: CryptoService, 
@@ -93,6 +95,7 @@ export class ExpensesComponent {
 
   onEdit(expense: any) {
     expense.isEdit = true
+    expense.clone = { ...expense }; // Create a clone of the expense object
   }
 
   onDelete(expense: any) {
@@ -102,22 +105,37 @@ export class ExpensesComponent {
       "collectionName": 'expenses',
       "queryData": {}
     }
-    this.isLoading = true;
-    this.entityService.deleteEntityById(expense._id, formData).subscribe((res:any)=>{
-      this.isLoading = false;
-      if(res.status == 200){
-        Swal.fire('Expense Successfully deleted!', '', 'success').then(()=>{
-          this.getExpenses();
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.isLoading = true;
+        this.entityService.deleteEntityById(expense._id, formData).subscribe((res:any)=>{
+          this.isLoading = false;
+          if(res.status == 200){
+            Swal.fire('Expense Successfully deleted!', '', 'success').then(()=>{
+              this.getExpenses();
+            })
+          }
+        }, (err:any)=>{
+          this.isLoading = false;
+          this.errorHandlingService.errorAlertMsg(err);
         })
       }
-    }, (err:any)=>{
-      this.isLoading = false;
-
-      this.errorHandlingService.errorAlertMsg(err);
     })
+
+  
   }
 
   onCancel(expense: any) {
+    Object.assign(expense, expense.clone); // Restore the original data
+    delete expense.clone; // Remove the clone property
     expense.isEdit = false;
   }
 
@@ -212,15 +230,16 @@ export class ExpensesComponent {
         // Implement your search logic here
         // Return true if the item matches the search criteria
         // Otherwise, return false
-        return JSON.stringify(item).toLowerCase().includes(this.searchText);
+        return JSON.stringify(item).toLowerCase().includes(this.searchText.toLowerCase());
       });
       this.calculateExpenses(this.filteredItems);
     }
   }
 
   onCategoryChange(event:any){
-    if(event.target.value != 'Filter All Category'){
-      this.getExpenses({selectedCategory : event.target.value});
+    console.log(event)
+    if(event.value){
+      this.getExpenses({selectedCategory : event.value});
     }else{
       this.getExpenses();
     }

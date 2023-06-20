@@ -46,9 +46,10 @@ export class BillBalanceTrackerComponent {
   selectedBillDetails:any;
   addNewAmount:any = undefined;
   isInvalidPayAmount = false;
-  isInvalidDate = (m: moment.Moment) => {
-    return this.invalidDates.some(d => d.isSame(m, 'day'))
-  }
+  isInvalidDate = (current: moment.Moment) => {
+    const currentDate = moment();
+    return current.isAfter(currentDate, 'day'); // Disable future dates
+  };
   constructor(
     private authService: AuthGuardService,
     private cryptService: CryptoService,
@@ -101,7 +102,7 @@ export class BillBalanceTrackerComponent {
       if (res) {
         console.log(res)
         this.balanceList = res.data.filter((data:any)=>{
-          return data.paymentStatus == 'part'
+          return data.paymentStatus == 'part' && data.paidAmount != data.finalTotal
         });
         this.filteredItems = [...this.balanceList];
         this.calculateBillAmounts(this.balanceList);

@@ -61,15 +61,17 @@ export class HomeComponent implements OnInit {
   selectedPeriod: any = 'Overall Datas';
   customDayLabels = ['S', 'M', 'T', 'W', 'Th', 'F', 'S'];
   progressServiceList: any = []
-  isInvalidDate = (m: moment.Moment) => {
-    return this.invalidDates.some(d => d.isSame(m, 'day'))
-  }
+  isInvalidDate = (current: moment.Moment) => {
+    const currentDate = moment();
+    return current.isAfter(currentDate, 'day'); // Disable future dates
+  };
 
   constructor(
     private entityService: EntityService,
     private authService: AuthGuardService,
     private excelService: ExcelService,
     private commonService: CommonService,
+    private navigationService: NavigationService,
     private errorHandlingService: ErrorHandlingService,
   ) {
     this.userDetails = this.authService.getUserDetails();
@@ -85,7 +87,7 @@ export class HomeComponent implements OnInit {
     })
     this.listOfServices = this.flattenArray(response);
     this.progressServiceList = this.getServiceStats(this.listOfServices);
-    console.log(this.progressServiceList)
+    // console.log(this.progressServiceList)
     let barDetails: any = this.getDestructuredBarChart(this.listOfServices, 'categoryName');
     let serviceChartData = {
       labels: barDetails.labels,
@@ -183,6 +185,26 @@ export class HomeComponent implements OnInit {
   }
 
 
+  getFilteredDatas(query:any){
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'customers',
+      "queryData": query
+    }
+    this.isLoading = true;
+    this.entityService.getAllEntities(formData).subscribe((res: any) => {
+      this.isLoading = false;
+      if (res) {
+        console.log(res)
+       return res.data;
+      }
+    }, (err: any) => {
+      this.isLoading = false;
+      this.errorHandlingService.errorAlertMsg(err);
+      return;
+    })
+  }
 
   getAllAggregateDatas(queryData?: any) {
     const formData = {
@@ -199,7 +221,7 @@ export class HomeComponent implements OnInit {
         this.entities = []
         this.inVoicesList = []
         this.entities = res.data.customersList;
-        console.log("entities", this.entities)
+        // console.log("entities", this.entities)
         this.inVoicesList = res.data.invoicesList;
         this.createDynamicChartArr();
         this.loadServicesChart(res.data.products);
@@ -231,7 +253,7 @@ export class HomeComponent implements OnInit {
         const netProfitPromise = this.getNetProfitAndExpense(JSON.parse(this.tableQuery));
         // Wait for all promises to resolve or reject
         const [chartData, invoices, netProfit] = await Promise.all([chartDataPromise, invoicesPromise, netProfitPromise]);
-        console.log("completed")
+        // console.log("completed")
         this.isLoading = false;
 
       } catch (error) {
@@ -254,7 +276,7 @@ export class HomeComponent implements OnInit {
         const netProfitPromise = this.getNetProfitAndExpense();
         // Wait for all promises to resolve or reject
         const [chartData, invoices, netProfit] = await Promise.all([chartDataPromise, invoicesPromise, netProfitPromise]);
-        console.log("completed")
+        // console.log("completed")
         this.isLoading = false;
       } catch (error) {
         // Handle any errors that occurred during the API calls
@@ -279,7 +301,7 @@ export class HomeComponent implements OnInit {
         (res: any) => {
           if (res) {
             this.serviceChartDays = res.data;
-            console.log(this.serviceChartDays);
+            // console.log(this.serviceChartDays);
             resolve(this.serviceChartDays);
           }
         },
@@ -308,7 +330,7 @@ export class HomeComponent implements OnInit {
             this.entities = [];
             this.inVoicesList = [];
             this.entities = res.data.customers;
-            console.log("entities", this.entities)
+            // console.log("entities", this.entities)
             this.inVoicesList = res.data.invoicesList;
             this.createDynamicChartArr();
             this.loadServicesChart(res.data.invoicesList);
@@ -331,12 +353,19 @@ export class HomeComponent implements OnInit {
     let filterdDetails: any;
     let key = dataArr.labels[index].toLowerCase();
 
+    console.log(index);
+    console.log(key)
+    console.log(chartName)
+    console.log(this.isDateField(this.entities[0][chartName]))
+    console.log(this.entities)
+
+    // this.getFilteredDatas({[chartName]:key});
     if (this.isArrayCheck(chartName)) {
       filterdDetails = this.entities.filter((value: any) => {
         return value[chartName].some((data: any) => data.fieldName === key && data.fieldValue);
       })
     }
-    else if (this.isDateField(dataArr.labels[index])) {
+    else if (this.isDateField(this.entities[0][chartName])) {
       filterdDetails = this.entities.filter((value: any) => {
         return this.getDateFormated(new Date(value[chartName])) == key
       })
@@ -345,11 +374,26 @@ export class HomeComponent implements OnInit {
         return value[chartName] == dataArr.labels[index]
       })
     }
-    this.exportAsXLSX(filterdDetails, chartName);
+    
+    this.entityService.updateTableData(filterdDetails);
+    const commands = ['/client/clients'];
+    this.navigationService.navigateWithoutLocationChange(commands);
+    // this.exportAsXLSX(filterdDetails, chartName);
+  }
+
+  navigateToUserTableComponent(data:any) {
+    const commands = ['/client/clients'];
+    console.log(data)
+    this.navigationService.navigateWithoutLocationChange(commands, {
+      state: {
+        tableData: JSON.stringify(data) // Convert tableData to a string if it's an object
+      }
+    });
   }
 
   isDateField(value: any): boolean {
-    return !isNaN(Date.parse(value));
+    const date = new Date(value);
+    return date instanceof Date && !isNaN(date.getTime());
   }
 
   getNetProfitAndExpense(queryData?: any) {
@@ -368,7 +412,7 @@ export class HomeComponent implements OnInit {
             if (this.netProfitAndExpenses.netProfit) {
               this.netProfitAndExpenses.netProfit = this.netProfitAndExpenses?.netProfit?.toFixed(2);
             }
-            console.log(this.netProfitAndExpenses);
+            // console.log(this.netProfitAndExpenses);
             resolve(this.netProfitAndExpenses);
           }
         },
@@ -558,7 +602,7 @@ export class HomeComponent implements OnInit {
   }
 
   onClickCardBox(cardName: any) {
-    console.log(cardName)
+    // console.log(cardName)
     switch (cardName) {
       case 'customers':
         this.exportAsXLSX(this.entities, cardName);
@@ -570,7 +614,7 @@ export class HomeComponent implements OnInit {
         this.exportAsXLSX(this.inVoicesList, cardName);
         break;
       default:
-        console.log('invalid card clicked!')
+        // console.log('invalid card clicked!')
     }
   }
 

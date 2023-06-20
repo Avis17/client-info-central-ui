@@ -98,7 +98,7 @@ export class UserDetailsComponent {
   }
 
   onPreviousPage() {
-    const commands = ['/client/home'];
+    const commands = ['/client/clients'];
     this.navigationService.navigateWithoutLocationChange(commands);
   }
 

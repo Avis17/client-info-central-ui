@@ -127,6 +127,7 @@ export class DynamicFormCreationComponent {
       return data.isUnique == true
     })
     this.servicesList = this.userDetails.app_meta_details.servicesList.categories;
+    console.log(this.servicesList)
 
   }
 
@@ -146,14 +147,20 @@ export class DynamicFormCreationComponent {
     this.navigationService.navigateWithoutLocationChange(commands);
   }
 
-  onServiceOptionChange(event: any, categoryName:any , selectedObj: any) {
+  onServiceOptionChange(event: any, categoryName: any, selectedObj: any) {
+    const serviceName = selectedObj.itemName;
     if (event.target.checked) {
-      this.listOfServices.push({ ...selectedObj, createdAt: new Date(), categoryName : categoryName })
+      const existingService = this.listOfServices.find((service: any) => service.itemName === serviceName);
+      if (!existingService) {
+        this.listOfServices.push({ ...selectedObj, createdAt: new Date(), categoryName: categoryName });
+      }
     } else {
-      this.listOfServices = this.listOfServices.filter((data: any) => {
-        return data.itemName != selectedObj.itemName
-      })
+      this.listOfServices = this.listOfServices.filter((service: any) => service.itemName !== serviceName);
     }
+  }
+  
+  isServiceSelected(categoryName: string, serviceName: string): boolean {
+    return this.listOfServices.some((service: any) => service.categoryName === categoryName && service.itemName === serviceName);
   }
 
   onSubmit() {

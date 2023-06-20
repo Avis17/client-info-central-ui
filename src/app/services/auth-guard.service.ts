@@ -72,7 +72,7 @@ export class AuthGuardService {
   }
 
   clearSession(){
-    sessionStorage.clear()
+    localStorage.clear()
   }
 
   logout(){

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, ViewChild, Input, OnChanges, SimpleChanges, OnDestroy } from '@angular/core';
 import { AuthGuardService } from 'src/app/services/auth-guard.service';
 import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { MessageService } from 'primeng/api';
@@ -9,13 +9,15 @@ import { EntityService } from '../../services/entity.service';
 import { ErrorHandlingService } from 'src/app/services/error-handling.service';
 import { Table } from 'primeng/table'
 import { CryptoService } from 'src/app/services/crypto.service';
+import { ActivatedRoute } from '@angular/router';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-user-table',
   templateUrl: './user-table.component.html',
   styleUrls: ['./user-table.component.scss']
 })
-export class UserTableComponent implements OnChanges {
+export class UserTableComponent implements OnChanges, OnDestroy {
 
   entities: any = [];
   cols: any = [];
@@ -31,6 +33,7 @@ export class UserTableComponent implements OnChanges {
   constructor(
     private entityService: EntityService,
     private authService: AuthGuardService,
+    private route: ActivatedRoute,
     private commonService: CommonService,
     private errorHandlingService: ErrorHandlingService,
     private navigationService: NavigationService,
@@ -41,11 +44,21 @@ export class UserTableComponent implements OnChanges {
   }
   ngOnInit() {
     // this.iterateTableFields();
-    setTimeout(()=>{
-      if(!this.tableData){
-        this.getAllEntity();
-      }
-    }, 500)
+    this.entityService.tableData$.subscribe((data:any) => {
+      this.tableData = data;
+      console.log(data)
+    });
+    if(!this.tableData){
+      this.getAllEntity();
+    }else{
+      this.entities = this.tableData;
+      this.createCols();
+      this.isLoading = false;
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.entityService.updateTableData(null);
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -53,7 +66,11 @@ export class UserTableComponent implements OnChanges {
       this.isLoading = false;
       this.entities = JSON.parse(this.tableData);
       this.createCols();
-    } 
+    } else if (history.state && history.state.tableData) {
+      this.isLoading = false;
+      this.entities = JSON.parse(history.state.tableData);
+      this.createCols();
+    }
   }
 
   isDateField(value: any): boolean {

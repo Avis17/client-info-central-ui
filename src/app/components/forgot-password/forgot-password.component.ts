@@ -9,11 +9,15 @@ import Swal from 'sweetalert2';
 })
 export class ForgotPasswordComponent {
   email: string = '';
-  isResetSent : boolean = false;
+  isResetSent: boolean = false;
   constructor(private http: HttpClient) { }
 
   onSubmit() {
     const data = { email: this.email };
+
+    if (this.email == '' || !this.email.includes('@') || !this.email.includes('.')) {
+      return
+    }
 
     this.http.post('https://customer-info-central.onrender.com/forgot-password', data).subscribe(
       (response) => {
@@ -33,10 +37,10 @@ export class ForgotPasswordComponent {
     );
   }
 
-  validate(){
-    if(this.email == '' || !this.email.includes('@') || !this.email.includes('.')){
+  validate() {
+    if (this.email == '' || !this.email.includes('@') || !this.email.includes('.')) {
       return true
-    }else{
+    } else {
       return false
     }
   }

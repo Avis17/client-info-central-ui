@@ -40,7 +40,7 @@ export class BillingComponent implements OnDestroy {
     // this.generatePDF_Format_2();
     this.userDetails = this.authService.getUserDetails();
     this.getBillNo({});
-    this.termsList = this.userDetails.app_meta_details.terms || [
+    this.termsList = [...this.userDetails.app_meta_details.terms] || [
       { terms: "Order can be return in max 10 days." },
       { terms: "Warrenty of the product will be subject to the manufacturer terms and conditions." },
       { terms: "This is system generated invoice." }
@@ -729,6 +729,14 @@ export class BillingComponent implements OnDestroy {
       this.isLoading = false;
       this.errorHandlingService.errorAlertMsg(err);
     })
+  }
+
+  onLoadDefault(){
+    this.termsList = [...this.userDetails.app_meta_details.terms] || [
+      { terms: "Order can be return in max 10 days." },
+      { terms: "Warrenty of the product will be subject to the manufacturer terms and conditions." },
+      { terms: "This is system generated invoice." }
+    ];
   }
 
   addBilNo(data:any){

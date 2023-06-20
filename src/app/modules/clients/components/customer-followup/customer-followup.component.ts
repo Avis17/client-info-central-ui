@@ -197,6 +197,7 @@ export class CustomerFollowupComponent implements OnDestroy{
       this.isLoading = false;
       if(res.status == 200){
         Swal.fire('Customer details Updated!', '', 'success');
+        this.getAllCustomers({})
       }
       this.errorHandlingService.errorAlertMsg(res);
     }, (err:any)=>{

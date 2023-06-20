@@ -4,6 +4,7 @@ import {delay, map} from 'rxjs/operators';
 import { CryptoService } from 'src/app/services/crypto.service';
 import { Schema } from 'mongoose';
 import { environment } from 'src/environment/environment';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -14,9 +15,16 @@ export class EntityService {
 
   invoiceDetails:any;
   URL = environment.apiUrl+'entities/';
-
   entitySchema :any = {}
+  private tableDataSubject = new BehaviorSubject<any>(null);
+  public tableData$ = this.tableDataSubject.asObservable();
 
+
+  updateTableData(tableData: any) {
+    this.tableDataSubject.next(tableData);
+  }
+
+  
   getInvoiceDetails(){
     return this.invoiceDetails;
   }
