@@ -11,6 +11,7 @@ import { Table } from 'primeng/table'
 import { CryptoService } from 'src/app/services/crypto.service';
 import { ActivatedRoute } from '@angular/router';
 import { map } from 'rxjs';
+import { ExcelService } from '../../services/excel.service';
 
 @Component({
   selector: 'app-user-table',
@@ -27,7 +28,7 @@ export class UserTableComponent implements OnChanges, OnDestroy {
   @Input() queryData: any;
   @Input() tableData: any;
   isLoading:boolean  = true;
-
+  isPrevPage : boolean = false;
   @ViewChild('tableref') dt: Table | any;
 
   constructor(
@@ -35,6 +36,7 @@ export class UserTableComponent implements OnChanges, OnDestroy {
     private authService: AuthGuardService,
     private route: ActivatedRoute,
     private commonService: CommonService,
+    private excelService: ExcelService,
     private errorHandlingService: ErrorHandlingService,
     private navigationService: NavigationService,
     private cryptoService: CryptoService
@@ -50,7 +52,9 @@ export class UserTableComponent implements OnChanges, OnDestroy {
     });
     if(!this.tableData){
       this.getAllEntity();
+      this.isPrevPage = false
     }else{
+      this.isPrevPage = true
       this.entities = this.tableData;
       this.createCols();
       this.isLoading = false;
@@ -58,7 +62,15 @@ export class UserTableComponent implements OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.entityService.updateTableData(null);
+    if(this.isPrevPage){
+      this.entityService.updateTableData(null)
+    }
+  }
+
+
+  onPreviousPage(){
+    const commands = ['/client/home'];
+    this.navigationService.navigateWithoutLocationChange(commands)
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -158,6 +170,15 @@ export class UserTableComponent implements OnChanges, OnDestroy {
 
   onAddUSer() {
     const commands = ['/client/dynamic-forms'];
+    this.entityService.setFormType("customers")
     this.navigationService.navigateWithoutLocationChange(commands);
+  }
+
+  exportPdf(){
+    this.exportAsXLSX(this.entities, 'customers')
+  }
+
+  exportAsXLSX(data: any, filename: any): void {
+    this.excelService.exportAsExcelFile(data, filename);
   }
 }

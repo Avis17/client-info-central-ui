@@ -7,6 +7,7 @@ import { ErrorHandlingService } from 'src/app/services/error-handling.service';
 import { EntityService } from '../../services/entity.service';
 import Swal from 'sweetalert2';
 import * as moment from 'moment';
+import { ExcelService } from '../../services/excel.service';
 
 @Component({
   selector: 'app-expenses',
@@ -15,41 +16,162 @@ import * as moment from 'moment';
 })
 export class ExpensesComponent {
 
-  expensesList:any = []
-  searchText:any = '';
-  filteredItems:any = []
+  expensesList: any = []
+  searchText: any = '';
+  filteredItems: any = []
   currentPage = 1;
   itemsPerPage = 5;
-  userDetails:any = {};
-  Query:any = {};
-  totalExpenseSum : number = 0;
-  newexpense:any = {
+  userDetails: any = {};
+  Query: any = {};
+  totalExpenseSum: number = 0;
+  expenseTypes: any = [
+    {
+      label: 'Actual Expense'
+    },
+    {
+      label: 'Asset to Business'
+    }
+  ]
+  newexpense: any = {
     selectedCategory: '',
     expense_comments: '',
     expense_price: '',
-    expense_date : new Date()
-  };  
+    expense_tax: '',
+    type: '',
+    customCategory: '',
+    expense_date: new Date()
+  };
   expenseCategories = [
     {
-      label : "Electricity"
+      label: "Office Supplies"
     },
     {
-      label : "Labour"
+      label: "Travel Expenses"
     },
     {
-      label : "Travel"
+      label: "Meals & Entertainment"
     },
     {
-      label : "Rent"
+      label: "Utilities"
     },
     {
-      label : "Advance"
+      label: "Rent"
     },
     {
-      label : "Others"
+      label: "Office Maintenance"
+    },
+    {
+      label: "Marketing & Advertising"
+    },
+    {
+      label: "Professional Services"
+    },
+    {
+      label: "Software Subscriptions"
+    },
+    {
+      label: "Equipment"
+    },
+    {
+      label: "Training & Education"
+    },
+    {
+      label: "Taxes"
+    },
+    {
+      label: "Insurance"
+    },
+    {
+      label: "Others"
     }
   ]
-  isLoading:boolean  = true;
+  allCategories :any = [
+    {
+      label: "Office Supplies"
+    },
+    {
+      label: "Travel Expenses"
+    },
+    {
+      label: "Meals & Entertainment"
+    },
+    {
+      label: "Utilities"
+    },
+    {
+      label: "Rent"
+    },
+    {
+      label: "Office Maintenance"
+    },
+    {
+      label: "Marketing & Advertising"
+    },
+    {
+      label: "Professional Services"
+    },
+    {
+      label: "Software Subscriptions"
+    },
+    {
+      label: "Equipment"
+    },
+    {
+      label: "Training & Education"
+    },
+    {
+      label: "Taxes"
+    },
+    {
+      label: "Insurance"
+    },
+    {
+      label: 'Vehicle'
+    },
+    {
+      label: 'Furniture'
+    },
+    {
+      label: 'Computer Equipment'
+    },
+    {
+      label: 'Machinery'
+    },
+    {
+      label: 'Tools'
+    },
+    {
+      label: 'Office Equipment'
+    },
+    {
+      label: 'Others'
+    }
+  ]
+  assetItems: any = [
+    {
+      label: 'Vehicle'
+    },
+    {
+      label: 'Furniture'
+    },
+    {
+      label: 'Computer Equipment'
+    },
+    {
+      label: 'Machinery'
+    },
+    {
+      label: 'Tools'
+    },
+    {
+      label: 'Office Equipment'
+    },
+    {
+      label: 'Others'
+    }
+  ]
+
+  isLoading: boolean = true;
   selectedDates: { startDate: moment.Moment, endDate: moment.Moment };
   ranges: any = {
     'Today': [moment(), moment()],
@@ -68,7 +190,7 @@ export class ExpensesComponent {
     ]
   }
   invalidDates: moment.Moment[] = [moment().add(2, 'days'), moment().add(3, 'days'), moment().add(5, 'days')];
-  searchFilterString:string = ''
+  searchFilterString: string = ''
   filteredOptions: any = [];
 
   isInvalidDate = (current: moment.Moment) => {
@@ -77,18 +199,19 @@ export class ExpensesComponent {
   };
 
   constructor(
-    private authService: AuthGuardService, 
-    private cryptService: CryptoService, 
-    private appMetaService: AppMetaCreationService, 
+    private authService: AuthGuardService,
+    private cryptService: CryptoService,
+    private appMetaService: AppMetaCreationService,
     private errorHandlingService: ErrorHandlingService,
-    private commonService:CommonService,
-    private entityService:EntityService
-  ){
+    private commonService: CommonService,
+    private excelService: ExcelService,
+    private entityService: EntityService
+  ) {
     this.userDetails = this.authService.getUserDetails();
   }
 
   filterOptions() {
-    this.filteredOptions = this.expenseCategories.filter((option:any) =>
+    this.filteredOptions = this.expenseCategories.filter((option: any) =>
       option['label'].toLowerCase().includes(this.searchFilterString.toLowerCase())
     );
   }
@@ -116,21 +239,21 @@ export class ExpensesComponent {
     }).then((result) => {
       if (result.isConfirmed) {
         this.isLoading = true;
-        this.entityService.deleteEntityById(expense._id, formData).subscribe((res:any)=>{
+        this.entityService.deleteEntityById(expense._id, formData).subscribe((res: any) => {
           this.isLoading = false;
-          if(res.status == 200){
-            Swal.fire('Expense Successfully deleted!', '', 'success').then(()=>{
+          if (res.status == 200) {
+            Swal.fire('Expense Successfully deleted!', '', 'success').then(() => {
               this.getExpenses();
             })
           }
-        }, (err:any)=>{
+        }, (err: any) => {
           this.isLoading = false;
           this.errorHandlingService.errorAlertMsg(err);
         })
       }
     })
 
-  
+
   }
 
   onCancel(expense: any) {
@@ -147,26 +270,26 @@ export class ExpensesComponent {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
       "collectionName": 'expenses',
-      "collectionData" : expense
+      "collectionData": expense
     }
     this.isLoading = true;
 
-    this.entityService.updateEntityById(_id, formData).subscribe((res:any)=>{
+    this.entityService.updateEntityById(_id, formData).subscribe((res: any) => {
       this.isLoading = false;
-      if(res.status == 200){
+      if (res.status == 200) {
         Swal.fire('Expense Updated!', '', 'success');
       }
-    }, (err:any)=>{
+    }, (err: any) => {
       this.isLoading = false;
       this.errorHandlingService.errorAlertMsg(err);
     })
   }
 
   onAddService() {
-    
+
   }
 
-  onAddexpense(){
+  onAddexpense() {
     // const clientOffset = new Date().getTimezoneOffset();
     // const adjustedDate = new Date(this.newexpense.expense_date.getTime() - clientOffset * 60000);
     // this.newexpense = {
@@ -184,7 +307,15 @@ export class ExpensesComponent {
       this.isLoading = false;
 
       if (res.status == 200) {
-        this.newexpense = {}
+        this.newexpense = {
+          selectedCategory: '',
+          expense_comments: '',
+          expense_price: '',
+          expense_tax: '',
+          type: '',
+          customCategory: '',
+          expense_date: new Date()
+        }
         this.getExpenses();
       }
     }, (err) => {
@@ -193,7 +324,7 @@ export class ExpensesComponent {
     })
   }
 
-  getExpenses(query?:any){
+  getExpenses(query?: any) {
     const formData = {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
@@ -215,18 +346,18 @@ export class ExpensesComponent {
     })
   }
 
-  calculateExpenses(data:any){
-    this.totalExpenseSum = data.reduce((initialValue:any, data:any)=>{
-      return initialValue+data.expense_price
+  calculateExpenses(data: any) {
+    this.totalExpenseSum = data.reduce((initialValue: any, data: any) => {
+      return initialValue + data.expense_price
     }, 0)
   }
 
-  updateFilteredItems(event:any): void {
+  updateFilteredItems(event: any): void {
     if (!this.searchText) {
       this.filteredItems = [...this.expensesList];
       this.calculateExpenses(this.filteredItems);
     } else {
-      this.filteredItems = this.expensesList.filter((item:any) => {
+      this.filteredItems = this.expensesList.filter((item: any) => {
         // Implement your search logic here
         // Return true if the item matches the search criteria
         // Otherwise, return false
@@ -236,12 +367,20 @@ export class ExpensesComponent {
     }
   }
 
-  onCategoryChange(event:any){
+  onCategoryChange(event: any, option:any) {
     console.log(event)
-    if(event.value){
-      this.getExpenses({selectedCategory : event.value});
+    if(option == 'type'){
+      if (event.value) {
+        this.getExpenses({ type: event.value });
+      } else {
+        this.getExpenses();
+      }
     }else{
-      this.getExpenses();
+      if (event.value) {
+        this.getExpenses({ selectedCategory: event.value });
+      } else {
+        this.getExpenses();
+      }
     }
   }
 
@@ -267,4 +406,11 @@ export class ExpensesComponent {
     }
   }
 
+  exportPdf(){
+    this.exportAsXLSX(this.filteredItems, 'expenses')
+  }
+
+  exportAsXLSX(data: any, filename: any): void {
+    this.excelService.exportAsExcelFile(data, filename);
+  }
 }

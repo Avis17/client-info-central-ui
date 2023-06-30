@@ -17,6 +17,9 @@ export class AuthGuardService {
   URL = environment.apiUrl;
   constructor(private router: Router, private http: HttpClient, private cookieService: CookieService) { }
 
+  getUserPermission(){
+    return this.userDetails.permission;
+  }
 
   getSessionUserDetails() {
     let user = sessionStorage.getItem("user");
@@ -42,6 +45,7 @@ export class AuthGuardService {
   setUserDetails(details: any) {
     this.userDetails = details
   }
+
   getUserDetails() {
     return this.userDetails
   }
@@ -68,7 +72,6 @@ export class AuthGuardService {
     const tokenExpirationTime = 30 * 60 * 1000; // 30 minutes in milliseconds
     const expirationDate = new Date(Date.now() + tokenExpirationTime);
     this.cookieService.set('token', token, { expires: expirationDate });
-
   }
 
   removeToken(): void {

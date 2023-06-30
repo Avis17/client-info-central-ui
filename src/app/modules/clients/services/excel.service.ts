@@ -33,7 +33,7 @@ export class ExcelService {
 
   public exportAsExcelFile(json: any[], excelFileName: string): void {
     const dataWithoutIdAndVersion = json.map(obj => {
-      const { _id, __v, isUniqueField, ...rest } = obj;
+      const { _id, __v, isUniqueField, clone, isEdit, ...rest } = obj;
       const interestedFields = Object.entries(rest)
         .filter(([key, value]: any) => Array.isArray(value))
         .map(([key, value]: any) => {

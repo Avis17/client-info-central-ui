@@ -85,15 +85,18 @@ export class CreateApplicationMetaComponent implements OnInit {
   secondFormGroup: FormGroup;
   thirdFormGroup: FormGroup;
   furthFormGroup: FormGroup;
+  employeeFormGroup: FormGroup;
   servicesFormGroup : any;
   isSecondFormValid = false;
   isThirdFormValid = false;
   isServiceFormValid = false;
+  isEmployeeFormValid = false;
 
   serviceForm: FormGroup;
 
   @ViewChild('modal') private fieldModalComponent: ModalComponent
   @ViewChild('modal1') private chartModalComponent: ModalComponent
+  @ViewChild('employeeModal') private employeeModalComponent: ModalComponent
 
   modalConfig: ModalConfig = {
     modalTitle: "Add New Form Field",
@@ -103,6 +106,17 @@ export class CreateApplicationMetaComponent implements OnInit {
     },
     disableCloseButton: () => {
       return !this.isSecondFormValid;
+    },
+  }
+
+  modalEmployee: ModalConfig = {
+    modalTitle: "Add Employee Form Field",
+    closeButtonLabel: 'Add',
+    hideDismissButton() {
+      return true
+    },
+    disableCloseButton: () => {
+      return !this.isEmployeeFormValid;
     },
   }
 
@@ -122,7 +136,10 @@ export class CreateApplicationMetaComponent implements OnInit {
       return await this.fieldModalComponent.open();
     } else if (modelName == 'modal1') {
       return await this.chartModalComponent.open();
-    } else {
+    } else if (modelName == 'employeeModal') {
+      return await this.employeeModalComponent.open();
+    }
+     else {
       return await this.fieldModalComponent.open();
     }
   }
@@ -155,6 +172,9 @@ export class CreateApplicationMetaComponent implements OnInit {
     })
     this.thirdFormGroup.statusChanges.subscribe((status) => {
       this.isThirdFormValid = status === 'VALID';
+    })
+    this.employeeFormGroup.statusChanges.subscribe((status) => {
+      this.isEmployeeFormValid = status === 'VALID';
     })
   }
 
@@ -207,6 +227,10 @@ export class CreateApplicationMetaComponent implements OnInit {
       "logo": ["", Validators.required],
       "signature": ["", Validators.required],
     });
+    this.employeeFormGroup = this._formBuilder.group({
+      "employee_management_required": ["", Validators.required],
+      "employee_fields": this._formBuilder.array([])
+    })
   }
 
   ngOnInit() {
@@ -247,6 +271,11 @@ export class CreateApplicationMetaComponent implements OnInit {
     control.push(this._formBuilder.group(this.getListOfFields()))
   }
 
+  addEmployeeFieldsObj(){
+    const control = this.employeeFormGroup.get('employee_fields') as FormArray;
+    control.push(this._formBuilder.group(this.getListOfFields()))
+  }
+
   addChartobj() {
     const control = this.thirdFormGroup.get('charts_details') as FormArray;
     control.push(this._formBuilder.group(this.getChartsDetailsObj()))
@@ -258,16 +287,12 @@ export class CreateApplicationMetaComponent implements OnInit {
       "field_key": ["", Validators.required],
       "field_type": ["", Validators.required],
       "field_value": ["", Validators.required],
-      // "isField_table_show": [true, Validators.required],
-      // "isField_services" : [false, Validators.required],
-      // "isField_detailed_show": [true, Validators.required],
       "isMutable": [true, Validators.required],
-      // "isRequired": [true, Validators.required],
       "isUnique": [false, Validators.required],
-      // "isField_table_sorting": [true, Validators.required],
       "field_options": new FormControl<string[] | null>(null)
     }
   }
+
 
   getChartsDetailsObj() {
     return {
@@ -281,6 +306,13 @@ export class CreateApplicationMetaComponent implements OnInit {
     this.openModal('modal');
     this.addFieldsObj();
   }
+
+  onFieldEmployeeAdd() {
+    this.openModal('employeeModal');
+    this.addEmployeeFieldsObj();
+  }
+
+
 
   onChartAdd() {
     this.addChartobj();
@@ -297,6 +329,9 @@ export class CreateApplicationMetaComponent implements OnInit {
       return arr.controls
     } else if (groupName == 'third') {
       let arr = this.thirdFormGroup.get(fieldName) as FormArray;
+      return arr.controls
+    } else if (groupName == 'employee') {
+      let arr = this.employeeFormGroup.get(fieldName) as FormArray;
       return arr.controls
     } else {
       let arr = this.secondFormGroup.get(fieldName) as FormArray;
@@ -321,6 +356,13 @@ export class CreateApplicationMetaComponent implements OnInit {
         this.closeModal('modal1')
       }
     }
+    if (modalName == 'employeeModal') {
+      const control = this.employeeFormGroup.get(fieldName) as FormArray;
+      control.removeAt(index);
+      if (option == 'modal-close') {
+        this.closeModal('employeeModal')
+      }
+    }
   }
 
   getLengthOfArr(fieldName: string, groupName: string) {
@@ -329,6 +371,10 @@ export class CreateApplicationMetaComponent implements OnInit {
       return arr.length
     } else if (groupName == 'third') {
       let arr = this.thirdFormGroup.get(fieldName) as FormArray;
+      return arr.length
+    }
+    else if (groupName == 'employee') {
+      let arr = this.employeeFormGroup.get(fieldName) as FormArray;
       return arr.length
     } else {
       return 0
@@ -342,11 +388,11 @@ export class CreateApplicationMetaComponent implements OnInit {
 
   getAppCategories() {
     this.isLoading = true;
-
     this.appMetaService.getAppCategories().subscribe((res) => {
       this.isLoading = false;
       if (res) {
         this.appCategories = res.data;
+        this.appCategories = this.appCategories.reverse();
         return;
       }
       this.appCategories = []
@@ -364,7 +410,7 @@ export class CreateApplicationMetaComponent implements OnInit {
     })
     console.log(isUniqueThere)
     if(isUniqueThere.length >= 1){
-      let data = { ...this.firstFormGroup.value, ...this.secondFormGroup.value, servicesList : {...this.serviceForm.value} , ...this.thirdFormGroup.value, billingdetails: {...this.furthFormGroup.value}, terms : this.termsList }
+      let data = { ...this.firstFormGroup.value, ...this.secondFormGroup.value, servicesList : {...this.serviceForm.value} , ...this.thirdFormGroup.value, billingdetails: {...this.furthFormGroup.value}, terms : this.termsList, ...this.employeeFormGroup.value }
       this.isLoading = true;
       this.appMetaService.createNewAppMeta(data).subscribe((res: any) => {
         this.isLoading = false;

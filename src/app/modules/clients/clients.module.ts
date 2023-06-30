@@ -28,6 +28,9 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import {MatExpansionModule} from '@angular/material/expansion';
 import { NewBillComponent } from './components/new-bill/new-bill.component';
 import { TabViewModule } from 'primeng/tabview';
+import { EmployeeManagementComponent } from './components/employee-management/employee-management.component';
+import { EmployeeTableComponent } from './components/employee-table/employee-table.component';
+import { TooltipModule } from 'primeng/tooltip';
 
 
 
@@ -47,6 +50,8 @@ import { TabViewModule } from 'primeng/tabview';
     RebillComponent,
     CustomerFollowupComponent,
     NewBillComponent,
+    EmployeeManagementComponent,
+    EmployeeTableComponent,
   ],
   imports: [
     CommonModule,
@@ -62,7 +67,8 @@ import { TabViewModule } from 'primeng/tabview';
     ProgressBarModule,
     NgxDaterangepickerMd.forRoot(),
     MatExpansionModule,
-    TabViewModule
+    TabViewModule,
+    TooltipModule
   ],
   providers: [CanDeactivateGuard]
 })

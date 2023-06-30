@@ -34,10 +34,12 @@ export class HomeComponent implements OnInit {
   // chartHoverBackgroundColors = ['#ffdde1', '#A7BFE8', '#BBD2C5', '#acb6e5', "#EF886C", "#256687", "#0AB1FF", "#C4E6E9", "#8D9DA5", "#3D3D3D"]
   inVoicesList: any;
   totalRevenue = 0;
-  weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "ThursDay", "Friday", "Saturday"]
-  selectedDates: { startDate: moment.Moment, endDate: moment.Moment };
-  alwaysShowCalendars: boolean;
+ 
   listOfServices: any = []
+  aggregatedDats: any;
+  serviceChartDays: any;
+  netProfitAndExpenses: any;
+  progressServiceList: any = []
   ranges: any = {
     'Today': [moment(), moment()],
     'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
@@ -54,13 +56,12 @@ export class HomeComponent implements OnInit {
         .endOf('month')
     ]
   }
-  aggregatedDats: any;
-  serviceChartDays: any;
-  netProfitAndExpenses: any;
+  weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "ThursDay", "Friday", "Saturday"]
+  selectedDates: { startDate: moment.Moment, endDate: moment.Moment };
+  alwaysShowCalendars: boolean;
   invalidDates: moment.Moment[] = [moment().add(2, 'days'), moment().add(3, 'days'), moment().add(5, 'days')];
   selectedPeriod: any = 'Overall Datas';
   customDayLabels = ['S', 'M', 'T', 'W', 'Th', 'F', 'S'];
-  progressServiceList: any = []
   isInvalidDate = (current: moment.Moment) => {
     const currentDate = moment();
     return current.isAfter(currentDate, 'day'); // Disable future dates
@@ -86,6 +87,7 @@ export class HomeComponent implements OnInit {
       return data.products
     })
     this.listOfServices = this.flattenArray(response);
+    console.log(this.listOfServices)
     this.progressServiceList = this.getServiceStats(this.listOfServices);
     // console.log(this.progressServiceList)
     let barDetails: any = this.getDestructuredBarChart(this.listOfServices, 'categoryName');
@@ -609,7 +611,10 @@ export class HomeComponent implements OnInit {
     // console.log(cardName)
     switch (cardName) {
       case 'customers':
-        this.exportAsXLSX(this.entities, cardName);
+        // this.exportAsXLSX(this.entities, cardName);
+        this.entityService.updateTableData(this.entities);
+        const commands = ['/client/clients'];
+        this.navigationService.navigateWithoutLocationChange(commands);
         break;
       case 'products':
         this.exportAsXLSX(this.listOfServices, cardName);

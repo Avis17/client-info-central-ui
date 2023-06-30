@@ -12,12 +12,12 @@
                     </div> 
                     Dashboard
                 </a>
-                <a (click)="onClickLink('clients')" appSkipLocationChange [commands]="['/client/clients']" [ngClass]="linkActive['clients'] ? 'text-color nav-link' : 'nav-link'">
+                <!-- <a (click)="onClickLink('clients')" appSkipLocationChange [commands]="['/client/clients']" [ngClass]="linkActive['clients'] ? 'text-color nav-link' : 'nav-link'">
                     <div class="sb-nav-link-icon">
                         <img src="../../../../../assets/clients/png/customers.png">
                     </div>
                     Clients
-                </a>
+                </a> -->
                 <!-- <a (click)="onClickLink('billing')" appSkipLocationChange [commands]="['/client/billing']" [ngClass]="linkActive['billing'] ? 'text-color nav-link' : 'nav-link'">
                     <div class="sb-nav-link-icon">
                         <img src="../../../../../assets/clients/png/billing.png">
@@ -28,7 +28,7 @@
                     <div class="sb-nav-link-icon">
                         <img src="../../../../../assets/clients/png/services.png">
                     </div>
-                    Services
+                    Services/Products
                 </a>
                 <a (click)="onClickLink('expenses')" appSkipLocationChange [commands]="['/client/expenses']" [ngClass]="linkActive['expenses'] ? 'text-color nav-link' : 'nav-link'">
                     <div class="sb-nav-link-icon">
@@ -47,6 +47,12 @@
                         <img src="../../../../../assets/clients/png/follow.png">
                     </div>
                     Customer Followup
+                </a>
+                <a *ngIf="authService.getUserPermission() == 'admin'" (click)="onClickLink('employee')" appSkipLocationChange [commands]="['/client/employee']" [ngClass]="linkActive['employee'] ? 'text-color nav-link' : 'nav-link'">
+                    <div class="sb-nav-link-icon">
+                        <img src="../../../../../assets/clients/png/customers.png">
+                    </div>
+                    Employee Management
                 </a>
             </div> 
         </div>

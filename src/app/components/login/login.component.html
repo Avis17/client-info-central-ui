@@ -1,26 +1,48 @@
 <app-custom-loader *ngIf="isLoading"></app-custom-loader>
 
-<div class="centre-container">
-  <div class="card card-width-40 card-width-sm-80">
-    <div class="card-header">
-      Customer Info Central
-    </div>
-    <div class="card-body">
-      <div class="mt-3">
-        <input class="form-control" type="text" placeholder="Email" [(ngModel)]="email">
-      </div>
-      <div class="mt-3">
-        <div class="password-input">
-          <input class="form-control" type="{{ showPassword ? 'text' : 'password' }}" (keydown.enter)="onLoginBtnClick()" placeholder="Password" [(ngModel)]="password">
-          <button mat-icon-button class="password-toggle" (click)="togglePasswordVisibility()">
-            <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-          </button>
+<div class="bg">
+  <div class="row mt-8">
+    <div class="col-lg-7 col-md-12 col-sm-12">
+      <div class="centre-container">
+        <div class="card-width-100 card-width-sm-100 align-center">
+          <div>
+            <img src="../../../assets/login/cic.jpg" width="300px" height="200px">
+          </div>
+          <div class="mt-3">
+            <h1 class="title">Customer Info Central</h1>
+          </div>
+          <div class="sub-heading">Unleash the Power of Customer Insights</div>
+          <div class="sub-heading2">"Customer Info Central: Empowering Businesses with Data-driven Growth"</div>
         </div>
       </div>
-      <div class="mt-3">
-        <button (click)="onLoginBtnClick()" mat-flat-button class="primary-bg">{{ 'Login' | uppercase }}</button>
-        <div class="mt-2">
-          <a routerLink="/forgot-password">Forgot Password?</a>
+    </div>
+    <div class="col-lg-5 col-md-12 col-sm-12 mt-5 mb-5">
+      <div class="centre-container">
+        <div class="card card-width-80 card-width-sm-80">
+          <div class="card-header">
+            Enter Your Credentials to Login
+          </div>
+          <div class="card-body">
+            <div class="mt-5">
+              <label>Username</label>
+              <input class="form-control" type="text" placeholder="Email" [(ngModel)]="email">
+            </div>
+            <div class="mt-3">
+              <div class="password-input">
+                <label>Password</label>
+                <input class="form-control" type="{{ showPassword ? 'text' : 'password' }}" (keydown.enter)="onLoginBtnClick()" placeholder="Password" [(ngModel)]="password">
+                <button mat-icon-button class="password-toggle" (click)="togglePasswordVisibility()">
+                  <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+              </div>
+            </div>
+            <div class="mt-2 text-end">
+              <a routerLink="/forgot-password">Forgot Password?</a>
+            </div>
+            <div class="mt-3">
+              <button (click)="onLoginBtnClick()" mat-flat-button class="primary-bg">{{ 'Login' | uppercase }}</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

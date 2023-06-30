@@ -114,3 +114,8 @@ th {
 ::ng-deep .p-progressbar .p-progressbar-label{
     display: none !important;
 }
+
+::ng-deep .p-tabview .p-tabview-panels{
+    padding: 0 !important;
+    margin : 1rem !important;
+}

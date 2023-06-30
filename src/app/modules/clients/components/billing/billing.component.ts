@@ -178,19 +178,20 @@ export class BillingComponent implements OnDestroy {
             [
               {
                 columns: [
-                  {
-                    width: 'auto',
-                    text: 'Customer Name: ',
-                    bold: true,
-                    fontSize: 12,
-                    margin: [0, 0, 3, 0]
-                  },
+                  // {
+                  //   width: 'auto',
+                  //   text: 'Customer Name: ',
+                  //   bold: true,
+                  //   fontSize: 12,
+                  //   margin: [0, 0, 3, 0]
+                  // },
                   {
                     width: 'auto',
                     text: this.invoice.customerName,
                     fontSize: 10,
                     alignment: 'center',
-                    margin: [0, 2, 0, 5] // Add a small margin at the top and right
+                    // margin: [0, 2, 0, 5] // Add a small margin at the top and right
+                    // margin: [0, 0, 0, 5] // Add a small margin at the top and right
 
                   }
                 ],
@@ -198,19 +199,20 @@ export class BillingComponent implements OnDestroy {
               },
               {
                 columns: [
-                  {
-                    width: 'auto',
-                    text: 'Address: ',
-                    bold: true,
-                    fontSize: 12,
-                    margin: [0, 0, 3, 0]
-                  },
+                  // {
+                  //   width: 'auto',
+                  //   text: 'Address: ',
+                  //   bold: true,
+                  //   fontSize: 12,
+                  //   margin: [0, 0, 3, 0]
+                  // },
                   {
                     width: 'auto',
                     text: this.invoice.address,
                     fontSize: 10,
                     alignment: 'center',
-                    margin: [0, 2, 0, 5] // Add a small margin at the top and right
+                    // margin: [0, 2, 0, 5] // Add a small margin at the top and right
+                    // margin: [0, 0, 0, 5] // Add a small margin at the top and right
 
                   }
                 ],
@@ -218,19 +220,20 @@ export class BillingComponent implements OnDestroy {
               },
               {
                 columns: [
-                  {
-                    width: 'auto',
-                    text: 'Email: ',
-                    bold: true,
-                    fontSize: 12,
-                    margin: [0, 0, 3, 0]
-                  },
+                  // {
+                  //   width: 'auto',
+                  //   text: 'Email: ',
+                  //   bold: true,
+                  //   fontSize: 12,
+                  //   margin: [0, 0, 3, 0]
+                  // },
                   {
                     width: 'auto',
                     text: this.invoice.email,
                     fontSize: 10,
                     alignment: 'center',
-                    margin: [0, 2, 0, 5] // Add a small margin at the top and right
+                    // margin: [0, 2, 0, 5] // Add a small margin at the top and right
+                    // margin: [0, 0, 0, 5] // Add a small margin at the top and right
 
                   }
                 ],
@@ -238,19 +241,20 @@ export class BillingComponent implements OnDestroy {
               },
               {
                 columns: [
-                  {
-                    width: 'auto',
-                    text: 'Phone: ',
-                    bold: true,
-                    fontSize: 12,
-                    margin: [0, 0, 3, 0]
-                  },
+                  // {
+                  //   width: 'auto',
+                  //   text: 'Phone: ',
+                  //   bold: true,
+                  //   fontSize: 12,
+                  //   margin: [0, 0, 3, 0]
+                  // },
                   {
                     width: 'auto',
                     text: this.invoice.phone,
                     fontSize: 10,
                     alignment: 'center',
-                    margin: [0, 2, 0, 5] // Add a small margin at the top and right
+                    // margin: [0, 2, 0, 5] // Add a small margin at the top and right
+                    // margin: [0, 0, 0, 5] // Add a small margin at the top and right
 
                   }
                 ],
@@ -258,19 +262,20 @@ export class BillingComponent implements OnDestroy {
               },
               {
                 columns: [
-                  {
-                    width: 'auto',
-                    text: 'GST No: ',
-                    bold: true,
-                    fontSize: 12,
-                    margin: [0, 0, 3, 0]
-                  },
+                  // {
+                  //   width: 'auto',
+                  //   text: 'GST No: ',
+                  //   bold: true,
+                  //   fontSize: 12,
+                  //   margin: [0, 0, 3, 0]
+                  // },
                   {
                     width: 'auto',
                     text: this.invoice.gstNo || '',
                     fontSize: 10,
                     alignment: 'center',
-                    margin: [0, 2, 0, 5] // Add a small margin at the top and right
+                    // margin: [0, 2, 0, 5] // Add a small margin at the top and right
+                    // margin: [0, 0, 0, 5] // Add a small margin at the top and right
 
                   }
                 ]
@@ -681,7 +686,7 @@ export class BillingComponent implements OnDestroy {
   onValidateTc() {
     let isTermsEmpty = false;
     this.termsList.forEach((data: any) => {
-      if (data.terms == '') {
+      if (data.terms.trim() == '') {
         isTermsEmpty = true;
         return; // exit the loop if an empty term is found
       }
@@ -696,7 +701,7 @@ export class BillingComponent implements OnDestroy {
   onCalculateSubTotal() {
     let subtotal = 0
     this.invoice.products.forEach((item: any) => {
-      subtotal = subtotal + (item.price * item.qty)
+      subtotal = subtotal + (Number(item.price) * Number(item.qty))
     })
     this.invoice.subTotal = subtotal;
     this.isSubTotalClicked = true;
@@ -704,11 +709,10 @@ export class BillingComponent implements OnDestroy {
   }
 
   onCalculateTotal() {
-    this.invoice.cgstAmount = (this.invoice.cgst * this.invoice.subTotal) / 100;
+    this.invoice.cgstAmount = (Number(this.invoice.cgst) * Number(this.invoice.subTotal)) / 100;
     // this.invoice.sgstAmount = (this.invoice.sgst * this.invoice.subTotal) / 100;
     // this.invoice.igstAmount = (this.invoice.igst * this.invoice.subTotal) / 100;
-    this.invoice.finalTotal = this.invoice.subTotal + this.invoice.cgstAmount;
-    console.log(this.invoice);
+    this.invoice.finalTotal = Number(this.invoice.subTotal) + this.invoice.cgstAmount;
     this.isFinalTotalClicked = true;
 
   }

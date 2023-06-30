@@ -18,7 +18,7 @@
         <div class="card-body">
             <div *ngFor="let category of servicesList;let j=index" class="mb-4">
                 <mat-accordion class="example-headers-align" multi>
-                    <mat-expansion-panel>
+                    <mat-expansion-panel expanded="true">
                         <mat-expansion-panel-header>
                             <mat-panel-title>
                                 {{category.categoryName}}

@@ -111,7 +111,7 @@
                                     (click)="onCalculateSubTotal()">Calculate SubTotal</button>
                             </div>
                             <div class="col-md-6">
-                                <input class="form-control float-right" name="subtotal" *ngIf="invoice.subTotal > 0"
+                                <input class="form-control float-right no-arrow" type="number" name="subtotal" *ngIf="invoice.subTotal > 0"
                                     [(ngModel)]="invoice.subTotal">
                             </div>
 
@@ -122,7 +122,7 @@
                                 <span class="float-right mt-2">Tax GST</span>
                             </div>
                             <div class="col-md-3">
-                                <select class="form-select" name="name" [(ngModel)]="invoice.cgst">
+                                <select class="form-select" name="gstname" [(ngModel)]="invoice.cgst">
                                     <option *ngFor="let gst of gstList" [value]="gst">{{gst}} %</option>
                                 </select>
                             </div>

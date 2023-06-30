@@ -5,8 +5,8 @@ label{
     font-weight: 500;
 }
 
-::ng-deep .p-card-header{
-    background-color: #E1E5EE !important;
+::ng-deep .p-card{
+    background-color: $pcard !important;
 }
 
 .img-size{

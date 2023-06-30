@@ -1,32 +1,88 @@
+@import "src/_variables.scss";
 
 
-.centre-container{
-    height: 100vH;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    background-repeat: no-repeat;
-    opacity: 0.8;
-    background-size: cover;
-    background-position: center;
-    background-image: url('https://clipart-library.com/images_k/people-with-transparent-background/people-with-transparent-background-10.png');
+.centre-container {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  flex-wrap: wrap;
+  background-repeat: no-repeat;
+  opacity: 0.8;
+  background-size: cover;
+  background-position: center;
+  // background-image: url('https://clipart-library.com/images_k/people-with-transparent-background/people-with-transparent-background-10.png');
+}
+
+.align-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+}
+
+.card-width-80 {
+  width: 80% !important;
+  // height: 350px !important;
+}
+
+.bg {
+  background-color: $pcard;
+  display: flex;
+  flex-direction: column;
+  height: 100vH;
+  // justify-content: center;
+}
+
+.mt-8{
+  margin-top: 8rem !important;
+}
+
+.sub-heading {
+  font-size: 28px;
+  line-height: 1.41;
+  letter-spacing: -0.78px;
+  margin-left: 5px;
+  margin-bottom: 10px;
+  font-weight: 500;
+  color: #000;
+}
+
+.sub-heading2 {
+  font-size: 17px;
+  line-height: 1.41;
+  margin-left: 3px;
+  letter-spacing: -0.47px;
+  font-weight: 500;
+  color: #000;
+}
+
+.title {
+  font-size: 48px;
+  font-weight: bold;
+  line-height: 1.41;
+  letter-spacing: -0.47px;
+  color: #333;
+  // text-align: center;
+  text-decoration: overline;
+  text-transform: uppercase;
+  margin-bottom: 18px;
 }
 
 .password-input {
-    position: relative;
-    display: inline-block;
-    width: 100%;
-  }
-  
-  .password-input input {
-    padding-right: 2.5rem; /* Adjust this value based on the icon size and padding */
-  }
-  
-  .password-toggle {
-    position: absolute;
-    top: 50%;
-    right: 0; /* Adjust this value based on the desired icon position */
-    transform: translateY(-50%);
-  }
-  
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.password-input input {
+  padding-right: 2.5rem;
+  /* Adjust this value based on the icon size and padding */
+}
+
+.password-toggle {
+  position: absolute;
+  top: 65%;
+  right: 0;
+  /* Adjust this value based on the desired icon position */
+  transform: translateY(-50%);
+}

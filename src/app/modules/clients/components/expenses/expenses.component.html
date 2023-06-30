@@ -21,38 +21,57 @@
             </div>
         </div>
     </div>
-    <div class="row align-end">
-        <div class="col-lg-7 col-md-7 col-sm-12 mt-3 mb-3">
-            <div class="input-group position-static">
-                <input type="text" class="form-control custom-date"
-                  [locale]="{ format: 'DD-MM-YYYY', daysOfWeek: ['S', 'M', 'T', 'W', 'T', 'F', 'S']}"
-                  ngxDaterangepickerMd [(ngModel)]="selectedDates"
-                  [showCustomRangeLabel]="true" [alwaysShowCalendars]="true" (ngModelChange)="ngModelDateChange($event)"
-                  [ranges]="ranges" [linkedCalendars]="true" [isInvalidDate]="isInvalidDate" [showClearButton]="true"
-                  placeholder="Filter by dates" />
-                  <div class="input-group-prepend">
-                    <span class="input-group-text" style="height: 100%;">
-                      <i class="fa fa-calendar"></i>
-                    </span>
-                  </div>
-              </div>
+    <p-toolbar>
+        <div style="width: 100%;">
+            <div class="row align-end">
+                <div class="col-lg-7 col-md-7 col-sm-12 mt-3 mb-3">
+                    <div class="input-group position-static">
+                        <input type="text" class="form-control custom-date"
+                            [locale]="{ format: 'DD-MM-YYYY', daysOfWeek: ['S', 'M', 'T', 'W', 'T', 'F', 'S']}"
+                            ngxDaterangepickerMd [(ngModel)]="selectedDates" [showCustomRangeLabel]="true"
+                            [alwaysShowCalendars]="true" (ngModelChange)="ngModelDateChange($event)" [ranges]="ranges"
+                            [linkedCalendars]="true" [isInvalidDate]="isInvalidDate" [showClearButton]="true"
+                            placeholder="Filter by dates" />
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" style="height: 100%;">
+                                <i class="fa fa-calendar"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 col-sm-12 col-md-6 mb-3 mt-3">
+                    <input type="text" (input)="updateFilteredItems($event)" placeholder="Search expense"
+                        [(ngModel)]="searchText" class="form-control mb-3">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-8 col-sm-12 col-md-6 mb-3 mb-md-0">
+                    <div class="row">
+                        <div class="col-lg-6 col-sm-12">
+                            <p-dropdown [options]="expenseTypes" (onChange)="onCategoryChange($event, 'type')"
+                                optionLabel="label" [showClear]="true" [filter]="true"
+                                placeholder="Filter by Expense Type">
+                            </p-dropdown>
+                        </div>
+                        <div class="col-lg-6 col-sm-12">
+                            <p-dropdown [virtualScroll]="true" [virtualScrollItemSize]="38" [options]="allCategories"
+                                (onChange)="onCategoryChange($event, 'category')" optionLabel="label" [filter]="true"
+                                [showClear]="true" placeholder="Filter by Category">
+                            </p-dropdown>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-sm-12 col-md-6 text-end mb-3">
+                    <p-button label="New Expense" icon="pi pi-plus" class="mr-2" data-bs-toggle="modal"
+                        data-bs-target="#exampleModal"></p-button>
+                    <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf()"
+                        class="p-button-success mr-2" pTooltip="Export data" tooltipPosition="bottom">
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="col-lg-5 col-sm-12 col-md-6 mb-3 mt-3">
-            <input type="text" (input)="updateFilteredItems($event)" placeholder="Search expense"
-                [(ngModel)]="searchText" class="form-control mb-3">
-        </div>
-    </div>
-    <div class="row">
-        
-        <div class="col-lg-4 col-sm-12 col-md-6 mb-3 mb-md-0">
-            <p-dropdown [virtualScroll]="true" [virtualScrollItemSize]="38" [options]="expenseCategories" (onChange)="onCategoryChange($event)" optionLabel="label" [filter]="true" [showClear]="true" placeholder="Select a Category">
-            </p-dropdown>
-        </div>
-        <div class="col-lg-8 col-sm-12 col-md-6 text-end mb-3">
-            <p-button label="New Expense" icon="pi pi-plus" class="mr-2" data-bs-toggle="modal"
-                data-bs-target="#exampleModal"></p-button>
-        </div>
-    </div>
+    </p-toolbar>
+
 
     <div class="card mb-8">
         <div class="card-header">
@@ -64,10 +83,12 @@
                     <thead>
                         <tr>
                             <th>S No</th>
-                            <th>Expense Category</th>
                             <th>Date</th>
-                            <th>Expense Amount</th>
+                            <th>Expense Type</th>
+                            <th>Expense Category</th>
                             <th>Additional Details</th>
+                            <th>Expense Amount</th>
+                            <th>GST Amount</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -75,17 +96,44 @@
                         <tr
                             *ngFor="let expense of filteredItems | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; let i = index">
                             <td>{{i+1}}</td>
-                            <td style="width: 20%;">
-                                <span *ngIf="!expense.isEdit">{{expense?.selectedCategory.label}}</span>
-
-                                  <p-dropdown *ngIf="expense.isEdit"
-                                  [virtualScroll]="true" [virtualScrollItemSize]="38"
-                                  [style]="{'width':'100%','overflow':'visible'}" appendTo="body" 
-                                  [options]="expenseCategories" [(ngModel)]="newexpense.selectedCategory" optionLabel="label" [filter]="true" [showClear]="true" placeholder="Select a Category">
-                                </p-dropdown>
-                            </td>
                             <td>
                                 <span>{{expense?.expense_date | dateformat}}</span>
+                            </td>
+                            <td>
+                                <span *ngIf="!expense.isEdit">{{expense?.type?.label}}</span>
+                                <p-dropdown *ngIf="expense.isEdit" [(ngModel)]="expense.type" [options]="expenseTypes"
+                                    optionLabel="label" placeholder="Select a expense type"></p-dropdown>
+                            </td>
+                            <td style="width: 20%;">
+                                <span
+                                    *ngIf="!expense.isEdit && expense?.selectedCategory.label == 'Others'">{{expense?.customCategory}}</span>
+                                <span
+                                    *ngIf="!expense.isEdit && expense?.selectedCategory.label != 'Others'">{{expense?.selectedCategory.label}}</span>
+
+                                <p-dropdown *ngIf="expense.isEdit && expense?.type?.label == 'Actual Expense'"
+                                    [virtualScroll]="true" [virtualScrollItemSize]="38"
+                                    [style]="{'width':'100%','overflow':'visible'}" appendTo="body"
+                                    [options]="expenseCategories" [(ngModel)]="expense.selectedCategory"
+                                    optionLabel="label" [filter]="true" [showClear]="true"
+                                    placeholder="Select a Expense Category">
+                                </p-dropdown>
+
+                                <p-dropdown *ngIf="expense.isEdit && expense?.type?.label == 'Asset to Business'"
+                                    [virtualScroll]="true" [virtualScrollItemSize]="38"
+                                    [style]="{'width':'100%','overflow':'visible'}" appendTo="body"
+                                    [options]="assetItems" [(ngModel)]="expense.selectedCategory" optionLabel="label"
+                                    [filter]="true" [showClear]="true" placeholder="Select a Asset Category">
+                                </p-dropdown>
+
+                                <input [(ngModel)]="expense.customCategory"
+                                    *ngIf="expense.isEdit && expense?.selectedCategory?.label == 'Others'" type="text"
+                                    class="form-control mt-3" placeholder="Enter expense Expense/Asset Category">
+
+                            </td>
+                            <td>
+                                <span *ngIf="!expense.isEdit">{{expense?.expense_comments}}</span>
+                                <input [(ngModel)]="expense.expense_comments" *ngIf="expense.isEdit" type="text"
+                                    class="form-control" placeholder="Enter expense Comments">
                             </td>
                             <td>
                                 <span *ngIf="!expense.isEdit">{{expense?.expense_price}}</span>
@@ -93,9 +141,9 @@
                                     class="form-control" placeholder="Enter expense Price">
                             </td>
                             <td>
-                                <span *ngIf="!expense.isEdit">{{expense?.expense_comments}}</span>
-                                <input [(ngModel)]="expense.expense_comments" *ngIf="expense.isEdit" type="text"
-                                    class="form-control" placeholder="Enter expense Comments">
+                                <span *ngIf="!expense.isEdit">{{expense?.expense_tax}}</span>
+                                <input [(ngModel)]="expense.expense_tax" *ngIf="expense.isEdit" type="number"
+                                    class="form-control" placeholder="Enter expense tax amount">
                             </td>
                             <td>
                                 <button *ngIf="!expense.isEdit" class="btn btn-warning mr-3 mb-2"
@@ -132,23 +180,30 @@
                 </button>
             </div>
             <div class="modal-body">
-                
+
                 <div class="mt-5 mb-2">
-                    <p-dropdown [virtualScroll]="true" [virtualScrollItemSize]="38" [options]="expenseCategories" [(ngModel)]="newexpense.selectedCategory" optionLabel="label" [filter]="true" [showClear]="true" placeholder="Select a Category">
+                    <p-dropdown [(ngModel)]="newexpense.type" [options]="expenseTypes" optionLabel="label"
+                        placeholder="Select a expense type"></p-dropdown>
+                </div>
+                <div class="mb-2" *ngIf="newexpense.type['label'] === 'Actual Expense'">
+                    <p-dropdown [virtualScroll]="true" [virtualScrollItemSize]="38" [options]="expenseCategories"
+                        [(ngModel)]="newexpense.selectedCategory" optionLabel="label" [filter]="true" [showClear]="true"
+                        placeholder="Select a Expense Category">
                     </p-dropdown>
                 </div>
-
-                <mat-form-field class="mt-2 full-width">
-                    <mat-label>Enter expense Additional Information</mat-label>
-                    <input matInput type="text"  [(ngModel)]="newexpense.expense_comments">
-                </mat-form-field>
-
-                <mat-form-field class="mt-2 full-width">
-                    <mat-label>Enter expense amount</mat-label>
-                    <input matInput type="number" class="no-arrow"  [(ngModel)]="newexpense.expense_price">
-                </mat-form-field>
-
-                <mat-form-field class="example-form-field mb-5">
+                <div class="mb-2" *ngIf="newexpense.type['label'] === 'Asset to Business'">
+                    <p-dropdown [virtualScroll]="true" [virtualScrollItemSize]="38" [options]="assetItems"
+                        [(ngModel)]="newexpense.selectedCategory" optionLabel="label" [filter]="true" [showClear]="true"
+                        placeholder="Select a Asset Category">
+                    </p-dropdown>
+                </div>
+                <div class="mt-3" *ngIf="newexpense.selectedCategory['label'] == 'Others'">
+                    <mat-form-field class="mt-2 full-width">
+                        <mat-label>Enter expense category</mat-label>
+                        <input matInput type="text" [(ngModel)]="newexpense.customCategory">
+                    </mat-form-field>
+                </div>
+                <mat-form-field class="example-form-field mt-2 full-width">
                     <mat-label>Choose a expense date</mat-label>
                     <input matInput [(ngModel)]="newexpense.expense_date" [matDatepicker]="datepicker">
                     <mat-hint>MM/DD/YYYY</mat-hint>
@@ -160,11 +215,24 @@
                         </mat-datepicker-actions>
                     </mat-datepicker>
                 </mat-form-field>
+                <mat-form-field class="mt-2 full-width">
+                    <mat-label>Enter expense Additional Information</mat-label>
+                    <input matInput type="text" [(ngModel)]="newexpense.expense_comments">
+                </mat-form-field>
+
+                <mat-form-field class="mt-2 full-width">
+                    <mat-label>Enter expense amount</mat-label>
+                    <input matInput type="number" class="no-arrow" [(ngModel)]="newexpense.expense_price">
+                </mat-form-field>
+                <mat-form-field class="mt-2 mb-5 full-width">
+                    <mat-label>Enter tax amount(if any)</mat-label>
+                    <input matInput type="number" class="no-arrow" [(ngModel)]="newexpense.expense_tax">
+                </mat-form-field>
+
 
             </div>
             <div class="modal-footer">
-                <button type="button"
-                    [disabled]="!newexpense.selectedCategory || !newexpense.expense_price"
+                <button type="button" [disabled]="!newexpense.selectedCategory || !newexpense.expense_price"
                     data-bs-dismiss="modal" (click)="onAddexpense()" class="btn btn-primary">Save changes</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>

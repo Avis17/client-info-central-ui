@@ -21,9 +21,10 @@ export class SidenavComponent {
     "services" : false,
     "expenses" : false,
     "balance" : false,
-    "followup" : false
+    "followup" : false,
+    "employee":  false
   }
-  constructor(private authService:AuthGuardService, private sanitizer: DomSanitizer){
+  constructor(public authService:AuthGuardService, private sanitizer: DomSanitizer){
     this.userDetails = this.authService.getUserDetails();
     // console.log(this.userDetails?.app_meta_details?.billingdetails?.signature)
   }

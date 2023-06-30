@@ -22,6 +22,17 @@ export class BillBalanceTrackerComponent {
   userDetails: any = {};
   Query: any = {};
   isLoading: boolean = true;
+  billTypes: any = [
+    {
+      label: 'All Inovices'
+    },
+    {
+      label: 'Balance Bills'
+    },
+  ]
+  selectedBillType: any = {
+    label: 'Balance Bills'
+  }
   selectedDates: { startDate: moment.Moment, endDate: moment.Moment };
   ranges: any = {
     'Today': [moment(), moment()],
@@ -44,9 +55,10 @@ export class BillBalanceTrackerComponent {
   paidAmountSum = 0;
   balanceAmountSum = 0;
   filteredItems: any = []
-  selectedBillDetails:any;
-  addNewAmount:any = undefined;
+  selectedBillDetails: any;
+  addNewAmount: any = undefined;
   isInvalidPayAmount = false;
+  allBills:any = []
   isInvalidDate = (current: moment.Moment) => {
     const currentDate = moment();
     return current.isAfter(currentDate, 'day'); // Disable future dates
@@ -68,7 +80,7 @@ export class BillBalanceTrackerComponent {
     delete this.selectedBillDetails._id
     this.selectedBillDetails = {
       ...this.selectedBillDetails,
-      paidAmount : Number(this.selectedBillDetails.paidAmount)+this.addNewAmount
+      paidAmount: Number(this.selectedBillDetails.paidAmount) + this.addNewAmount
     }
     const formData = {
       "schema": '',
@@ -103,7 +115,8 @@ export class BillBalanceTrackerComponent {
       this.isLoading = false;
       if (res) {
         console.log(res)
-        this.balanceList = res.data.filter((data:any)=>{
+        this.allBills = res.data;
+        this.balanceList = this.allBills.filter((data: any) => {
           return data.paymentStatus == 'part' && data.paidAmount != data.finalTotal
         });
         this.filteredItems = [...this.balanceList];
@@ -115,8 +128,31 @@ export class BillBalanceTrackerComponent {
     })
   }
 
+  onBillChange(event: any) {
+    if (event.value) {
+      if(event.value.label == 'All Invoices'){
+        this.balanceList = [...this.allBills]
+        this.filteredItems = [...this.balanceList];
+        this.calculateBillAmounts(this.balanceList);
+      }else{
+        this.balanceList = this.allBills.filter((data: any) => {
+          return data.paymentStatus == 'part' && data.paidAmount != data.finalTotal
+        });
+        this.filteredItems = [...this.balanceList];
+        this.calculateBillAmounts(this.balanceList);
+      }
+    } else {
+        this.balanceList = [...this.allBills]
+        this.filteredItems = [...this.balanceList];
+        this.calculateBillAmounts(this.balanceList);
+    }
+  }
+
+  findTotal(balance: any) {
+    return (balance?.finalTotal - balance?.paidAmount).toFixed(2)
+  }
+
   calculateBillAmounts(data: any) {
-    console.log(data)
     this.totalAmountSum = 0;
     this.paidAmountSum = 0;
     this.balanceAmountSum = 0;
@@ -169,15 +205,15 @@ export class BillBalanceTrackerComponent {
     }
   }
 
-  onBillPayment(billDetails:any){
+  onBillPayment(billDetails: any) {
     this.selectedBillDetails = billDetails;
     this.addNewAmount = undefined;
   }
 
-  chechValidAmount(){
-    if(this.addNewAmount > (Number(this.selectedBillDetails.finalTotal) - Number(this.selectedBillDetails.paidAmount))){
+  chechValidAmount() {
+    if (this.addNewAmount > (Number(this.selectedBillDetails.finalTotal) - Number(this.selectedBillDetails.paidAmount))) {
       this.isInvalidPayAmount = true
-    }else{
+    } else {
       this.isInvalidPayAmount = false
     }
   }

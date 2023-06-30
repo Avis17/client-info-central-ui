@@ -16,6 +16,7 @@ export class EntityService {
   invoiceDetails:any;
   URL = environment.apiUrl+'entities/';
   entitySchema :any = {}
+  formType:string = ''
   private tableDataSubject = new BehaviorSubject<any>(null);
   public tableData$ = this.tableDataSubject.asObservable();
 
@@ -24,7 +25,14 @@ export class EntityService {
     this.tableDataSubject.next(tableData);
   }
 
-  
+  setFormType(type:string){
+    this.formType = type
+  }
+
+  getFormType(){
+    return this.formType
+  }
+
   getInvoiceDetails(){
     return this.invoiceDetails;
   }

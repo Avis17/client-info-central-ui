@@ -13,6 +13,7 @@ import { BillBalanceTrackerComponent } from './components/bill-balance-tracker/b
 import { CustomerFollowupComponent } from './components/customer-followup/customer-followup.component';
 import { RebillComponent } from './components/rebill/rebill.component';
 import { NewBillComponent } from './components/new-bill/new-bill.component';
+import { EmployeeManagementComponent } from './components/employee-management/employee-management.component';
 
 const routes:Routes = [
   {
@@ -59,6 +60,10 @@ const routes:Routes = [
       {
         path : 'newbill',
         component : NewBillComponent,
+      }, 
+      {
+        path : 'employee',
+        component : EmployeeManagementComponent,
       },      
       {
         path : 'user-details/:id',

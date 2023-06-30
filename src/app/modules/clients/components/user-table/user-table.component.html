@@ -1,5 +1,7 @@
 <app-custom-loader *ngIf="isLoading"></app-custom-loader>
-
+<div class="pt-5 pl-3" *ngIf="isPrevPage">
+    <mat-icon class="cursor-pointer" (click)="onPreviousPage()">arrow_back</mat-icon>
+</div>
 <p-toolbar>
     <div class="p-toolbar-group-start">
         <input type="text" pInputText placeholder="Search Fields" (input)="applyFilterGlobal($event, 'contains')" />
@@ -7,9 +9,17 @@
     <div class="p-toolbar-group-end">
         <p-button [label]="userDetails?.app_meta_details?.client_name || 'Add User'" icon="pi pi-plus" class="mr-2"
             (click)="onAddUSer()"></p-button>
+            <button type="button" 
+                    pButton pRipple 
+                    icon="pi pi-file-pdf" 
+                    (click)="exportPdf()"
+                    class="p-button-success mr-2" 
+                    pTooltip="Export data" 
+                    tooltipPosition="bottom">
+            </button>
     </div>
 </p-toolbar>
-<div class="card m-4 mb-8" *ngIf="entities.length > 0">
+<div class="card mx-4 mb-8" *ngIf="entities.length > 0">
     <p-table #tableref [value]="entities" [paginator]="true" [columns]="cols" [rows]="5" [showCurrentPageReport]="true"
         [tableStyle]="{ 'min-width': '60rem' }" [reorderableColumns]="true" [alwaysShowPaginator]="false"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"

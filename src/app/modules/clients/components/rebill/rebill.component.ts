@@ -408,95 +408,105 @@ export class RebillComponent implements OnInit{
             [
               {
                 columns: [
-                  {
-                    width: 'auto',
-                    text: 'Customer Name: ',
-                    bold: true,
-                    fontSize: 12,
-                    margin: [0, 0, 3, 0]
-                  },
+                  // {
+                  //   width: 'auto',
+                  //   text: 'Customer Name: ',
+                  //   bold: true,
+                  //   fontSize: 12,
+                  //   margin: [0, 0, 3, 0]
+                  // },
                   {
                     width: 'auto',
                     text: this.invoiceDetails.customerName,
                     fontSize: 10,
                     alignment: 'center',
-                    margin: [0, 2, 0, 5]
+                    // margin: [0, 2, 0, 5] // Add a small margin at the top and right
+                    // margin: [0, 0, 0, 5] // Add a small margin at the top and right
+
                   }
                 ],
                 marginBottom: 5
               },
               {
                 columns: [
-                  {
-                    width: 'auto',
-                    text: 'Address: ',
-                    bold: true,
-                    fontSize: 12,
-                    margin: [0, 0, 3, 0]
-                  },
+                  // {
+                  //   width: 'auto',
+                  //   text: 'Address: ',
+                  //   bold: true,
+                  //   fontSize: 12,
+                  //   margin: [0, 0, 3, 0]
+                  // },
                   {
                     width: 'auto',
                     text: this.invoiceDetails.address,
                     fontSize: 10,
                     alignment: 'center',
-                    margin: [0, 2, 0, 5]
+                    // margin: [0, 2, 0, 5] // Add a small margin at the top and right
+                    // margin: [0, 0, 0, 5] // Add a small margin at the top and right
+
                   }
                 ],
                 marginBottom: 5
               },
               {
                 columns: [
-                  {
-                    width: 'auto',
-                    text: 'Email: ',
-                    bold: true,
-                    fontSize: 12,
-                    margin: [0, 0, 3, 0]
-                  },
+                  // {
+                  //   width: 'auto',
+                  //   text: 'Email: ',
+                  //   bold: true,
+                  //   fontSize: 12,
+                  //   margin: [0, 0, 3, 0]
+                  // },
                   {
                     width: 'auto',
                     text: this.invoiceDetails.email,
                     fontSize: 10,
                     alignment: 'center',
-                    margin: [0, 2, 0, 5]
+                    // margin: [0, 2, 0, 5] // Add a small margin at the top and right
+                    // margin: [0, 0, 0, 5] // Add a small margin at the top and right
+
                   }
                 ],
                 marginBottom: 5
               },
               {
                 columns: [
-                  {
-                    width: 'auto',
-                    text: 'Phone: ',
-                    bold: true,
-                    fontSize: 12,
-                    margin: [0, 0, 3, 0]
-                  },
+                  // {
+                  //   width: 'auto',
+                  //   text: 'Phone: ',
+                  //   bold: true,
+                  //   fontSize: 12,
+                  //   margin: [0, 0, 3, 0]
+                  // },
                   {
                     width: 'auto',
                     text: this.invoiceDetails.phone,
                     fontSize: 10,
                     alignment: 'center',
-                    margin: [0, 2, 0, 5]
+                    // margin: [0, 2, 0, 5] // Add a small margin at the top and right
+                    // margin: [0, 0, 0, 5] // Add a small margin at the top and right
+
                   }
                 ],
                 marginBottom: 5
               },
               {
                 columns: [
-                  {
-                    width: 'auto',
-                    text: 'GST No: ',
-                    bold: true,
-                    fontSize: 12,
-                    margin: [0, 0, 3, 0]
-                  },
+                  // {
+                  //   width: 'auto',
+                  //   text: 'GST No: ',
+                  //   bold: true,
+                  //   fontSize: 12,
+                  //   margin: [0, 0, 3, 0]
+                  // },
                   {
                     width: 'auto',
                     text: this.invoiceDetails.gstNo || '',
                     fontSize: 10,
                     alignment: 'center',
-                    margin: [0, 2, 0, 5]
+                    // margin: [0, 2, 0, 5] // Add a small margin at the top and right
+                    // margin: [0, 0, 0, 5] // Add a small margin at the top and right
+
                   }
                 ]
               }

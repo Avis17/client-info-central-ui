@@ -53,6 +53,8 @@ export class DynamicFormCreationComponent {
   searchItem: string = ''
   isLoading: boolean = false;
   servicesList:any = [];
+  formType:string = "";
+  formFields:any;
 
   ngOnInit() {
     this.formGroup = this.formBuilder.group({});
@@ -60,56 +62,60 @@ export class DynamicFormCreationComponent {
   }
 
   createFormGroup() {
-    for (const field of this.userDetails?.app_meta_details?.table_fileds) {
-      const fieldKey = field.field_key;
-      const fieldValue = '';
-      let formControl;
-      switch (field.field_type) {
-        case 'checkbox':
-          const checkboxOptions = field.field_options.map((option: any) => {
-            return this.formBuilder.group({
-              fieldName: this.commonService.toMongodbCase(option),
-              fieldValue: false
+    this.formFields = this.formType == 'customers' ? (this.userDetails?.app_meta_details?.table_fileds || null) : (this.userDetails?.app_meta_details?.employee_table_fileds || null)
+    console.log(this.formFields)
+    if(this.formFields){
+      for (const field of this.formFields) {
+        const fieldKey = field.field_key;
+        const fieldValue = '';
+        let formControl;
+        switch (field.field_type) {
+          case 'checkbox':
+            const checkboxOptions = field.field_options.map((option: any) => {
+              return this.formBuilder.group({
+                fieldName: this.commonService.toMongodbCase(option),
+                fieldValue: false
+              });
             });
-          });
-          formControl = this.formBuilder.array(checkboxOptions);
-          break;
-        case 'text':
-          if (field.field_key == 'name') {
-            formControl = new FormControl(fieldValue, [Validators.required, noSpecialCharactersValidator, onlyAlphabetsValidator]);
+            formControl = this.formBuilder.array(checkboxOptions);
             break;
-          } else {
-            formControl = new FormControl(fieldValue, [Validators.required, noSpecialCharactersValidator]);
+          case 'text':
+            if (field.field_key == 'name') {
+              formControl = new FormControl(fieldValue, [Validators.required, noSpecialCharactersValidator, onlyAlphabetsValidator]);
+              break;
+            } else {
+              formControl = new FormControl(fieldValue, [Validators.required, noSpecialCharactersValidator]);
+              break;
+            }
+          case 'email':
+            formControl = this.formBuilder.control(fieldValue, [Validators.required, Validators.email]);
             break;
-          }
-        case 'email':
-          formControl = this.formBuilder.control(fieldValue, [Validators.required, Validators.email]);
-          break;
-        case 'number':
-          if (field.field_key == 'phone') {
-            formControl = this.formBuilder.control('', [Validators.required, phoneNumberValidator])
+          case 'number':
+            if (field.field_key == 'phone') {
+              formControl = this.formBuilder.control('', [Validators.required, phoneNumberValidator])
+              break;
+            } else {
+              formControl = this.formBuilder.control(null, [Validators.required]);
+              break;
+            }
+          case 'radio':
+            formControl = this.formBuilder.control(fieldValue, [Validators.required]);
             break;
-          } else {
-            formControl = this.formBuilder.control(null, [Validators.required]);
+          case 'date':
+            formControl = this.formBuilder.control(new Date(fieldValue), [Validators.required]);
             break;
-          }
-        case 'radio':
-          formControl = this.formBuilder.control(fieldValue, [Validators.required]);
-          break;
-        case 'date':
-          formControl = this.formBuilder.control(new Date(fieldValue), [Validators.required]);
-          break;
-        case 'multipleValues':
-          formControl = this.formBuilder.control('');
-          break;
-        case 'dropdown':
-          formControl = this.formBuilder.control(fieldValue, [Validators.required]);
-          break;
-        default:
-          formControl = this.formBuilder.control(fieldValue, [Validators.required]);
-          break;
+          case 'multipleValues':
+            formControl = this.formBuilder.control('');
+            break;
+          case 'dropdown':
+            formControl = this.formBuilder.control(fieldValue, [Validators.required]);
+            break;
+          default:
+            formControl = this.formBuilder.control(fieldValue, [Validators.required]);
+            break;
+        }
+        this.formGroup.addControl(fieldKey, formControl);
       }
-      this.formGroup.addControl(fieldKey, formControl);
     }
   }
 
@@ -129,7 +135,7 @@ export class DynamicFormCreationComponent {
     })
     this.servicesList = this.userDetails.app_meta_details.servicesList.categories;
     console.log(this.servicesList)
-
+    this.formType = entityService.getFormType();
   }
 
   createEntitySchema(field: any) {
@@ -144,7 +150,12 @@ export class DynamicFormCreationComponent {
   }
 
   onPreviousPage() {
-    const commands = ['/client/home'];
+    let commands:any;
+    if(this.formType == "customers"){
+      commands = ['/client/home'];
+    }else{
+      commands = ['/client/employee'];
+    }
     this.navigationService.navigateWithoutLocationChange(commands);
   }
 
@@ -190,6 +201,13 @@ export class DynamicFormCreationComponent {
     } else {
       // Handle form validation errors
     }
+  }
+
+  validateFormType(){
+    if(this.formType == "customers"){
+      return this.listOfServices.length == 0
+    }
+    return false
   }
 }
 
