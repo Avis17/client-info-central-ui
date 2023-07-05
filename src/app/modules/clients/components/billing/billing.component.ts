@@ -45,7 +45,7 @@ export class BillingComponent implements OnDestroy {
       { terms: "Warrenty of the product will be subject to the manufacturer terms and conditions." },
       { terms: "This is system generated invoice." }
     ];
-    this.servicesList = this.userDetails?.app_meta_details?.servicesList?.categories.map((data:any) => {
+    this.servicesList = this.userDetails?.app_meta_details?.servicesList?.categories.map((data: any) => {
       data.items.forEach((item: any) => {
         item.categoryName = data.categoryName
       })
@@ -68,8 +68,8 @@ export class BillingComponent implements OnDestroy {
   termsList: any;
   isBillCreated: boolean = false;
   isInvlidPartAmount: boolean = false;
-  billNo:Number = 1;
-  currentBillNo:any;
+  billNo: Number = 1;
+  currentBillNo: any;
   ngOnDestroy(): void {
     this.entityService.setinvoiceDetails({})
   }
@@ -81,7 +81,7 @@ export class BillingComponent implements OnDestroy {
     const day = date.getDate().toString().padStart(2, '0');
     return year + month + day;
   }
-  
+
 
   onProductChange(event: any, index: number) {
     console.log(event)
@@ -123,6 +123,7 @@ export class BillingComponent implements OnDestroy {
                   fontSize: 24,
                   bold: true,
                   alignment: 'right',
+                  decoration: 'underline',
                   color: '#1C4E80', // Blue color
                   margin: [0, 0, 0, 10]
                 },
@@ -156,35 +157,16 @@ export class BillingComponent implements OnDestroy {
           ],
           margin: [0, 0, 0, 20] // Add margin to increase spacing
         },
-        // {
-        //   text: 'Customer Details',
-        //   style: 'sectionHeader'
-        // },
+        {
+          text: 'Customer Details',
+          style: 'sectionHeader',
+          color: '#CC5803', // Red color
+        },
         {
           columns: [
-            // Customer Details
-            // [
-            //   {
-            //     text: this.invoice.customerName,
-            //     bold: true,
-            //     fontSize: 12,
-            //     marginBottom: 5
-            //   },
-            //   { text: this.invoice.address, fontSize: 10, marginBottom: 5 },
-            //   { text: this.invoice.email, fontSize: 10, marginBottom: 5 },
-            //   { text: this.invoice.phone, fontSize: 10, marginBottom: 5 },
-            //   { text: this.invoice.gstNo || '', fontSize: 10 }
-            // ],
             [
               {
                 columns: [
-                  // {
-                  //   width: 'auto',
-                  //   text: 'Customer Name: ',
-                  //   bold: true,
-                  //   fontSize: 12,
-                  //   margin: [0, 0, 3, 0]
-                  // },
                   {
                     width: 'auto',
                     text: this.invoice.customerName,
@@ -199,13 +181,6 @@ export class BillingComponent implements OnDestroy {
               },
               {
                 columns: [
-                  // {
-                  //   width: 'auto',
-                  //   text: 'Address: ',
-                  //   bold: true,
-                  //   fontSize: 12,
-                  //   margin: [0, 0, 3, 0]
-                  // },
                   {
                     width: 'auto',
                     text: this.invoice.address,
@@ -220,13 +195,6 @@ export class BillingComponent implements OnDestroy {
               },
               {
                 columns: [
-                  // {
-                  //   width: 'auto',
-                  //   text: 'Email: ',
-                  //   bold: true,
-                  //   fontSize: 12,
-                  //   margin: [0, 0, 3, 0]
-                  // },
                   {
                     width: 'auto',
                     text: this.invoice.email,
@@ -241,13 +209,6 @@ export class BillingComponent implements OnDestroy {
               },
               {
                 columns: [
-                  // {
-                  //   width: 'auto',
-                  //   text: 'Phone: ',
-                  //   bold: true,
-                  //   fontSize: 12,
-                  //   margin: [0, 0, 3, 0]
-                  // },
                   {
                     width: 'auto',
                     text: this.invoice.phone,
@@ -262,13 +223,6 @@ export class BillingComponent implements OnDestroy {
               },
               {
                 columns: [
-                  // {
-                  //   width: 'auto',
-                  //   text: 'GST No: ',
-                  //   bold: true,
-                  //   fontSize: 12,
-                  //   margin: [0, 0, 3, 0]
-                  // },
                   {
                     width: 'auto',
                     text: this.invoice.gstNo || '',
@@ -281,11 +235,6 @@ export class BillingComponent implements OnDestroy {
                 ]
               }
             ],
-
-            // Use the content array in your pdfmake configuration
-
-            // Use the content array in your pdfmake configuration            
-            // Invoice Details
             [
               {
                 text: `Invoice Number: ${this.invoice.billNo}`,
@@ -311,28 +260,43 @@ export class BillingComponent implements OnDestroy {
         {
           table: {
             headerRows: 1,
-            widths: ['*', 'auto', 'auto', 'auto'],
+            widths: ['auto', '*', 'auto', 'auto', 'auto'],
             body: [
-              [{ text: 'Description', style: 'tableHeader' }, { text: 'Price', style: 'tableHeader' }, { text: 'Quantity', style: 'tableHeader' }, { text: 'Amount', style: 'tableHeader' }],
-              ...this.invoice.products.map((p) => [p.name, p.price, p.qty, (p.price * p.qty).toFixed(2)]),
-              [{ text: '', colSpan: 4, fillColor: '#ffffff' }], // Empty row
               [
-                { text: 'Subtotal', colSpan: 3, alignment: 'right', bold: true, fillColor: '#eaeaea' },
+                { text: 'S.No.', style: 'tableHeader' },
+                { text: 'Description', style: 'tableHeader' },
+                { text: 'Price', style: 'tableHeader' },
+                { text: 'Quantity', style: 'tableHeader' },
+                { text: 'Amount', style: 'tableHeader' }
+              ],
+              ...this.invoice.products.map((p, index) => [
+                index + 1, // S.No.
+                p.name,
+                p.price,
+                p.qty,
+                { text: "Rs." + (p.price * p.qty).toFixed(2) }
+              ]),
+              [{ text: '', colSpan: 5, fillColor: '#ffffff' }], // Empty row
+              [
+                { text: 'Subtotal', colSpan: 4, alignment: 'right', bold: true, fillColor: '#eaeaea' },
                 {},
                 {},
-                { text: this.invoice.subTotal, alignment: 'right', fillColor: '#eaeaea' }
+                {},
+                { text: "Rs." + this.invoice.subTotal.toFixed(2), alignment: 'right', fillColor: '#eaeaea' }
               ],
               [
-                { text: 'GST', colSpan: 3, alignment: 'right', bold: true, fillColor: '#eaeaea' },
+                { text: 'GST', colSpan: 4, alignment: 'right', bold: true, fillColor: '#eaeaea' },
+                {},
                 {},
                 {},
                 { text: this.invoice.cgst + '%', alignment: 'right', fillColor: '#eaeaea' }
               ],
               [
-                { text: 'Total', colSpan: 3, alignment: 'right', bold: true, fillColor: '#eaeaea', color: '#CC5803' },
+                { text: 'Total', colSpan: 4, alignment: 'right', bold: true, fillColor: '#eaeaea', color: '#CC5803' },
                 {},
                 {},
-                { text: "Rs." + this.invoice.finalTotal, alignment: 'right', fillColor: '#eaeaea', color: '#CC5803' }
+                {},
+                { text: "Rs." + this.invoice.finalTotal.toFixed(2), alignment: 'right', fillColor: '#eaeaea', color: '#CC5803' }
               ]
             ]
           },
@@ -341,8 +305,8 @@ export class BillingComponent implements OnDestroy {
             hLineWidth: function (i: any, node: any) { return 0; }, // Remove horizontal borders
             paddingLeft: function (i: any, node: any) { return 8; }, // Add left padding to align text
             paddingRight: function (i: any, node: any) { return 8; }, // Add right padding to align text
-            paddingTop: function (i: any, node: any) { return 8; }, // Add top padding to all rows except the header
-            paddingBottom: function (i: any, node: any) { return 8; } // Add bottom padding to all rows except the header
+            paddingTop: function (i: any, node: any) { return 8; },
+            paddingBottom: function (i: any, node: any) { return 8; }
           },
           margin: [0, 10, 0, 20] // Add margin to increase spacing
         },
@@ -394,11 +358,12 @@ export class BillingComponent implements OnDestroy {
           fillColor: '#eaeaea',
           color: '#333333',
           bold: true,
-          fontSize: 12,
+          fontSize: 12
         },
         sectionHeader: {
           bold: true,
           fontSize: 12,
+          decoration: 'underline',
           margin: [0, 10, 0, 5] // Add margin to increase spacing
         }
       },
@@ -446,7 +411,7 @@ export class BillingComponent implements OnDestroy {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
       "collectionName": 'invoices',
-      "collectionData": {...this.invoice, billedBy:this.userDetails.email}
+      "collectionData": { ...this.invoice, billedBy: this.userDetails.email }
     }
     this.isLoading = true;
     this.entityService.addNewEntity(formData).subscribe(
@@ -454,7 +419,6 @@ export class BillingComponent implements OnDestroy {
         this.isLoading = false;
         if (res.status == 200) {
           this.invoiceuser = res.data;
-          console.log(res)
           this.isBillCreated = true;
           pdfMake.createPdf(docDefinition).open();
         }
@@ -464,8 +428,8 @@ export class BillingComponent implements OnDestroy {
         this.errorHandlingService.errorAlertMsg(err);
       }
     );
-    
-    this.addBilNo({billdetails:{no:this.currentBillNo}});
+
+    this.addBilNo({ billdetails: { no: this.currentBillNo } });
   }
 
   generatePDF_Format_2() {
@@ -732,13 +696,13 @@ export class BillingComponent implements OnDestroy {
     this.entityService.getAllEntities(formData).subscribe((res: any) => {
       this.isLoading = false;
       if (res) {
-        if(res.data.length > 0){
-          this.currentBillNo = Number(res.data[0].billdetails.no)+1
-          this.invoice.billNo = this.getTodaysDate()+"-"+this.currentBillNo;
-        }else{
-          this.addBilNo({billdetails:{no:1}})
+        if (res.data.length > 0) {
+          this.currentBillNo = Number(res.data[0].billdetails.no) + 1
+          this.invoice.billNo = this.getTodaysDate() + "-" + this.currentBillNo;
+        } else {
+          this.addBilNo({ billdetails: { no: 1 } })
         }
-       console.log(res)
+        console.log(res)
       }
     }, (err: any) => {
       this.isLoading = false;
@@ -746,7 +710,7 @@ export class BillingComponent implements OnDestroy {
     })
   }
 
-  onLoadDefault(){
+  onLoadDefault() {
     this.termsList = [...this.userDetails.app_meta_details.terms] || [
       { terms: "Order can be return in max 10 days." },
       { terms: "Warrenty of the product will be subject to the manufacturer terms and conditions." },
@@ -754,7 +718,7 @@ export class BillingComponent implements OnDestroy {
     ];
   }
 
-  addBilNo(data:any){
+  addBilNo(data: any) {
     const formData = {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',

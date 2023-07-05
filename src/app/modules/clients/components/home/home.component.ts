@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit {
   // chartHoverBackgroundColors = ['#ffdde1', '#A7BFE8', '#BBD2C5', '#acb6e5', "#EF886C", "#256687", "#0AB1FF", "#C4E6E9", "#8D9DA5", "#3D3D3D"]
   inVoicesList: any;
   totalRevenue = 0;
- 
+
   listOfServices: any = []
   aggregatedDats: any;
   serviceChartDays: any;
@@ -57,11 +57,39 @@ export class HomeComponent implements OnInit {
     ]
   }
   weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "ThursDay", "Friday", "Saturday"]
+  months = [
+    "January", 
+    "February", 
+    "March", 
+    "April", 
+    "May", 
+    "June", 
+    "July", 
+    "August", 
+    "September", 
+    "October", 
+    "November", 
+    "December"
+  ];
   selectedDates: { startDate: moment.Moment, endDate: moment.Moment };
   alwaysShowCalendars: boolean;
   invalidDates: moment.Moment[] = [moment().add(2, 'days'), moment().add(3, 'days'), moment().add(5, 'days')];
   selectedPeriod: any = 'Overall Datas';
   customDayLabels = ['S', 'M', 'T', 'W', 'Th', 'F', 'S'];
+  customChartFilter = [
+    {
+      label: 'Last 31 Days Records',
+    },
+    {
+      label: 'Last 12 Months Records',
+    },
+    {
+      label: 'All Records in Years',
+    },
+  ];
+  selectedChartFilterData = {
+    label: 'Last 31 Days Records',
+  };
   isInvalidDate = (current: moment.Moment) => {
     const currentDate = moment();
     return current.isAfter(currentDate, 'day'); // Disable future dates
@@ -150,6 +178,97 @@ export class HomeComponent implements OnInit {
     return arr.flat(Infinity);
   }
 
+  onChangeChartFilterOptions(event: any) {
+    const chartDetail = {
+      chartType: 'bar',
+      chartFieldName: 'createdAt',
+      chartName: "Customers",
+      chartData: {},
+      chartOptions: {
+        plugins: {
+          legend: {
+            labels: {
+              usePointStyle: true,
+              color: '#000'
+            }
+          }
+        }
+      }
+    }
+    console.log(event.value)
+    if (event.value) {
+      if (event.value.label == 'Last 31 Days Records') {
+        let barDetails: any = this.getDestructuredBarChart(this.entities, 'createdAt', 'days')
+        chartDetail.chartData = {
+          labels: barDetails.labels.slice(0, 31),
+          datasets: [
+            {
+              label: 'Customers',
+              data: barDetails.data.slice(0, 31),
+              backgroundColor: this.chartBackgroundColors,
+              hoverBackgroundColor: this.chartHoverBackgroundColors
+            }
+          ]
+        };
+        this.dynamicChartDetails = this.dynamicChartDetails.filter((data:any)=>{
+          return data.chartFieldName != 'createdAt'
+        })
+        this.dynamicChartDetails.push(chartDetail);
+      } else if (event.value.label == 'Last 12 Months Records') {
+        let barDetails: any = this.getDestructuredBarChart(this.entities, 'createdAt', 'months')
+        chartDetail.chartData = {
+          labels: barDetails.labels.slice(0, 12),
+          datasets: [
+            {
+              label: 'Customers',
+              data: barDetails.data.slice(0, 12),
+              backgroundColor: this.chartBackgroundColors,
+              hoverBackgroundColor: this.chartHoverBackgroundColors
+            }
+          ]
+        };
+        this.dynamicChartDetails = this.dynamicChartDetails.filter((data:any)=>{
+          return data.chartFieldName != 'createdAt'
+        })
+        this.dynamicChartDetails.push(chartDetail);
+      } else if (event.value.label == 'All Records in Years') {
+        let barDetails: any = this.getDestructuredBarChart(this.entities, 'createdAt', 'year')
+        chartDetail.chartData = {
+          labels: barDetails.labels,
+          datasets: [
+            {
+              label: 'Customers',
+              data: barDetails.data,
+              backgroundColor: this.chartBackgroundColors,
+              hoverBackgroundColor: this.chartHoverBackgroundColors
+            }
+          ]
+        };
+        this.dynamicChartDetails = this.dynamicChartDetails.filter((data:any)=>{
+          return data.chartFieldName != 'createdAt'
+        })
+        this.dynamicChartDetails.push(chartDetail);
+      }
+    }else{
+      let barDetails: any = this.getDestructuredBarChart(this.entities, 'createdAt', 'days')
+        chartDetail.chartData = {
+          labels: barDetails.labels.slice(0, 31),
+          datasets: [
+            {
+              label: 'Customers',
+              data: barDetails.data.slice(0, 31),
+              backgroundColor: this.chartBackgroundColors,
+              hoverBackgroundColor: this.chartHoverBackgroundColors
+            }
+          ]
+        };
+        this.dynamicChartDetails = this.dynamicChartDetails.filter((data:any)=>{
+          return data.chartFieldName != 'createdAt'
+        })
+        this.dynamicChartDetails.push(chartDetail);
+    }
+  }
+
   getServiceStats(services: any[]): any[] {
     const serviceStats: { [name: string]: { count: number, percent: string, categoryName: string } } = {};
 
@@ -187,7 +306,7 @@ export class HomeComponent implements OnInit {
   }
 
 
-  getFilteredDatas(query:any){
+  getFilteredDatas(query: any) {
     const formData = {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
@@ -199,7 +318,7 @@ export class HomeComponent implements OnInit {
       this.isLoading = false;
       if (res) {
         console.log(res)
-       return res.data;
+        return res.data;
       }
     }, (err: any) => {
       this.isLoading = false;
@@ -355,11 +474,6 @@ export class HomeComponent implements OnInit {
     let filterdDetails: any;
     let key = dataArr.labels[index].toLowerCase();
 
-    console.log(index);
-    console.log(key)
-    console.log(chartName)
-    console.log(this.isDateField(this.entities[0][chartName]))
-    console.log(this.entities)
 
     // this.getFilteredDatas({[chartName]:key});
     if (this.isArrayCheck(chartName)) {
@@ -376,14 +490,14 @@ export class HomeComponent implements OnInit {
         return value[chartName] == dataArr.labels[index]
       })
     }
-    
+
     this.entityService.updateTableData(filterdDetails);
     const commands = ['/client/clients'];
     this.navigationService.navigateWithoutLocationChange(commands);
     // this.exportAsXLSX(filterdDetails, chartName);
   }
 
-  navigateToUserTableComponent(data:any) {
+  navigateToUserTableComponent(data: any) {
     const commands = ['/client/clients'];
     console.log(data)
     this.navigationService.navigateWithoutLocationChange(commands, {
@@ -397,7 +511,7 @@ export class HomeComponent implements OnInit {
     if (typeof value !== 'string') {
       return false; // Return false if the value is not a string
     }
-  
+
     const date = new Date(value);
     return date instanceof Date && !isNaN(date.getTime());
   }
@@ -481,13 +595,13 @@ export class HomeComponent implements OnInit {
           };
           break;
         case 'bar':
-          let barDetails: any = this.getDestructuredBarChart(this.entities, chart.chart_field_name)
+          let barDetails: any = this.getDestructuredBarChart(this.entities, chart.chart_field_name, 'days')
           chartDetail.chartData = {
-            labels: barDetails.labels,
+            labels: barDetails.labels.slice(0, 31),
             datasets: [
               {
-                label: chart.chart_field_name == 'createdAt' ? "Users" : chart.chart_field_name.toUpperCase(),
-                data: barDetails.data,
+                label: chart.chart_field_name == 'createdAt' ? "Customers" : chart.chart_field_name.toUpperCase(),
+                data: barDetails.data.slice(0, 31),
                 backgroundColor: this.chartBackgroundColors,
                 hoverBackgroundColor: this.chartHoverBackgroundColors
               }
@@ -507,7 +621,7 @@ export class HomeComponent implements OnInit {
   }
 
 
-  getDestructuredBarChart(dataArr: any, fieldName: string) {
+  getDestructuredBarChart(dataArr: any, fieldName: string, type?:string) {
     const labels = dataArr.map((item: any) => item[fieldName]);
     // Counting the occurrences of each createdAt value
     const counts: any = {};
@@ -515,8 +629,15 @@ export class HomeComponent implements OnInit {
       // console.log(label)
       if (!Array.isArray(label)) {
         if (fieldName == 'createdAt') {
-          label = new Date(label);
-          label = this.getDateFormated(label)
+          if(type == 'days'){
+            label =  new Date(label);
+            label = this.getDateFormated(label)
+          }else if(type == 'months'){
+            label = (new Date(label).getMonth()+1);
+            label = this.months[label]
+          }else if(type == 'year'){
+            label = new Date(label).getFullYear()
+          }
           counts[label] = (counts[label] || 0) + 1;
         } else {
           counts[label] = (counts[label] || 0) + 1;
@@ -623,7 +744,7 @@ export class HomeComponent implements OnInit {
         this.exportAsXLSX(this.inVoicesList, cardName);
         break;
       default:
-        // console.log('invalid card clicked!')
+      // console.log('invalid card clicked!')
     }
   }
 

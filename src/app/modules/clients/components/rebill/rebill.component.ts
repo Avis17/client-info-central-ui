@@ -636,7 +636,7 @@ export class RebillComponent implements OnInit{
     if(this.invoiceDetails){
       const docDefinition: any = this.createPDFData();
       pdfMake.createPdf(docDefinition).open();
-      this.navigationService.navigateWithoutLocationChange(['client/balance']);
+      this.navigationService.navigateWithoutLocationChange(['client/clients']);
     }
   }
 }

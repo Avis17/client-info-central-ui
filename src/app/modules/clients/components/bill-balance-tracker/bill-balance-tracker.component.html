@@ -4,7 +4,25 @@
 
 <div class="m-sm-1 m-lg-5 mb-8">
     <div class="row mb-5" *ngIf="balanceList.length > 0">
-        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" >
+        <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer">
+            <div class="card card-3 border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs card-text-color text-uppercase mb-1">
+                                Total Bills
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                &#8377; {{filteredItems.length}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer">
             <div class="card card-1 border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -13,7 +31,7 @@
                                 Total Bill Amount
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                &#8377; {{totalAmountSum}}</div>
+                                &#8377; {{totalAmountSum.toFixed(2)}}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
@@ -22,7 +40,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" >
+        <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer">
             <div class="card card-2 border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -31,7 +49,7 @@
                                 Total Paid Amount
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                &#8377; {{paidAmountSum}}</div>
+                                &#8377; {{paidAmountSum.toFixed(2)}}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
@@ -40,7 +58,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-4 mt-2 col-md-6 col-sm-12 cursor-pointer" >
+        <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer">
             <div class="card card-3 border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
@@ -49,7 +67,7 @@
                                 Total Balance Amount
                             </div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                &#8377; {{balanceAmountSum}}</div>
+                                &#8377; {{balanceAmountSum.toFixed(2)}}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
@@ -65,37 +83,43 @@
                 <div class="col-lg-7 col-md-6 col-sm-12 mb-3 mb-md-0">
                     <div class="input-group position-static">
                         <input type="text" class="form-control custom-date"
-                          [locale]="{ format: 'DD-MM-YYYY', daysOfWeek: ['S', 'M', 'T', 'W', 'T', 'F', 'S']}"
-                          ngxDaterangepickerMd [(ngModel)]="selectedDates"
-                          [showCustomRangeLabel]="true" [alwaysShowCalendars]="true" (ngModelChange)="ngModelDateChange($event)"
-                          [ranges]="ranges" [linkedCalendars]="true" [isInvalidDate]="isInvalidDate" [showClearButton]="true"
-                          placeholder="Filter by dates" />
-                          <div class="input-group-prepend">
+                            [locale]="{ format: 'DD-MM-YYYY', daysOfWeek: ['S', 'M', 'T', 'W', 'T', 'F', 'S']}"
+                            ngxDaterangepickerMd [(ngModel)]="selectedDates" [showCustomRangeLabel]="true"
+                            [alwaysShowCalendars]="true" (ngModelChange)="ngModelDateChange($event)" [ranges]="ranges"
+                            [linkedCalendars]="true" [isInvalidDate]="isInvalidDate" [showClearButton]="true"
+                            placeholder="Filter by dates" />
+                        <div class="input-group-prepend">
                             <span class="input-group-text" style="height: 100%;">
-                              <i class="fa fa-calendar"></i>
+                                <i class="fa fa-calendar"></i>
                             </span>
-                          </div>
-                      </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-lg-5 col-sm-12 col-md-6 mb-3 mb-md-0">
-                    <input type="text" (input)="updateFilteredItems($event)" placeholder="Search bill details" [(ngModel)]="searchText" class="form-control">
+                    <input type="text" (input)="updateFilteredItems($event)" placeholder="Search bill details"
+                        [(ngModel)]="searchText" class="form-control">
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-12 col-sm-12 col-md-6 mb-3 mb-md-0">
+                <div class="col-lg-8 col-sm-12 col-md-8 mb-3 mb-md-0">
                     <div class="row">
                         <div class="col-lg-6 col-sm-12">
-                            <p-dropdown [options]="billTypes" [(ngModel)]="selectedBillType" (onChange)="onBillChange($event)"
-                                optionLabel="label" [showClear]="true" [filter]="true"
-                                placeholder="Filter by Bill s/Invoices">
+                            <p-dropdown [options]="billTypes" [(ngModel)]="selectedBillType"
+                                (onChange)="onBillChange($event)" optionLabel="label" [showClear]="true" [filter]="true"
+                                placeholder="Filter by Bills/Invoices">
                             </p-dropdown>
                         </div>
                     </div>
                 </div>
+                <div class="col-lg-4 col-sm-12 col-md-4 text-end mb-3">
+                    <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf()"
+                        class="p-button-success mr-2" pTooltip="Export data" tooltipPosition="bottom">
+                    </button>
+                </div>
             </div>
         </div>
     </p-toolbar>
-    
+
     <!-- <div class="row mb-3">
         <div class="col-lg-6 col-sm-12 col-md-6 mb-3 mb-md-0">
         </div>
@@ -121,6 +145,7 @@
                             <th>Total Bill</th>
                             <th>Paid Bill</th>
                             <th>Balance Bill</th>
+                            <th>Invoice</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -144,15 +169,31 @@
                                 <span>Rs.{{balance?.finalTotal}}</span>
                             </td>
                             <td>
-                                <span>Rs.{{balance?.paidAmount}}</span>
+                                <span *ngIf="!balance.isEdit">Rs.{{balance?.paidAmount}}</span>
+                                <input *ngIf="balance.isEdit" class="form-control" [(ngModel)]="balance.paidAmount">
                             </td>
                             <td>
                                 <span>Rs.{{findTotal(balance)}}</span>
                             </td>
                             <td>
-                                <button data-bs-toggle="modal" *ngIf="balance.paymentStatus == 'part'"
-                                data-bs-target="#exampleModal" (click)="onBillPayment(balance)" class="btn btn-info mb-2 mr-3">Pay</button>
-                                <button class="btn btn-warning mb-2" (click)="onDownloadBill(balance)">Download Invoice</button>
+                                <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="onDownloadBill(balance)"
+                                    class="p-button-success mr-2" pTooltip="Download Invoice" tooltipPosition="bottom">
+                                </button>
+                            </td>
+                            <td>
+
+                                <button data-bs-toggle="modal" *ngIf="!balance.isEdit && balance.paymentStatus == 'part'"
+                                    data-bs-target="#exampleModal" (click)="onBillPayment(balance)"
+                                    class="btn btn-info mb-2 mr-3">Pay</button>
+                                
+                                    <button *ngIf="!balance.isEdit"  (click)="onEdit(balance)"
+                                    class="btn btn-warning mb-2 mr-3">Edit</button>
+
+                                    <button *ngIf="balance.isEdit"  (click)="onSave(balance)"
+                                    class="btn btn-success mb-2 mr-3">Save</button>
+
+                                    <button *ngIf="balance.isEdit"  (click)="onCancel(balance)"
+                                    class="btn btn-info mb-2 mr-3">Cancel</button>
                             </td>
                         </tr>
                         <tr *ngIf="balanceList.length == 0">
@@ -161,7 +202,7 @@
                     </tbody>
                 </table>
                 <div class="mt-5">
-                    <pagination-controls  (pageChange)="currentPage = $event"></pagination-controls>
+                    <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
                 </div>
             </div>
         </div>
@@ -178,15 +219,17 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">       
+            <div class="modal-body">
                 <div class="row">
                     <div class="col">
                         <mat-form-field class="mt-5 mb-2 full-width">
                             <mat-label>Enter Payment Amount</mat-label>
-                            <input matInput type="number" class="no-arrow"  (input)="chechValidAmount()" [(ngModel)]="addNewAmount">
+                            <input matInput type="number" class="no-arrow" (input)="chechValidAmount()"
+                                [(ngModel)]="addNewAmount">
                             <!-- <mat-error *ngIf="isInvalidPayAmount">Entered amount greater than Balance Amount</mat-error> -->
                         </mat-form-field>
-                        <span *ngIf="isInvalidPayAmount" style="color: red;">Entered amount should not greater than Balance Amount.</span>
+                        <span *ngIf="isInvalidPayAmount" style="color: red;">Entered amount should not greater than
+                            Balance Amount.</span>
 
                         <!-- <input placeholder="Enter amount" type="number" (input)="chechValidAmount()" class="form-control" [(ngModel)]="addNewAmount"> -->
                         <!-- <span *ngIf="isInvalidPayAmount" style="color: red;">Entered amount greater than Balance Amount</span> -->
@@ -194,12 +237,10 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button"
-                    [disabled]="!addNewAmount || isInvalidPayAmount"
-                    data-bs-dismiss="modal" (click)="onSaveBill()" class="btn btn-primary">Save changes</button>
+                <button type="button" [disabled]="!addNewAmount || isInvalidPayAmount" data-bs-dismiss="modal"
+                    (click)="onSaveBill()" class="btn btn-primary">Save changes</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
 </div>
-

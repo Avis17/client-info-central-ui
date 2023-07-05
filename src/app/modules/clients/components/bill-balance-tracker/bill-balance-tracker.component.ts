@@ -8,6 +8,7 @@ import { EntityService } from '../../services/entity.service';
 import Swal from 'sweetalert2';
 import * as moment from 'moment';
 import { NavigationService } from 'src/app/services/navigation.service';
+import { ExcelService } from '../../services/excel.service';
 
 @Component({
   selector: 'app-bill-balance-tracker',
@@ -24,7 +25,7 @@ export class BillBalanceTrackerComponent {
   isLoading: boolean = true;
   billTypes: any = [
     {
-      label: 'All Inovices'
+      label: 'All Invoices'
     },
     {
       label: 'Balance Bills'
@@ -52,8 +53,8 @@ export class BillBalanceTrackerComponent {
   }
   invalidDates: moment.Moment[] = [moment().add(2, 'days'), moment().add(3, 'days'), moment().add(5, 'days')];
   totalAmountSum = 0;
-  paidAmountSum = 0;
-  balanceAmountSum = 0;
+  paidAmountSum:number = 0;
+  balanceAmountSum:number = 0;
   filteredItems: any = []
   selectedBillDetails: any;
   addNewAmount: any = undefined;
@@ -70,6 +71,7 @@ export class BillBalanceTrackerComponent {
     private errorHandlingService: ErrorHandlingService,
     private commonService: CommonService,
     private entityService: EntityService,
+    private excelService: ExcelService,
     private navigationService: NavigationService,
   ) {
     this.userDetails = this.authService.getUserDetails();
@@ -131,6 +133,7 @@ export class BillBalanceTrackerComponent {
   onBillChange(event: any) {
     if (event.value) {
       if(event.value.label == 'All Invoices'){
+        console.log(this.allBills)
         this.balanceList = [...this.allBills]
         this.filteredItems = [...this.balanceList];
         this.calculateBillAmounts(this.balanceList);
@@ -157,15 +160,49 @@ export class BillBalanceTrackerComponent {
     this.paidAmountSum = 0;
     this.balanceAmountSum = 0;
     data.forEach((item: any) => {
-      this.totalAmountSum += Number(item.finalTotal);
-      this.paidAmountSum += Number(item.paidAmount);
-      this.balanceAmountSum += (Number(item.finalTotal) - Number(item.paidAmount))
+      this.totalAmountSum += Number(item.finalTotal ? item.finalTotal : 0);
+      this.paidAmountSum += Number(item.paidAmount ? item.paidAmount : 0);
+      this.balanceAmountSum += (Number(item.finalTotal ? item.finalTotal : 0) - Number(item.paidAmount ? item.paidAmount : 0))
     });
   }
 
   onDownloadBill(data: any) {
     this.entityService.setinvoiceDetails(data);
     this.navigationService.navigateWithoutLocationChange(['client/bill-download']);
+  }
+
+  onEdit(balance: any) {
+    balance.isEdit = true
+    balance.clone = { ...balance }; // Create a clone of the balance object
+  }
+
+  onSave(balance: any) {
+    balance.isEdit = false;
+    const _id = balance._id;
+    delete balance._id
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'invoices',
+      "collectionData": balance
+    }
+    this.isLoading = true;
+
+    this.entityService.updateEntityById(_id, formData).subscribe((res: any) => {
+      this.isLoading = false;
+      if (res.status == 200) {
+        Swal.fire('balance Updated!', '', 'success');
+      }
+    }, (err: any) => {
+      this.isLoading = false;
+      this.errorHandlingService.errorAlertMsg(err);
+    })
+  }
+
+  onCancel(balance: any) {
+    Object.assign(balance, balance.clone); // Restore the original data
+    delete balance.clone; // Remove the clone property
+    balance.isEdit = false;
   }
 
   get pagedServicesList(): any[] {
@@ -216,5 +253,32 @@ export class BillBalanceTrackerComponent {
     } else {
       this.isInvalidPayAmount = false
     }
+  }
+
+  exportPdf(){
+    let cloneItems = JSON.parse(JSON.stringify(this.filteredItems));
+    let exportData = cloneItems.map((data:any)=>{
+      let out =  {
+        createdAt:this.getDateFormated(new Date(data.createdAt)),
+        billNo : data.billNo,
+        customerName:data.customerName,
+        phone:data.phone,
+        address:data.address,
+        billedBy:data.billedBy,
+        billAmount:data.finalTotal,
+        paidAmount:data.paidAmount,
+        balanceAmount: data.paymentStatus == 'part' ? (Number(data.finalTotal)-Number(data.paidAmount)).toFixed(2) : 0
+      }
+      return out;
+    })
+    this.exportAsXLSX(exportData, 'bills')
+  }
+
+  exportAsXLSX(data: any, filename: any): void {
+    this.excelService.exportAsExcelFile(data, filename);
+  }
+
+  getDateFormated(date: any) {
+    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
   }
 }

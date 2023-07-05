@@ -8,6 +8,7 @@ import { EntityService } from '../../services/entity.service';
 import Swal from 'sweetalert2';
 import * as moment from 'moment';
 import { ExcelService } from '../../services/excel.service';
+import { clone } from 'lodash';
 
 @Component({
   selector: 'app-expenses',
@@ -358,9 +359,6 @@ export class ExpensesComponent {
       this.calculateExpenses(this.filteredItems);
     } else {
       this.filteredItems = this.expensesList.filter((item: any) => {
-        // Implement your search logic here
-        // Return true if the item matches the search criteria
-        // Otherwise, return false
         return JSON.stringify(item).toLowerCase().includes(this.searchText.toLowerCase());
       });
       this.calculateExpenses(this.filteredItems);
@@ -407,10 +405,28 @@ export class ExpensesComponent {
   }
 
   exportPdf(){
-    this.exportAsXLSX(this.filteredItems, 'expenses')
+    let cloneItems = JSON.parse(JSON.stringify(this.filteredItems));
+    let exportData = cloneItems.map((data:any)=>{
+      let out =  {
+        ...data,
+        category : data.selectedCategory.label,
+        expenseType : data.type.label,
+        createdAt : this.getDateFormated(new Date(data.createdAt))
+      }
+      delete out.selectedCategory;
+      delete out.type;
+      delete out.clone;
+      delete out.updatedAt;
+      return out;
+    })
+    this.exportAsXLSX(exportData, 'expenses')
   }
 
   exportAsXLSX(data: any, filename: any): void {
     this.excelService.exportAsExcelFile(data, filename);
+  }
+
+  getDateFormated(date: any) {
+    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
   }
 }

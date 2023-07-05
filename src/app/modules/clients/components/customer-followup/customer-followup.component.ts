@@ -6,6 +6,7 @@ import { CryptoService } from 'src/app/services/crypto.service';
 import { AuthGuardService } from 'src/app/services/auth-guard.service';
 import Swal from 'sweetalert2';
 import { Table } from 'primeng/table'
+import { ExcelService } from '../../services/excel.service';
 
 @Component({
   selector: 'app-customer-followup',
@@ -59,13 +60,16 @@ export class CustomerFollowupComponent implements OnDestroy{
     private cryptService: CryptoService,
     private errorHandlingService: ErrorHandlingService,
     private commonService: CommonService,
+    private excelService: ExcelService,
     private entityService: EntityService
   ) {
     this.userDetails = this.authService.getUserDetails();
     this.statusOptions = [
       { label: 'Interested', value: 'interested' },
       { label: 'Not Interested', value: 'not-interested' },
-      { label: 'May be in Future', value: 'may-be-in-future' }
+      { label: 'May be in Future', value: 'may-be-in-future' },
+      { label: 'Done', value: 'Done' }
+
     ];
     this.isLoading = false
   }
@@ -74,6 +78,27 @@ export class CustomerFollowupComponent implements OnDestroy{
     this.getAllCustomers({});
     this.selectedCustomers = [];
   }
+
+  getCustomerStatusClass(interestStatus:string) {
+    if (interestStatus == 'interested') {
+      return "btn btn-success";
+    } else if (interestStatus == 'not-interested') {
+      return "btn btn-danger";
+    } else if (interestStatus == 'may-be-in-future') {
+      return "btn btn-warning";
+    } else {
+      return "btn btn-info";
+    }
+  }
+
+  filterInterest(event:any){
+    if(event.value){
+      this.getAllCustomers({interest:event.value})
+    }else{
+      this.getAllCustomers({})
+    }
+  }
+  
 
   ngOnDestroy(): void {
     
@@ -118,15 +143,7 @@ export class CustomerFollowupComponent implements OnDestroy{
     this.entityService.getAllEntities(formData).subscribe((res: any) => {
       this.isLoading = false;
       if (res) {
-        this.customerList = [];
-        this.selectedCustomers = [];
-        res.data.forEach((data:any)=>{
-          if(data.interest == 'Done'){
-            this.selectedCustomers.push(data)
-          }else{
-            this.customerList.push(data)
-          }
-        })
+        this.customerList = res.data;
       }
     }, (err: any) => {
       this.isLoading = false;
@@ -134,9 +151,9 @@ export class CustomerFollowupComponent implements OnDestroy{
     })
   }
 
-  getInterestedCount(){
+  getInterestedCount(status:any){
     let count = this.customerList.filter((data:any)=>{
-      return data.interest == "interested"
+      return data.interest == status;
     })
     return count.length
   }
@@ -211,5 +228,22 @@ export class CustomerFollowupComponent implements OnDestroy{
       return false
     }
     return true;
+  }
+
+  exportPdf(){
+    this.exportAsXLSX(this.customerList.map((data:any)=> {
+      return {
+        ...data, 
+        createdAt:this.getDateFormated(new Date(data.createdAt))
+      }
+    }), 'customers-followup-list')
+  }
+
+  exportAsXLSX(data: any, filename: any): void {
+    this.excelService.exportAsExcelFile(data, filename);
+  }
+
+  getDateFormated(date: any) {
+    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
   }
 }
