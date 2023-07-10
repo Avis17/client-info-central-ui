@@ -686,11 +686,13 @@ export class HomeComponent implements OnInit {
       data: [],
     };
     for (const obj of dataArr) {
-      let field_value: any = obj[field_name]
+      let field_value: any = obj[field_name];
       if (Array.isArray(field_value)) {
         field_value = this.destructureArray(field_value, 'array');
         for (const value of field_value) {
-          const index = details.labels.indexOf(value);
+          const index = details.labels.findIndex((label:any) =>
+            label.toLowerCase() === value.toLowerCase()
+          );
           if (index === -1) {
             details.labels.push(value);
             details.data.push(1);
@@ -699,7 +701,9 @@ export class HomeComponent implements OnInit {
           }
         }
       } else {
-        const index = details.labels.indexOf(field_value);
+        const index = details.labels.findIndex((label:any) =>
+          label.toLowerCase() === field_value.toLowerCase()
+        );
         if (index === -1) {
           details.labels.push(field_value);
           details.data.push(1);
@@ -710,6 +714,7 @@ export class HomeComponent implements OnInit {
     }
     return details;
   }
+  
 
   destructureArray(data: any, type: any) {
     let arr = data.filter((obj: any) => {

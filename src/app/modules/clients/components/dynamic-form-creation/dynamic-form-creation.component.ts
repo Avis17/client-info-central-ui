@@ -37,6 +37,15 @@ const phoneNumberValidator: ValidatorFn = (control: AbstractControl): Validation
   return null;
 };
 
+const aadharNumberValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+  const value: string = control.value;
+  const isValidAadharNumber: boolean = /^\d{12}$/.test(value); // Regular expression to check for 12 digits
+  if (!isValidAadharNumber) {
+    return { aadharNumberInvalid: true };
+  }
+  return null;
+};
+
 
 @Component({
   selector: 'app-dynamic-form-creation',
@@ -55,14 +64,16 @@ export class DynamicFormCreationComponent {
   servicesList:any = [];
   formType:string = "";
   formFields:any;
+  currentEmployeeNo: any;
+  employeeId :string = '';
 
   ngOnInit() {
-    this.formGroup = this.formBuilder.group({});
     this.createFormGroup();
   }
 
   createFormGroup() {
-    this.formFields = this.formType == 'customers' ? (this.userDetails?.app_meta_details?.table_fileds || null) : (this.userDetails?.app_meta_details?.employee_table_fileds || null)
+    this.formGroup = this.formBuilder.group({});
+    this.formFields = this.formType == 'customers' ? (this.userDetails?.app_meta_details?.table_fileds || null) : (this.userDetails?.app_meta_details?.employee_fields || null)
     console.log(this.formFields)
     if(this.formFields){
       for (const field of this.formFields) {
@@ -94,6 +105,13 @@ export class DynamicFormCreationComponent {
             if (field.field_key == 'phone') {
               formControl = this.formBuilder.control('', [Validators.required, phoneNumberValidator])
               break;
+            } else if (field.field_key == 'alternatePhone') {
+              formControl = this.formBuilder.control('', [Validators.required, phoneNumberValidator])
+              break;
+            }
+            else if (field.field_key == 'aadharNo') {
+              formControl = this.formBuilder.control('', [Validators.required, aadharNumberValidator])
+              break;
             } else {
               formControl = this.formBuilder.control(null, [Validators.required]);
               break;
@@ -117,6 +135,7 @@ export class DynamicFormCreationComponent {
         this.formGroup.addControl(fieldKey, formControl);
       }
     }
+    console.log(this.formGroup.value)
   }
 
   constructor(
@@ -133,6 +152,7 @@ export class DynamicFormCreationComponent {
     this.isUniqueArr = this.userDetails.app_meta_details.table_fileds.filter((data: any) => {
       return data.isUnique == true
     })
+    this.getEmployeeNo({});
     this.servicesList = this.userDetails.app_meta_details.servicesList.categories;
     console.log(this.servicesList)
     this.formType = entityService.getFormType();
@@ -150,13 +170,11 @@ export class DynamicFormCreationComponent {
   }
 
   onPreviousPage() {
-    let commands:any;
-    if(this.formType == "customers"){
-      commands = ['/client/home'];
-    }else{
-      commands = ['/client/employee'];
+    if(this.formType == 'customers'){
+      this.navigationService.navigateWithoutLocationChange(['client/clients']);
+    }  else{
+      this.navigationService.navigateWithoutLocationChange(['client/employee']);
     }
-    this.navigationService.navigateWithoutLocationChange(commands);
   }
 
   onServiceOptionChange(event: any, categoryName: any, selectedObj: any) {
@@ -180,8 +198,14 @@ export class DynamicFormCreationComponent {
       const formData = {
         "schema": '',
         "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
-        "collectionName": 'customers',
-        "collectionData": { ...this.formGroup.value, isUniqueField: this.isUniqueArr[0]?.field_key }
+        "collectionName": this.formType == 'customers' ? 'customers' : 'employees',
+        "collectionData": { ...this.formGroup.value, isUniqueField: this.isUniqueArr[0]?.field_key, }
+      }
+      if(this.formType == 'employees'){
+        formData.collectionData = {
+          ...formData.collectionData,
+          empId:this.employeeId,
+        }
       }
       if (formData.dbName == '' || formData.collectionName == '') {
         this.toastr.error("invalid DB details! contact your application provider immediately.", "Error")
@@ -191,8 +215,13 @@ export class DynamicFormCreationComponent {
       this.entityService.addNewEntity(formData).subscribe((res: any) => {
         this.isLoading = false;
         if (res.status == 200) {
-          this.entityService.setinvoiceDetails({ ...formData.collectionData, services: this.listOfServices })
-          this.navigationService.navigateWithoutLocationChange(['client/billing']);
+          if(this.formType == 'customers'){
+            this.entityService.setinvoiceDetails({ ...formData.collectionData, services: this.listOfServices })
+            this.navigationService.navigateWithoutLocationChange(['client/billing']);
+          }  else{
+            this.navigationService.navigateWithoutLocationChange(['client/employee']);
+            this.addEmployeeNo({ employeeDetails: { no: this.currentEmployeeNo } });
+          }
         }
       }, (err) => {
         this.isLoading = false;
@@ -209,6 +238,64 @@ export class DynamicFormCreationComponent {
     }
     return false
   }
+  getDynamicFields()
+  {
+    return this.formType == 'customers' ? (this.userDetails?.app_meta_details?.table_fileds || null) : (this.userDetails?.app_meta_details?.employee_fields || null);
+  }
+
+  getEmployeeNo(query: any) {
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'employeeNo',
+      "queryData": {}
+    }
+    this.isLoading = true;
+    this.entityService.getAllEntities(formData).subscribe((res: any) => {
+      this.isLoading = false;
+      if (res) {
+        console.log(res)
+        if (res.data?.length > 0) {
+          this.currentEmployeeNo = Number(res.data[0].employeeDetails.no) + 1
+          this.employeeId = new Date().getFullYear()+ "" + this.currentEmployeeNo;
+        } else {
+          this.currentEmployeeNo = 1;
+          this.employeeId = new Date().getFullYear()+ "" + this.currentEmployeeNo;
+        }
+      }
+    }, (err: any) => {
+      this.isLoading = false;
+      this.errorHandlingService.errorAlertMsg(err);
+    })
+  }
+
+  getTodaysDate(): string {
+    const date = new Date();
+    const year = date.getFullYear().toString();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Adding 1 to month since it is zero-based
+    const day = date.getDate().toString().padStart(2, '0');
+    return year + month + day;
+  }
+
+  addEmployeeNo(data: any) {
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'employeeNo',
+      "collectionData": data
+    }
+    this.isLoading = true;
+    this.entityService.addNewEntity(formData).subscribe((res: any) => {
+      this.isLoading = false;
+      if (res.status == 200) {
+        // Swal.fire()
+      }
+    }, (err) => {
+      this.isLoading = false;
+      this.errorHandlingService.errorAlertMsg(err);
+    })
+  }
+  
 }
 
 

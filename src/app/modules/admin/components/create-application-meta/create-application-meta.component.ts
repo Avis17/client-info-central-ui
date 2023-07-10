@@ -55,6 +55,7 @@ export class CreateApplicationMetaComponent implements OnInit {
     "name",
     "email",
     "phone",
+    "alternatePhone",
     "gender",
     "address",
     "profession",
@@ -65,6 +66,9 @@ export class CreateApplicationMetaComponent implements OnInit {
     "interestedIn",
     "isFutureUpdateRequired",
     "whatsappNumber",
+    "aadharNo",
+    "salary",
+    "bloodGroup",
     "referals"
   ]
 

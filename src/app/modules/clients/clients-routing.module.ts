@@ -14,6 +14,7 @@ import { CustomerFollowupComponent } from './components/customer-followup/custom
 import { RebillComponent } from './components/rebill/rebill.component';
 import { NewBillComponent } from './components/new-bill/new-bill.component';
 import { EmployeeManagementComponent } from './components/employee-management/employee-management.component';
+import { EmployeeAttendanceComponent } from './components/employee-attendance/employee-attendance.component';
 
 const routes:Routes = [
   {
@@ -64,6 +65,10 @@ const routes:Routes = [
       {
         path : 'employee',
         component : EmployeeManagementComponent,
+      }, 
+      {
+        path : 'employee-attendance',
+        component : EmployeeAttendanceComponent,
       },      
       {
         path : 'user-details/:id',

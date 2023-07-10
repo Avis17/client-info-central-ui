@@ -433,8 +433,6 @@ export class BillingComponent implements OnDestroy {
   }
 
   generatePDF_Format_2() {
-
-
     // Define the document definition for the invoice
     var documentDefinition: any = {
       content: [
@@ -696,13 +694,14 @@ export class BillingComponent implements OnDestroy {
     this.entityService.getAllEntities(formData).subscribe((res: any) => {
       this.isLoading = false;
       if (res) {
+        console.log(res)
         if (res.data.length > 0) {
           this.currentBillNo = Number(res.data[0].billdetails.no) + 1
           this.invoice.billNo = this.getTodaysDate() + "-" + this.currentBillNo;
         } else {
-          this.addBilNo({ billdetails: { no: 1 } })
+          this.currentBillNo = 1;
+          this.invoice.billNo = this.getTodaysDate() + "-" + this.currentBillNo;
         }
-        console.log(res)
       }
     }, (err: any) => {
       this.isLoading = false;

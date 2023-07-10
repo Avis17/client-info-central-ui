@@ -1,20 +1,20 @@
 @import "src/_variables.scss";
 
-label{
+label {
     color: $secondary;
     font-weight: 500;
 }
 
-::ng-deep .p-card{
+::ng-deep .p-card {
     background-color: $pcard !important;
 }
 
-.img-size{
+.img-size {
     width: 300px;
     height: 300px;
 }
 
-::ng-deep .p-card-header{
+::ng-deep .p-card-header {
     text-align: center !important;
 }
 
@@ -75,7 +75,7 @@ label{
     font-weight: 600;
 }
 
-.card-box{
+.card-box {
     background: lightgray;
     padding: 5px 20px;
     border-radius: 20px;
@@ -88,27 +88,27 @@ label{
     display: none !important;
 }
 
-::ng-deep .p-card-header{
+::ng-deep .p-card-header {
     width: 50% !important;
 }
 
-::ng-deep .p-timeline-event-content{
+::ng-deep .p-timeline-event-content {
     margin-bottom: 10px !important;
 }
 
-::ng-deep .p-card-subtitle{
+::ng-deep .p-card-subtitle {
     text-align: start !important;
 }
 
-::ng-deep .p-card-title{
+::ng-deep .p-card-title {
     text-align: start !important;
 }
 
-::ng-deep .p-card-content{
+::ng-deep .p-card-content {
     text-align: start !important;
 }
-  
-.f-500{
+
+.f-500 {
     font-weight: 400 !important;
     color: black;
     font-size: 14px !important;
@@ -122,9 +122,61 @@ label{
     bottom: 0;
     z-index: 9999;
     margin: auto;
-  }
+}
 
-  .wrapped-text {
+.wrapped-text {
     word-wrap: break-word;
     max-width: 100%;
-  }
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+input[type="number"],
+select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #1C4E80;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.highlighted {
+    background-color: yellow;
+    font-weight: bold;
+    padding: 5px;
+}
+
+.highlighted-imp {
+    background-color: #1C4E80;
+    font-weight: bold;
+    color: white;
+    padding: 5px;
+}
+
+.p-color{
+    color: #1C4E80;
+    font-weight: 600;
+}

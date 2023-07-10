@@ -2,69 +2,70 @@
 
 <div class="pt-5 pl-3">
     <mat-icon class="cursor-pointer" (click)="onPreviousPage()">arrow_back</mat-icon>
-    <div class="text-end mb-3">
+    <div class="text-end mb-3" *ngIf="formType == 'customers'">
         <p-button label="New Invoice" icon="pi pi-plus" class="mr-2" data-bs-toggle="modal"
             data-bs-target="#exampleModal"></p-button>
     </div>
-    <div class="row">
-        <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer" matTooltip="export list of invoices"
-            matTooltipPosition="above" (click)="onClickCardBox('invoices')">
-            <div class="card card-1 border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs card-text-color text-uppercase mb-1">
-                                Invoices
+    <div>
+        <div class="row" *ngIf="formType == 'customers'">
+            <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer" matTooltip="export list of invoices"
+                matTooltipPosition="above" (click)="onClickCardBox('invoices')">
+                <div class="card card-1 border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs card-text-color text-uppercase mb-1">
+                                    Invoices
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{inVoicesList?.length}}</div>
                             </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{inVoicesList?.length}}</div>
+                            <div class="col-auto">
+                                <i class="fa-solid fa-file-invoice fa-2x text-gray-300"></i>
+                            </div>
                         </div>
-                        <div class="col-auto">
-                            <i class="fa-solid fa-file-invoice fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer" matTooltip="export list of products"
+                matTooltipPosition="above" (click)="onClickCardBox('products')">
+                <div class="card card-5 border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs card-text-color text-uppercase mb-1">
+                                    Products
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{servicesList?.length}}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-bag-shopping fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer">
+                <div class="card card-2 border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs card-text-color text-uppercase mb-1">
+                                    Total Amount
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">&#8377; {{totalRevenue}}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer" matTooltip="export list of products"
-            matTooltipPosition="above" (click)="onClickCardBox('products')">
-            <div class="card card-5 border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs card-text-color text-uppercase mb-1">
-                                Products
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{servicesList?.length}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-bag-shopping fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer">
-            <div class="card card-2 border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs card-text-color text-uppercase mb-1">
-                                Total Amount
-                            </div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">&#8377; {{totalRevenue}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div class="card m-3 mb-8" *ngIf="clientInfo">
             <p-tabView>
                 <p-tabPanel header="Profile">
-                    <p-card [header]="clientInfo['name']" [subheader]="getDate(clientInfo['createdAt'])">
+                    <p-card [header]="clientInfo['name']" [subheader]="'Joined - '+getDate(clientInfo['createdAt'])">
                         <ng-template pTemplate="header">
                             <img alt="Card" class="img-size" src="../../../../../assets/clients/png/client.png" />
                         </ng-template>
@@ -87,26 +88,31 @@
                             </div>
                             <div class="col-lg-8 col-sm-6" *ngIf="isArrayCheck(clientInfo[key.field_key])">
                                 <ng-container>
-                                        <mat-chip-set class="example-chip" cdkDropListOrientation="horizontal">
-                                            <ng-container *ngFor="let obj of clientInfo[key.field_key]">
-                                                <mat-chip class="example-box" *ngIf="obj.fieldValue">
-                                                    <label>{{ obj.fieldName | titlecase }}</label>
-                                                </mat-chip>
-                                                <mat-chip class="example-box" *ngIf="obj.fieldValue === undefined">
-                                                    <label >{{ obj }}</label>
-                                                </mat-chip>
-                                            </ng-container>
-                                        </mat-chip-set>
+                                    <mat-chip-set class="example-chip" cdkDropListOrientation="horizontal">
+                                        <ng-container *ngFor="let obj of clientInfo[key.field_key]">
+                                            <mat-chip class="example-box" *ngIf="obj.fieldValue">
+                                                <label>{{ obj.fieldName | titlecase }}</label>
+                                            </mat-chip>
+                                            <mat-chip class="example-box" *ngIf="obj.fieldValue === undefined">
+                                                <label>{{ obj }}</label>
+                                            </mat-chip>
+                                        </ng-container>
+                                    </mat-chip-set>
                                 </ng-container>
                             </div>
                         </div>
                         <ng-template pTemplate="footer">
-                            <!-- <p-button label="Save" icon="pi pi-check"></p-button>
-                            <p-button label="Cancel" icon="pi pi-times" styleClass="p-button-secondary" [style]="{ 'margin-left': '.5em' }"></p-button> -->
+                            <p-button (click)="onEdit()" *ngIf="formType != 'customers' && !clientInfo.isEdit"
+                                label="Edit" icon="pi pi-user"></p-button>
+                            <p-button (click)="onSave()" *ngIf="formType != 'customers' && clientInfo.isEdit"
+                                label="Save" icon="pi pi-check" styleClass="p-button-primary"></p-button>
+                            <p-button (click)="onDelete()" *ngIf="formType != 'customers' && clientInfo.isEdit"
+                                label="Cancel" icon="pi pi-times" [style]="{'margin-left': '5px'}"
+                                styleClass="p-button-secondary"></p-button>
                         </ng-template>
                     </p-card>
                 </p-tabPanel>
-                <p-tabPanel header="Previous Purchase">
+                <p-tabPanel *ngIf="formType == 'customers'" header="Previous Purchase">
                     <p-timeline [value]="inVoicesList" align="alternate" styleClass="customized-timeline">
                         <ng-template pTemplate="content" let-event>
                             <span class="custom-marker shadow-2" [style.backgroundColor]="event.color">
@@ -130,6 +136,80 @@
                             </p-card>
                         </ng-template>
                     </p-timeline>
+                </p-tabPanel>
+                <p-tabPanel *ngIf="formType == 'employees'" header="Salary">
+                    <div class="my-3">
+                        <full-calendar id="fullCalendar " [options]="calendarOptions"></full-calendar>
+                    </div>
+                    <form (ngSubmit)="calculateSalary()" #salaryForm="ngForm">
+                        <div class="form-group">
+                          <label for="monthlySalary">Monthly Salary</label>
+                          <input type="number" [disabled]="true" id="monthlySalary" name="monthlySalary" [(ngModel)]="monthlySalary" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="daysPresent">No of Days Present</label>
+                          <input type="number" [disabled]="true" id="daysPresent" name="daysPresent" [(ngModel)]="daysPresent" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="calculationDays">Calculation Days</label>
+                          <select [disabled]="setDefaultCalculationDays" id="calculationDays" name="calculationDays" [(ngModel)]="calculationDays" required>
+                            <option value="28">28</option>
+                            <option value="29">29</option>
+                            <option value="30">30</option>
+                            <option value="31">31</option>
+                          </select>
+                          <div class="form-group mt-2" *ngIf="calculationDays > 0">
+                            <input  type="checkbox" id="setDefaultCalculationDays" (change)="updateDefaultCalculationDays()" name="setDefaultCalculationDays" [(ngModel)]="setDefaultCalculationDays">
+                            <span for="setDefaultCalculationDays"> Set as Default</span>
+                        </div>
+                        </div>
+                       
+                        <div class="form-group">
+                          <label for="allowance">Allowance</label>
+                          <input type="number" id="allowance" name="allowance" [(ngModel)]="allowance" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="tax">Tax</label>
+                          <input type="number" id="tax" name="tax" [(ngModel)]="tax" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="insurance">Insurance</label>
+                          <input type="number" id="insurance" name="insurance" [(ngModel)]="insurance" required>
+                        </div>
+                        <div class="form-group">
+                          <label for="pf">PF</label>
+                          <input type="number" id="pf" name="pf" [(ngModel)]="pf" required>
+                        </div>
+                        <div class="form-group">
+                          <button type="submit" [disabled]="!salaryForm.valid">Calculate</button>
+                          <button (click)="savePayslip()" class="ml-3" [disabled]="!salaryForm.valid">Generate Payslip</button>
+                        </div>
+                      </form>
+                      
+                      <div *ngIf="totalSalary">
+                        <div>
+                          <p class="highlighted">Total Salary: {{ totalSalary.toFixed(2) }}</p>
+                        </div>
+                        <div>
+                          <p>Earnings:</p>
+                          <p>Total Salary: <span class="p-color">Rs.{{ totalSalary.toFixed(2) }}</span>
+                          <p >Allowance: <span class="p-color">Rs.{{ allowance.toFixed(2) }}</span>
+                          <p class="highlighted">Total Earnings: Rs.{{ totalEarnings.toFixed(2) }}</p>
+                        </div>
+                        <div>
+                          <p>Deductions:</p>
+                          <p>Tax: <span class="p-color">Rs.{{ tax.toFixed(2) }}</span>
+                          <p>Insurance: <span class="p-color">Rs.{{ insurance.toFixed(2) }}</span>
+                          <p>PF: <span class="p-color">Rs.{{ pf.toFixed(2) }}</span>
+                          <p class="highlighted">Total Deductions: <span>Rs.{{ totalDeductions.toFixed(2) }}</span>
+                        </div>
+                        <div>
+                          <p class="highlighted-imp">Net Salary: <span>Rs.{{ netSalary.toFixed(2) }}</span>
+                        </div>
+                      </div>                      
+                </p-tabPanel>
+                <p-tabPanel *ngIf="formType == 'employees'" header="Payslips">
+
                 </p-tabPanel>
             </p-tabView>
         </div>

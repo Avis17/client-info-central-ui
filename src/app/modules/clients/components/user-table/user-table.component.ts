@@ -134,6 +134,7 @@ export class UserTableComponent implements OnChanges, OnDestroy {
   }
 
   onNavClick(id: any, field: any) {
+    this.entityService.setFormType("customers")
     let encryptedId = this.cryptoService.encrypt(JSON.stringify({ [field]: id }));
     encryptedId = encodeURIComponent(encryptedId);
     this.entityService.setEntitySchema(this.entitySchema);

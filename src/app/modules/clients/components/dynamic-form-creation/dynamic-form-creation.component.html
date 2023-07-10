@@ -11,7 +11,7 @@
 		</mat-card-header>
 		<mat-card-content>
 			<form class="row" *ngIf="formFields" [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-				<div class="col-md-12 col-lg-6 mt-3 mb-3" *ngFor="let field of userDetails?.app_meta_details?.table_fileds">
+				<div class="col-md-12 col-lg-6 mt-3 mb-3" *ngFor="let field of getDynamicFields()">
 					<ng-container [ngSwitch]="field.field_type">
 						<div *ngSwitchCase="'text'">
 							<mat-form-field class="">
@@ -31,12 +31,13 @@
 							  </mat-form-field>
 						</div>
 						<div *ngSwitchCase="'number'">
-							<div *ngIf="field.field_key != 'phone'">
+							<div *ngIf="field.field_key == 'aadharNo'">
 								<mat-form-field class="">
 									<mat-label>{{ field.field_name }}</mat-label>
-									<input matInput type="number" [formControlName]="field.field_key">
+									<input matInput class="no-arrow" type="number" [formControlName]="field.field_key">
 									<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('required')">This field is required.</mat-error>
-								</mat-form-field>
+									<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('aadharNumberInvalid')">Please enter a 12-digit aadhar number.</mat-error>
+								  </mat-form-field>
 							</div>
 							<div *ngIf="field.field_key == 'phone'">
 								<mat-form-field class="">
@@ -46,6 +47,22 @@
 									<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('phoneNumberInvalid')">Please enter a 10-digit phone number.</mat-error>
 								  </mat-form-field>
 							</div>
+							<div *ngIf="field.field_key == 'alternatePhone'">
+								<mat-form-field class="">
+									<mat-label>{{ field.field_name }}</mat-label>
+									<input matInput class="no-arrow" type="number" [formControlName]="field.field_key">
+									<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('required')">This field is required.</mat-error>
+									<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('phoneNumberInvalid')">Please enter a 10-digit phone number.</mat-error>
+								  </mat-form-field>
+							</div>
+							<div *ngIf="field.field_key != 'phone' && field.field_key != 'aadharNo' && field.field_key != 'alternatePhone'">
+								<mat-form-field class="">
+									<mat-label>{{ field.field_name }}</mat-label>
+									<input matInput type="number" [formControlName]="field.field_key">
+									<mat-error *ngIf="formGroup.get(field.field_key)?.hasError('required')">This field is required.</mat-error>
+								</mat-form-field>
+							</div>
+							
 						</div>
 
 						<div class="" *ngSwitchCase="'radio'">

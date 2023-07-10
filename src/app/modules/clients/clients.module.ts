@@ -31,6 +31,8 @@ import { TabViewModule } from 'primeng/tabview';
 import { EmployeeManagementComponent } from './components/employee-management/employee-management.component';
 import { EmployeeTableComponent } from './components/employee-table/employee-table.component';
 import { TooltipModule } from 'primeng/tooltip';
+import { EmployeeAttendanceComponent } from './components/employee-attendance/employee-attendance.component';
+import { FullCalendarModule } from '@fullcalendar/angular';
 
 
 
@@ -52,6 +54,7 @@ import { TooltipModule } from 'primeng/tooltip';
     NewBillComponent,
     EmployeeManagementComponent,
     EmployeeTableComponent,
+    EmployeeAttendanceComponent,
   ],
   imports: [
     CommonModule,
@@ -68,7 +71,8 @@ import { TooltipModule } from 'primeng/tooltip';
     NgxDaterangepickerMd.forRoot(),
     MatExpansionModule,
     TabViewModule,
-    TooltipModule
+    TooltipModule,
+    FullCalendarModule
   ],
   providers: [CanDeactivateGuard]
 })

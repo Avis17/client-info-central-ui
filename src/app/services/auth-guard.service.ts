@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { CookieService } from 'ngx-cookie-service';
 import { environment } from 'src/environment/environment';
 import Swal from 'sweetalert2';
+import { CryptoService } from './crypto.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,12 @@ export class AuthGuardService {
   };
 
   URL = environment.apiUrl;
-  constructor(private router: Router, private http: HttpClient, private cookieService: CookieService) { }
+  constructor(
+    private router: Router, 
+    private http: HttpClient, 
+    private cookieService: CookieService,
+    private cryptService:CryptoService,
+    ) { }
 
   getUserPermission(){
     return this.userDetails.permission;
@@ -43,6 +49,7 @@ export class AuthGuardService {
   }
 
   setUserDetails(details: any) {
+    this.setSessionUserDetails(this.cryptService.encrypt(JSON.stringify(details)));
     this.userDetails = details
   }
 

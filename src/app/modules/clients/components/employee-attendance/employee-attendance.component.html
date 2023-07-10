@@ -1,0 +1,103 @@
+<div class="container-fluid pt-2 m-5">
+    <div class="pt-5 pl-3">
+        <mat-icon class="cursor-pointer" (click)="onPreviousPage()">arrow_back</mat-icon>
+    </div>
+    <p-card header="Mark Attendance" [subheader]="getDateFormated()">
+        <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" *ngIf="!attendenceMarked">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th>Employee ID</th>
+                        <th>Attendance</th>
+                        <th>Comments</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <ng-container formArrayName="employees"
+                        *ngFor="let employee of getFormArray()?.controls; let i = index">
+                        <tr [formGroupName]="i">
+                            <td>
+                                <input class="form-control" [disabled]="true" type="text" formControlName="name"
+                                    readonly>
+                            </td>
+                            <td>
+                                <input class="form-control" [disabled]="true" type="text" formControlName="empId"
+                                    readonly>
+                            </td>
+                            <td class="p-3">
+                                <label>
+                                    <input type="radio" value="Present" formControlName="attendance" checked>
+                                    Present
+                                </label> &nbsp;
+                                <label>
+                                    <input type="radio" value="Absent" formControlName="attendance">
+                                    Absent
+                                </label> &nbsp;
+                                <label>
+                                    <input type="radio" value="Half-day" formControlName="attendance">
+                                    Half-day
+                                </label> &nbsp;
+                            </td>
+                            <td>
+                                <textarea class="form-control" formControlName="comments">
+
+                        </textarea>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+            <button class="btn btn-primary mt-3" type="submit">Submit</button>
+        </form>
+        <div *ngIf="attendenceMarked">
+            <p>Attendance has already been marked for today. You can edit the details if needed.</p>
+            <form [formGroup]="employeeForm" (ngSubmit)="onUpdate()">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Employee Name</th>
+                            <th>Employee ID</th>
+                            <th>Attendance</th>
+                            <th>Comments</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <ng-container formArrayName="employees"
+                            *ngFor="let employee of getFormArray()?.controls; let i = index">
+                            <tr [formGroupName]="i">
+                                <td>
+                                    <input class="form-control" [disabled]="true" type="text" formControlName="name"
+                                        readonly>
+                                </td>
+                                <td>
+                                    <input class="form-control" [disabled]="true" type="text" formControlName="empId"
+                                        readonly>
+                                </td>
+                                <td class="p-3">
+                                    <label>
+                                        <input type="radio" value="Present" formControlName="attendance" checked>
+                                        Present
+                                    </label> &nbsp;
+                                    <label>
+                                        <input type="radio" value="Absent" formControlName="attendance">
+                                        Absent
+                                    </label> &nbsp;
+                                    <label>
+                                        <input type="radio" value="Half-day" formControlName="attendance">
+                                        Half-day
+                                    </label> &nbsp;
+                                </td>
+                                <td>
+                                    <textarea class="form-control" formControlName="comments">
+                            </textarea>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </table>
+                <button class="btn btn-primary mt-3" type="submit">Update</button>
+            </form>
+        </div>
+    </p-card>
+</div>
