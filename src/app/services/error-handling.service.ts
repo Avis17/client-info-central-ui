@@ -8,9 +8,14 @@ import { AuthGuardService } from './auth-guard.service';
 })
 export class ErrorHandlingService {
 
-  constructor(private authenticationService:AuthGuardService,private toastr: ToastrService, private navigationService: NavigationService) { }
+  constructor(
+    private authenticationService:AuthGuardService,
+    private toastr: ToastrService,
+    private navigationService: NavigationService,
+     ) { }
 
   errorAlertMsg(status: any, commands?: any) {
+    console.log(status)
     const login_commands = ['/'];
     switch (status.status) {
       case 200:
@@ -24,11 +29,11 @@ export class ErrorHandlingService {
         break;
       case 401:
         console.log(status.message)
-        this.authenticationService.logout()
+        this.authenticationService.logoutWithoutAPI()
         break;
       case 403:
         console.log(status.message)
-        this.authenticationService.logout()
+        this.authenticationService.logoutWithoutAPI()
         break;
       case 404:
         window.scrollTo(0, 0); // Scroll to the top

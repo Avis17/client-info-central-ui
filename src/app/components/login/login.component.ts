@@ -64,8 +64,11 @@ export class LoginComponent {
       if(err.status == 401){
         this.toastr.error("Invalid credentials, try again!", 'Error')
         return
+      }else if(err.status == 409){
+        this.toastr.error("Multiple sessions detected. Please log out from other devices.", 'Error')
+        return
       }else if(err.status == 403){
-        this.toastr.error("User is already logged in!", 'Error');
+        this.toastr.error("Multiple sessions detected. Please log out from other devices.", 'Error');
         return
       }else{
         this.toastr.error("Server error, Try again later please..!", 'Error')
@@ -79,5 +82,9 @@ export class LoginComponent {
         decryptedData = JSON.parse(decryptedData);
         this.authService.setToken(decryptedData.token)
         return decryptedData;
+  }
+
+  onResetAccount(){
+    this.authService.logout(this.email);
   }
 }

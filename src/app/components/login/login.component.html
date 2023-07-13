@@ -39,8 +39,11 @@
             <div class="mt-2 text-end">
               <a routerLink="/forgot-password">Forgot Password?</a>
             </div>
+            <div class="mt-2 text-end" *ngIf="email != ''">
+              <a class="link" (click)="onResetAccount()">Logout from all devices.</a>
+            </div>
             <div class="mt-3">
-              <button (click)="onLoginBtnClick()" mat-flat-button class="primary-bg">{{ 'Login' | uppercase }}</button>
+              <button [disabled]="email == '' || password == ''" (click)="onLoginBtnClick()" mat-flat-button class="primary-bg">{{ 'Login' | uppercase }}</button>
             </div>
           </div>
         </div>

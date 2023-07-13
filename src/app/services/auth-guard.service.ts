@@ -5,6 +5,8 @@ import { CookieService } from 'ngx-cookie-service';
 import { environment } from 'src/environment/environment';
 import Swal from 'sweetalert2';
 import { CryptoService } from './crypto.service';
+import { ToastrService } from 'ngx-toastr';
+import { ErrorHandlingService } from './error-handling.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +21,7 @@ export class AuthGuardService {
   constructor(
     private router: Router, 
     private http: HttpClient, 
+    private toastr: ToastrService,
     private cookieService: CookieService,
     private cryptService:CryptoService,
     ) { }
@@ -28,7 +31,7 @@ export class AuthGuardService {
   }
 
   getSessionUserDetails() {
-    let user = sessionStorage.getItem("user");
+    let user = localStorage.getItem("user");
     if (user) {
       user = JSON.parse(user)
     }
@@ -36,7 +39,7 @@ export class AuthGuardService {
   }
 
   setSessionUserDetails(data: any) {
-    sessionStorage.setItem("user", JSON.stringify(data));
+    localStorage.setItem("user", JSON.stringify(data));
   }
 
   canActivate(): boolean {
@@ -78,7 +81,7 @@ export class AuthGuardService {
     // this.cookieService.set('token', token);
     const tokenExpirationTime = 30 * 60 * 1000; // 30 minutes in milliseconds
     const expirationDate = new Date(Date.now() + tokenExpirationTime);
-    this.cookieService.set('token', token, { expires: expirationDate });
+    this.cookieService.set('token', token);
   }
 
   removeToken(): void {
@@ -86,18 +89,22 @@ export class AuthGuardService {
   }
 
   clearSession() {
-    sessionStorage.clear()
+    localStorage.clear()
   }
 
-  logout() {
-    this.http.post(this.URL + "logout", { email: this.userDetails.email }).subscribe((res: any) => {
+  logout(email?:string) {
+    this.http.post(this.URL + "logout", { email: this.userDetails.email || email }).subscribe((res: any) => {
       if (res) {
+        this.toastr.success('Access to your account has been terminated. Please login again to regain access.', 'Notification');
         this.clearSession()
         this.removeToken();
         this.clearUserDetails();
         this.router.navigate(["/"])
       }
     }, (err: any) => {
+      if(err.status == 404){
+        this.toastr.warning('You are not currently logged in. Please log in to continue.', 'Notification');
+      }
       this.clearSession()
       this.removeToken();
       this.clearUserDetails();
@@ -109,6 +116,13 @@ export class AuthGuardService {
     this.clearSession()
     this.removeToken();
     this.clearUserDetails();
+  }
+
+  logoutWithoutAPI() {
+    this.clearSession()
+    this.removeToken();
+    this.clearUserDetails();
+    this.router.navigate(["/"])
   }
 
   canAdminActivate() {

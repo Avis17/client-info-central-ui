@@ -86,3 +86,8 @@
   /* Adjust this value based on the desired icon position */
   transform: translateY(-50%);
 }
+
+.link{
+  color: $primary;
+  cursor: pointer;
+}
