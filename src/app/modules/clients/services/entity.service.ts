@@ -70,6 +70,21 @@ export class EntityService {
      })
     );
   }
+  
+  getAllAggregateEmployeeEntities(data:any){
+    return this.http.post(this.URL+'get-employee-aggregates-entities', data).pipe(
+      map((response:any) => {
+       if(response.status == 200){
+        let decryptRes = {
+          ...response,
+          data : JSON.parse(this.cryptoService.decrypt(response.data))
+         }
+         return decryptRes;
+       }
+       return response
+     })
+    );
+  }
 
   getAllEntities(data:any){
     return this.http.post(this.URL+'get-all-entities', data).pipe(
@@ -116,6 +131,20 @@ export class EntityService {
     );
   }
 
+  getAllMonthlyInvoicesData(data:any){
+    return this.http.post(this.URL+'get-month-invoice-data', data).pipe(
+      map((response:any) => {
+       if(response.status == 200){
+        let decryptRes = {
+          ...response,
+          data : JSON.parse(this.cryptoService.decrypt(response.data))
+         }
+         return decryptRes;
+       }
+       return response
+     })
+    );
+  }
   getNetProfitAndExpense(data:any){
     return this.http.post(this.URL+'get-expense-profit-datas', data).pipe(
       map((response:any) => {

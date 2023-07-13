@@ -27,7 +27,7 @@
 
         <ng-template pTemplate="header" let-columns>
             <tr>
-                <th style="width:10%; text-align: center !important;">S No</th>
+                <th style="width:10%; text-align: center !important;">S.No</th>
                 <ng-container *ngFor="let col of cols">
                     <th *ngIf="!isArrayCheck(col.field)" [pSortableColumn]="col.field"
                         style="flex-grow: 1; text-align: center !important;">

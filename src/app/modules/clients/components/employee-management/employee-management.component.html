@@ -1,6 +1,7 @@
 <app-custom-loader *ngIf="isLoading"></app-custom-loader>
 
 <p-tabView>
+
     <p-tabPanel header="Dashboard">
         <div class="m-4">
             <div class="row">
@@ -24,6 +25,195 @@
                 <p-card header="Employee Dashboard" [subheader]="selectedPeriod">
                     <ng-template pTemplate="header">
                     </ng-template>
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer">
+                                <div class="card card-1 border-left-primary shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs card-text-color text-uppercase mb-1">
+                                                    Total Employees
+                                                </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                    {{aggregateData?.totalEmployees}}</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-user fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer">
+                                <div class="card card-2 border-left-primary shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs card-text-color text-uppercase mb-1">
+                                                    Active Employees
+                                                </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                    {{aggregateData?.activeEmployees}}</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-user fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer">
+                                <div class="card card-3 border-left-primary shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs card-text-color text-uppercase mb-1">
+                                                    Resigned Employees
+                                                </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                    {{aggregateData?.resignedEmployees}}</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-user fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer">
+                                <div class="card card-4 border-left-primary shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs card-text-color text-uppercase mb-1">
+                                                    Part-Time Employees
+                                                </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                    {{aggregateData?.partTimeEmployees}}</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fas fa-user fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer">
+                                <div class="card card-5 border-left-primary shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs card-text-color text-uppercase mb-1">
+                                                    Total Payslips
+                                                </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                    {{aggregateData?.totalPayslips}}</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fa-solid fa-file-invoice fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 mt-2 col-md-4 col-sm-12">
+                                <div class="card card-3 border-left-primary shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs card-text-color text-uppercase mb-1">
+                                                    Total Net Salary
+                                                </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                    &#8377; {{aggregateData?.totalNetSalaryGiven}}</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 mt-2 col-md-4 col-sm-12">
+                                <div class="card card-4 border-left-primary shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs card-text-color text-uppercase mb-1">
+                                                    Total Tax
+                                                </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                    &#8377; {{aggregateData?.totalTax}}</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 mt-2 col-md-4 col-sm-12">
+                                <div class="card card-5 border-left-primary shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2">
+                                                <div class="text-xs card-text-color text-uppercase mb-1">
+                                                    Total Provident Fund
+                                                </div>
+                                                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                                    &#8377; {{aggregateData?.totalPF}}</div>
+                                            </div>
+                                            <div class="col-auto">
+                                                <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-5 mb-7" *ngIf="!isLoading || attendanceDetails.length > 0">
+                        <div class="col-4">
+                            <div class="text-xs card-text-color text-center text-uppercase mb-1">
+                                Today Working Employees
+                                <circle-progress [matTooltip]="'Count - '+todaysPresentCount.length"
+                                    matTooltipPosition="above" [percent]="todaysPresentPercentage" [radius]="100"
+                                    subtitle="Employees" [outerStrokeWidth]="16" [innerStrokeWidth]="8"
+                                    [outerStrokeColor]="'#78C000'" [innerStrokeColor]="'#C7E596'" [animation]="true"
+                                    [animationDuration]="900"></circle-progress>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-xs card-text-color text-center text-uppercase mb-1">
+                                Today Half-Day Workers
+                                <circle-progress [matTooltip]="'Count - '+todaysHalfdayCount.length"
+                                    matTooltipPosition="above" [percent]="todaysHalfdayPercentage" [radius]="100"
+                                    subtitle="Employees" [outerStrokeWidth]="16" [innerStrokeWidth]="8"
+                                    [outerStrokeColor]="'#53a9ff'" [innerStrokeColor]="'#99CCFF'" [animation]="true"
+                                    [animationDuration]="900"></circle-progress>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="text-xs card-text-color text-center text-uppercase mb-1"
+                                style="display: flex;flex-direction: column;">
+                                Today Absentees
+                                <circle-progress [matTooltip]="'Count - '+todaysAbsentCount.length"
+                                    matTooltipPosition="above" [percent]="todaysAbsentPercentage" [radius]="100"
+                                    subtitle="Employees" [outerStrokeWidth]="16" [innerStrokeWidth]="8"
+                                    [outerStrokeColor]="'#FF6347'" [innerStrokeColor]="'#FF8670'" [animation]="true"
+                                    [animationDuration]="900"></circle-progress>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-5 mb-7" *ngIf="attendanceDetails.length == 0">
+                        <div class="col">
+                            <div class="attendance-message">
+                                <h2>Oops! Attendance for today is not yet marked.</h2>
+                                <p>Please remember to mark employees attendance for today.</p>
+                            </div>
+                        </div>
+                    </div>
                 </p-card>
             </div>
         </div>

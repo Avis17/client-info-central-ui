@@ -63,12 +63,32 @@
             </div>
         </div>
         <div class="card m-3 mb-8" *ngIf="clientInfo">
-            <p-tabView>
+            <p-tabView (onChange)="switchHeaders($event);">
                 <p-tabPanel header="Profile">
                     <p-card [header]="clientInfo['name']" [subheader]="'Joined - '+getDate(clientInfo['createdAt'])">
                         <ng-template pTemplate="header">
                             <img alt="Card" class="img-size" src="../../../../../assets/clients/png/client.png" />
                         </ng-template>
+                        <div class="text-end m-3" *ngIf="formType != 'customers'">
+                            <a *ngIf="!clientInfo.isEdit" [ngClass]="checkEMployeeStatus(clientInfo.status)">{{clientInfo.status | titlecase}}</a>
+                            <select *ngIf="clientInfo.isEdit" class="form-select" style="width: 150px;" [(ngModel)]="clientInfo.status">
+                                <option *ngFor="let option of statusTypes">{{option}}</option>
+                            </select>
+                        </div>
+                        <div class="row" *ngIf="clientInfo.isEdit">
+                            <div class="col-lg-4 col-sm-6">
+                                <div class="key">
+                                    <ng-container>
+                                        <label>Employee Name</label>
+                                    </ng-container>
+                                </div>
+                            </div>
+                            <div class="col-lg-8 col-sm-6">
+                                <div class="value">
+                                    <input type="text" class="form-control mb-1" [(ngModel)]="clientInfo['name']">
+                                </div>
+                            </div>
+                        </div>
                         <div class="row" *ngFor="let key of clientInfoKeys">
                             <div class="col-lg-4 col-sm-6">
                                 <div class="key">
@@ -82,7 +102,8 @@
                                 <div class="value">
                                     <ng-container
                                         *ngIf="key.field_key != 'createdAt' && key.field_key != 'updatedAt' && key.field_key != 'name' && key.field_key != '__v'">
-                                        <h3 class="wrapped-text">{{clientInfo[key.field_key]}}</h3>
+                                        <h3 *ngIf="!clientInfo.isEdit || key.field_key == 'empId'" class="wrapped-text">{{clientInfo[key.field_key]}}</h3>
+                                        <input *ngIf="clientInfo.isEdit && key.field_key != 'empId'" [type]="key.field_type" class="form-control mb-1" [(ngModel)]="clientInfo[key.field_key]">
                                     </ng-container>
                                 </div>
                             </div>
@@ -103,10 +124,10 @@
                         </div>
                         <ng-template pTemplate="footer">
                             <p-button (click)="onEdit()" *ngIf="formType != 'customers' && !clientInfo.isEdit"
-                                label="Edit" icon="pi pi-user"></p-button>
+                                label="Edit" icon="pi pi-user" styleClass="p-button-info"></p-button>
                             <p-button (click)="onSave()" *ngIf="formType != 'customers' && clientInfo.isEdit"
-                                label="Save" icon="pi pi-check" styleClass="p-button-primary"></p-button>
-                            <p-button (click)="onDelete()" *ngIf="formType != 'customers' && clientInfo.isEdit"
+                                label="Save" icon="pi pi-check" styleClass="p-button-success"></p-button>
+                            <p-button (click)="onCancel()" *ngIf="formType != 'customers' && clientInfo.isEdit"
                                 label="Cancel" icon="pi pi-times" [style]="{'margin-left': '5px'}"
                                 styleClass="p-button-secondary"></p-button>
                         </ng-template>
@@ -126,7 +147,7 @@
                                 </h3>
                                 <mat-chip-set class="example-chip" cdkDropListOrientation="horizontal">
                                     <mat-chip class="example-box" *ngFor="let service of event.products">
-                                        {{service.name}} - <label>Rs.{{service.price}}</label>
+                                        {{service.name}} - <span class="card-text-color">Rs.{{service.price}}</span>
                                     </mat-chip>
                                 </mat-chip-set>
 
@@ -139,10 +160,14 @@
                 </p-tabPanel>
                 <p-tabPanel *ngIf="formType == 'employees'" header="Salary">
                     <div class="my-3">
-                        <full-calendar id="fullCalendar " [options]="calendarOptions"></full-calendar>
+                        <full-calendar id="fullCalendar" *ngIf="initializedCall" [options]="calendarOptions"></full-calendar>
+                        <div id="eventTooltip">
+                            {{ commentSelected }}
+                          </div>
                     </div>
                     <form (ngSubmit)="calculateSalary()" #salaryForm="ngForm">
-                        <div class="form-group">
+                        <h2 class="text-decoration-underline">Calculate Salary</h2>
+                        <div class="form-group mt-3">
                           <label for="monthlySalary">Monthly Salary</label>
                           <input type="number" [disabled]="true" id="monthlySalary" name="monthlySalary" [(ngModel)]="monthlySalary" required>
                         </div>
@@ -181,23 +206,23 @@
                           <input type="number" id="pf" name="pf" [(ngModel)]="pf" required>
                         </div>
                         <div class="form-group">
-                          <button type="submit" [disabled]="!salaryForm.valid">Calculate</button>
+                          <button type="submit" [disabled]="!salaryForm.valid">Show Calculation</button>
                           <button (click)="savePayslip()" class="ml-3" [disabled]="!salaryForm.valid">Generate Payslip</button>
                         </div>
                       </form>
                       
-                      <div *ngIf="totalSalary">
+                      <div *ngIf="totalSalary" class="salary-box">
                         <div>
                           <p class="highlighted">Total Salary: {{ totalSalary.toFixed(2) }}</p>
                         </div>
                         <div>
-                          <p>Earnings:</p>
+                          <p class="text-decoration-underline">Earnings</p>
                           <p>Total Salary: <span class="p-color">Rs.{{ totalSalary.toFixed(2) }}</span>
                           <p >Allowance: <span class="p-color">Rs.{{ allowance.toFixed(2) }}</span>
                           <p class="highlighted">Total Earnings: Rs.{{ totalEarnings.toFixed(2) }}</p>
                         </div>
                         <div>
-                          <p>Deductions:</p>
+                          <p class="text-decoration-underline">Deductions</p>
                           <p>Tax: <span class="p-color">Rs.{{ tax.toFixed(2) }}</span>
                           <p>Insurance: <span class="p-color">Rs.{{ insurance.toFixed(2) }}</span>
                           <p>PF: <span class="p-color">Rs.{{ pf.toFixed(2) }}</span>
@@ -209,7 +234,7 @@
                       </div>                      
                 </p-tabPanel>
                 <p-tabPanel *ngIf="formType == 'employees'" header="Payslips">
-
+                    <app-employee-payslips *ngIf="isAllPayslips" [empId]="clientInfo.empId"></app-employee-payslips>
                 </p-tabPanel>
             </p-tabView>
         </div>

@@ -81,13 +81,13 @@ export class CustomerFollowupComponent implements OnDestroy{
 
   getCustomerStatusClass(interestStatus:string) {
     if (interestStatus == 'interested') {
-      return "btn btn-success";
+      return "badge bg-success";
     } else if (interestStatus == 'not-interested') {
-      return "btn btn-danger";
+      return "badge bg-danger";
     } else if (interestStatus == 'may-be-in-future') {
-      return "btn btn-warning";
+      return "badge bg-warning";
     } else {
-      return "btn btn-info";
+      return "badge bg-info";
     }
   }
 

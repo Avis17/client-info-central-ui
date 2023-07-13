@@ -109,7 +109,7 @@
                 >
                 <ng-template pTemplate="header">
                     <tr *ngIf="customerList.length > 0">
-                        <th style="text-align: center !important;">S No</th>
+                        <th style="text-align: center !important;">S.No</th>
                         <ng-container *ngFor="let col of cols">
                             <th [pSortableColumn]="col.field" style="flex-grow: 1; text-align: center !important;">
                                 {{ col.header }}
@@ -126,7 +126,7 @@
                         <td style="text-align: center;">{{ customer.name }}</td>
                         <td style="text-align: center;">{{ customer.phone }}</td>
                         <td style="text-align: center;">
-                            <button [ngClass]="getCustomerStatusClass(customer.interest)" style="width: 130px;">{{customer.interest == 'may-be-in-future' ? 'In-Future' : customer.interest }}</button>
+                            <span [ngClass]="getCustomerStatusClass(customer.interest)">{{customer.interest | uppercase}}</span>
                         </td>
                         <td style="text-align: center;">{{ customer.place }}</td>
                         <td style="text-align: center;">{{ customer.createdAt | dateformat}}</td>

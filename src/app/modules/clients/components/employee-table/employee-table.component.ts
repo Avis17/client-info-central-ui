@@ -27,6 +27,24 @@ export class EmployeeTableComponent implements OnInit{
   entitySchema: any = [];
   isLoading:boolean  = true;
   isPrevPage : boolean = false;
+  statusTypes:any = [
+    {
+      label: 'All Employees'
+    },
+    {
+      label: 'Active'
+    },
+    {
+      label: 'Resigned'
+    },
+    {
+      label: 'Part-Time'
+    },
+  ];
+  selectedStatusType:any = {
+    label: 'All Employees'
+  };
+
   @ViewChild('tableref') dt: Table | any;
 
   constructor(
@@ -121,7 +139,7 @@ export class EmployeeTableComponent implements OnInit{
   }
 
   isDateField(value: any, col:string): boolean {
-    if (typeof value !== 'string' || col == 'empId') {
+    if (typeof value !== 'string' || col == 'empId' || col == 'salary') {
       return false; // Return false if the value is not a string
     }
     const date = new Date(value);
@@ -131,6 +149,34 @@ export class EmployeeTableComponent implements OnInit{
   onAddAttendance(){
     const commands = ['/client/employee-attendance'];
     this.navigationService.navigateWithoutLocationChange(commands);
+  }
+
+  checkEMployeeStatus(status:string){
+    if(status == 'active'){
+      return 'badge bg-success'
+    }else if(status == 'resigned'){
+      return 'badge bg-danger'
+    }else{
+      return 'badge bg-info'
+    }
+  }
+
+  onStatusChange(event:any){
+    let queryValue = {}
+    if (event.value) {
+      if(event.value.label == 'All Employees'){
+        queryValue = {}
+      }else if(event.value.label == 'Active'){
+        queryValue = {status:'active'}
+      }else if(event.value.label == 'Resigned'){
+        queryValue = {status:'resigned'}
+      }else if(event.value.label == 'Part-Time'){
+        queryValue = {status:'Part-Time'}
+      }else{
+        queryValue = {}
+      }
+    }
+    this.getAllEmployees(queryValue);  
   }
 
 }

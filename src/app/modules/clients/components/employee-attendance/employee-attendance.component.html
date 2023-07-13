@@ -1,7 +1,21 @@
 <div class="container-fluid pt-2 m-5">
-    <div class="pt-5 pl-3">
+    <div class="pt-5 pl-1 mb-3">
         <mat-icon class="cursor-pointer" (click)="onPreviousPage()">arrow_back</mat-icon>
     </div>
+    <p-toolbar>
+        <div style="width: 100%;">
+            <div class="row align-end">
+                <div class="col-lg-6 col-sm-12 col-md-6 mb-3 mt-1 text-start">
+                    <label class="mb-1">Choose date for attendance</label>
+                    <p-calendar class="max-w-full" (onSelect)="onDateSelected()" placeholder="Choose date for attendance" dateFormat="dd.mm.yy" [(ngModel)]="selectedDate" [showIcon]="true"></p-calendar>
+                </div>
+                <div class="col-lg-6 col-sm-12 col-md-6 mb-3 mt-3">
+                    <input type="text" placeholder="Search Employee"
+                        [(ngModel)]="searchText" (input)="filterEmployees()" class="form-control mb-3">
+                </div>
+            </div>
+        </div>
+    </p-toolbar>
     <p-card header="Mark Attendance" [subheader]="getDateFormated()">
         <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" *ngIf="!attendenceMarked">
             <table>
@@ -14,15 +28,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <ng-container formArrayName="employees"
-                        *ngFor="let employee of getFormArray()?.controls; let i = index">
-                        <tr [formGroupName]="i">
+                    <ng-container *ngFor="let employee of filteredEmployees; let i = index" [formGroup]="employee">
+                        <tr>
                             <td>
-                                <input class="form-control" [disabled]="true" type="text" formControlName="name"
+                                <input class="disabled form-control" [disabled]="true" type="text" formControlName="name"
                                     readonly>
                             </td>
                             <td>
-                                <input class="form-control" [disabled]="true" type="text" formControlName="empId"
+                                <input class="disabled form-control" [disabled]="true" type="text" formControlName="empId"
                                     readonly>
                             </td>
                             <td class="p-3">
@@ -48,10 +61,10 @@
                     </ng-container>
                 </tbody>
             </table>
-            <button class="btn btn-primary mt-3" type="submit">Submit</button>
+            <button *ngIf="getFormArray().length > 0" class="btn btn-primary mt-3" type="submit">Submit</button>
         </form>
         <div *ngIf="attendenceMarked">
-            <p>Attendance has already been marked for today. You can edit the details if needed.</p>
+            <p class="box">Attendance has already been marked for today. You can edit the details if needed.</p>
             <form [formGroup]="employeeForm" (ngSubmit)="onUpdate()">
                 <table>
                     <thead>
@@ -63,15 +76,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <ng-container formArrayName="employees"
-                            *ngFor="let employee of getFormArray()?.controls; let i = index">
-                            <tr [formGroupName]="i">
+                        <ng-container *ngFor="let employee of filteredEmployees; let i = index" [formGroup]="employee">
+                            <tr>
                                 <td>
-                                    <input class="form-control" [disabled]="true" type="text" formControlName="name"
+                                    <input class="disabled form-control" [disabled]="true" type="text" formControlName="name"
                                         readonly>
                                 </td>
                                 <td>
-                                    <input class="form-control" [disabled]="true" type="text" formControlName="empId"
+                                    <input class="disabled form-control" [disabled]="true" type="text" formControlName="empId"
                                         readonly>
                                 </td>
                                 <td class="p-3">

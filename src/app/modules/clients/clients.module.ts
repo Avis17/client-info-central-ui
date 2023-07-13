@@ -33,6 +33,10 @@ import { EmployeeTableComponent } from './components/employee-table/employee-tab
 import { TooltipModule } from 'primeng/tooltip';
 import { EmployeeAttendanceComponent } from './components/employee-attendance/employee-attendance.component';
 import { FullCalendarModule } from '@fullcalendar/angular';
+import { EmployeePayslipsComponent } from './components/employee-payslips/employee-payslips.component';
+import { CalendarModule } from 'primeng/calendar';
+import { NgCircleProgressModule } from 'ng-circle-progress';
+import { NotesComponent } from './components/notes/notes.component';
 
 
 
@@ -55,6 +59,8 @@ import { FullCalendarModule } from '@fullcalendar/angular';
     EmployeeManagementComponent,
     EmployeeTableComponent,
     EmployeeAttendanceComponent,
+    EmployeePayslipsComponent,
+    NotesComponent,
   ],
   imports: [
     CommonModule,
@@ -72,7 +78,17 @@ import { FullCalendarModule } from '@fullcalendar/angular';
     MatExpansionModule,
     TabViewModule,
     TooltipModule,
-    FullCalendarModule
+    FullCalendarModule,
+    CalendarModule,
+    NgCircleProgressModule.forRoot({
+      // set defaults here
+      radius: 100,
+      outerStrokeWidth: 16,
+      innerStrokeWidth: 8,
+      outerStrokeColor: "#78C000",
+      innerStrokeColor: "#C7E596",
+      animationDuration: 300,
+    })
   ],
   providers: [CanDeactivateGuard]
 })

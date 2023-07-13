@@ -1,0 +1,80 @@
+@import "src/_variables.scss";
+
+.notes-container {
+    padding: 20px;
+}
+
+.right-panel {
+    padding: 20px;
+    border-radius: 8px;
+    min-height: 200px;
+    background-color: #f8f8f8;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.right-panel:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.right-panel h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.right-panel small {
+    display: block;
+    margin-bottom: 20px;
+}
+
+.right-panel .buttons button {
+    margin-right: 10px;
+}
+
+.add-note-button {
+    animation: pulse-animation 2s infinite;
+}
+
+@keyframes pulse-animation {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.empty-notes,
+.no-note-selected {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.empty-notes p,
+.no-note-selected p {
+    margin-bottom: 10px;
+}
+
+.active {
+    background-color: $primary;
+    color: $text-white;
+}
+
+.flex-between {
+    display: flex;
+    justify-content: space-between;
+}
+
+.inventory-text {
+    white-space: pre-line;
+}
+
+.title {
+    color: $card-label;
+    font-weight: 500;
+}

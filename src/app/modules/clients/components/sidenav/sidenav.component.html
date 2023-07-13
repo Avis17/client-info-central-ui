@@ -54,6 +54,12 @@
                     </div>
                     Employee Management
                 </a>
+                <a (click)="onClickLink('notes')" appSkipLocationChange [commands]="['/client/notes']" [ngClass]="linkActive['notes'] ? 'text-color nav-link' : 'nav-link'">
+                    <div class="sb-nav-link-icon">
+                        <img src="../../../../../assets/clients/png/notes.png" style="width: 25px;height: 25px;">
+                    </div>
+                    Notes
+                </a>
             </div> 
         </div>
         <div class="sb-sidenav-footer">

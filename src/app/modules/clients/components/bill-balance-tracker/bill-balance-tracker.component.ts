@@ -215,9 +215,9 @@ export class BillBalanceTrackerComponent {
       const startDate = this.selectedDates.startDate.startOf('day');
       const endDate = this.selectedDates.endDate.endOf('day');
       this.Query = {
-        bill_balance_date: {
-          $gte: startDate.toDate(),
-          $lte: endDate.toDate()
+        createdAt: {
+          startDate: startDate.toDate(),
+          endDate: endDate.toDate()
         }
       }
       this.getBills(this.Query);

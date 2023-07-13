@@ -16,6 +16,7 @@ import { CalendarOptions } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { FullCalendarComponent } from '@fullcalendar/angular'; // Import FullCalendarComponent
 import { Calendar } from '@fullcalendar/core';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-user-details',
@@ -51,10 +52,13 @@ export class UserDetailsComponent {
   netSalary: number;
   setDefaultCalculationDays: boolean = false;
   calendarOptions: CalendarOptions = {
+    timeZone: 'UTC',
     plugins: [dayGridPlugin],
     initialView: 'dayGridMonth',
-    // Other configuration options
-    events: []
+    headerToolbar:{
+      center:"",
+      right:""
+    }
   };
   attendanceDetails: any;
   months = [
@@ -72,7 +76,15 @@ export class UserDetailsComponent {
     "December"
   ];
   calendar: Calendar;
-
+  initializedCall = false;
+  isHidden = false;
+  commentSelected = "";
+  isAllPayslips = false;
+  statusTypes:any = [
+    'active',
+    "resigned",
+    'Part-Time'
+  ];
 
   calculateSalary() {
     const oneDaySalary = this.monthlySalary / this.calculationDays;
@@ -91,6 +103,7 @@ export class UserDetailsComponent {
     private errorHandlingService: ErrorHandlingService,
     private navigationService: NavigationService,
     private authService: AuthGuardService,
+    private toastr: ToastrService,
     private appMetaService: AppMetaCreationService,
   ) {
     this.userDetails = this.authService.getUserDetails();
@@ -110,6 +123,26 @@ export class UserDetailsComponent {
     } else {
       this.getAllAggregateEmployeeDatas();
     }
+  }
+
+  handleEventMouseEnter(info: any) {
+    const eventData = info.event.extendedProps; // Assuming you have extended properties in your event data
+    this.commentSelected = eventData.comment;
+  
+    // Set the tooltip position
+    const tooltip:any = document.getElementById('eventTooltip');
+    const rect = info.el.getBoundingClientRect();
+    tooltip.style.top = `${rect.top}px`;
+    tooltip.style.left = `${rect.left + rect.width}px`;
+  
+    // Show the tooltip
+    tooltip.style.display = 'block';
+  }
+  
+  handleEventMouseLeave() {
+    // Hide the tooltip
+    const tooltip:any = document.getElementById('eventTooltip');
+    tooltip.style.display = 'none';
   }
 
   updateDefaultCalculationDays() {
@@ -245,7 +278,7 @@ export class UserDetailsComponent {
         this.clientInfo = res.data[0];
         this.monthlySalary = this.clientInfo.salary;
         this.clientInfoKeys = this.userDetails?.app_meta_details?.employee_fields?.map((data: any) => {
-          return { field_name: data.field_name, field_key: data.field_key }
+          return { field_name: data.field_name, field_key: data.field_key, field_type:data.field_type }
         })
         this.clientInfoKeys.unshift({
           field_name: "Employee ID",
@@ -353,13 +386,35 @@ export class UserDetailsComponent {
 
   onEdit() {
     this.clientInfo.isEdit = true;
+    this.clientInfo.clone = { ...this.clientInfo };
   }
 
   onSave() {
     this.clientInfo.isEdit = false;
+    const _id = this.clientInfo._id;
+    delete this.clientInfo._id
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'employees',
+      "collectionData": this.clientInfo
+    }
+    this.isLoading = true;
+
+    this.entityService.updateEntityById(_id, formData).subscribe((res: any) => {
+      this.isLoading = false;
+      if (res.status == 200) {
+        Swal.fire('Employee Details Updated!', '', 'success');
+      }
+    }, (err: any) => {
+      this.isLoading = false;
+      this.errorHandlingService.errorAlertMsg(err);
+    })
   }
 
-  onDelete() {
+  onCancel() {
+    Object.assign(this.clientInfo, this.clientInfo.clone); // Restore the original data
+    delete this.clientInfo.clone; // Remove the clone property
     this.clientInfo.isEdit = false;
   }
 
@@ -555,8 +610,16 @@ export class UserDetailsComponent {
               width: 'auto',
               margin: [0, 10, 0, 0],
               stack: [
-                { text: 'Authorized Signature', style: 'signature' }
-              ]
+                {
+                  width: 150,
+                  alignment: "right",
+                  image: this.userDetails?.app_meta_details?.billingdetails?.signature,
+                  margin: [0, 60, 0, 3],
+                },
+                { text: 'Authorized Signature', fontSize: 12, bold: true, color: '#CC5803' },
+                // { text: 'Your Name', fontSize: 10 }
+              ],
+              alignment: 'right'
             },
           ]
         }
@@ -624,8 +687,49 @@ export class UserDetailsComponent {
 
   savePayslip() {
     this.calculateSalary();
-    const docDefinition: any = this.generatePayslip();
-    pdfMake.createPdf(docDefinition).open();
+    const newPayslip = {
+      ...this.clientInfo,
+      payslipDetails : {
+        basicSalary : this.totalSalary.toFixed(2),
+        allowance : this.allowance.toFixed(2),
+        totalEarnings: this.totalEarnings.toFixed(2),
+        tax:this.tax.toFixed(2),
+        insurance:this.insurance.toFixed(2),
+        pf:this.pf.toFixed(2),
+        totalDeductions:this.totalDeductions.toFixed(2),
+        netSalary:this.netSalary.toFixed(2),
+        paidDays:this.daysPresent,
+        paidPeriod:this.months[new Date().getMonth()],
+        paidDate:this.getDateFormated(new Date())
+      }
+    }
+    delete newPayslip._id;
+    delete newPayslip.createdAt;
+    delete newPayslip.updatedAt;
+    let createdTime = new Date();
+    createdTime.setHours(createdTime.getHours()+5, createdTime.getMinutes()+30, 0, 0)
+    newPayslip.createdAt = createdTime;
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'employee-payslips',
+      "collectionData": { ...newPayslip }
+    }
+    if (formData.dbName == '' || formData.collectionName == '') {
+      this.toastr.error("invalid DB details! contact your application provider immediately.", "Error")
+      return;
+    }
+    this.isLoading = true;
+    this.entityService.addNewEntity(formData).subscribe((res: any) => {
+      this.isLoading = false;
+      if (res.status == 200) {
+        const docDefinition: any = this.generatePayslip();
+        pdfMake.createPdf(docDefinition).open();
+      }
+    }, (err) => {
+      this.isLoading = false;
+      this.errorHandlingService.errorAlertMsg(err);
+    })
   }
 
   getDateFormated(date: any) {
@@ -646,23 +750,28 @@ export class UserDetailsComponent {
         console.log(res)
         if (res.data?.length > 0) {
           this.attendanceDetails = res.data.map((data: any) => {
+            // let curentDate = new Date(data.createdAt);
+            const curentDate = data.createdAt;
+            // curentDate.setHours(curentDate.getHours()+5,curentDate.getMinutes()+30,0,0)
             let eachEmp = {
               ...data.employees.find((emp: any) => {
                 return emp.empId == this.clientInfo.empId
               }),
-              start: data.createdAt,
-              end: data.createdAt
+              start: curentDate,
+              end: curentDate,
             }
             return {
-              title: eachEmp.attendance,
+              title: eachEmp.attendance || 'Not Updated',
               start: eachEmp.start,
               end: eachEmp.end,
+              comment:eachEmp.comments
             };
           })
           this.calendarOptions.events = this.attendanceDetails;
+          this.calendarOptions.eventMouseEnter = this.handleEventMouseEnter.bind(this);
+          this.calendarOptions.eventMouseLeave = this.handleEventMouseLeave.bind(this);
           console.log(this.attendanceDetails)
           this.calculateNoOfDaysPresent();
-          // this.fullCalendar.getApi().render(); // Render the calendar
         }
       }
     }, (err: any) => {
@@ -671,4 +780,23 @@ export class UserDetailsComponent {
     })
   }
 
+  switchHeaders(event:any){
+    this.isAllPayslips = false;
+    this.initializedCall = false;
+    if(event.index == 1){
+      this.initializedCall = true;
+    }else if(event.index == 2){
+      this.isAllPayslips = true;
+    }
+  }
+
+  checkEMployeeStatus(status:string){
+    if(status == 'active'){
+      return 'btn btn-success'
+    }else if(status == 'resigned'){
+      return 'btn btn-danger'
+    }else{
+      return 'btn btn-info'
+    }
+  }
 }

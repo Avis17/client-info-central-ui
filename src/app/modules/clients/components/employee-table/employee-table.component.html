@@ -6,6 +6,12 @@
     <div class="p-toolbar-group-start">
         <input type="text" pInputText placeholder="Search Fields" (input)="applyFilterGlobal($event, 'contains')" />
     </div>
+    <div class="p-toolbar-group-center">
+        <p-dropdown [options]="statusTypes" [(ngModel)]="selectedStatusType"
+            (onChange)="onStatusChange($event)" optionLabel="label" [showClear]="true" [filter]="true"
+            placeholder="Filter by Employee Status">
+        </p-dropdown>
+    </div>
     <div class="p-toolbar-group-end">
         <p-button label="Attendance" icon="pi pi-plus" class="mr-2" (click)="onAddAttendance()"></p-button>
         <p-button label="Employee" icon="pi pi-plus" class="mr-2" (click)="onAddEmployee()"></p-button>
@@ -21,7 +27,7 @@
 
             <ng-template pTemplate="header" let-columns>
                 <tr>
-                    <th style="width:10%; text-align: center !important;">S No</th>
+                    <th style="width:10%; text-align: center !important;">S.No</th>
                     <ng-container *ngFor="let col of cols">
                         <th *ngIf="!isArrayCheck(col.field)" [pSortableColumn]="col.field"
                             style="flex-grow: 1; text-align: center !important;">
@@ -29,6 +35,7 @@
                             <p-sortIcon [field]="col.field"></p-sortIcon>
                         </th>
                     </ng-container>
+                    <th>Status</th>
                 </tr>
             </ng-template>
             <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
@@ -49,6 +56,9 @@
                             </ng-container>
                         </td>
                     </ng-container>
+                    <td>
+                        <span [ngClass]="checkEMployeeStatus(rowData['status'])">{{rowData['status'] | titlecase}}</span>
+                    </td>
                 </tr>
             </ng-template>
             <ng-template pTemplate="emptymessage" let-columns>

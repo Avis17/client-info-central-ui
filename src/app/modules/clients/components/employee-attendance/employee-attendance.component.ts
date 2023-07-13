@@ -38,6 +38,9 @@ export class EmployeeAttendanceComponent {
   selectedYear = new Date().getFullYear();
   attendenceMarked: boolean = false;
   attendanceDetails:any;
+  searchText:string = '';
+  filteredEmployees: any;
+  selectedDate:any = new Date();
 
   constructor(
     private fb: FormBuilder,
@@ -64,6 +67,31 @@ export class EmployeeAttendanceComponent {
     this.getAttendenceDetails({ createdAt: { startDate, endDate } });
   }
 
+  onDateSelected() {
+    const startDate = new Date(this.selectedDate);
+    startDate.setHours(5, 30, 0, 0);
+    const endDate = new Date(this.selectedDate);
+    endDate.setHours(29, 30, 0, 0);
+    console.log(startDate, endDate)
+    this.getAttendenceDetails({ createdAt: { startDate, endDate } });
+  }
+  
+
+  filterEmployees() {
+    console.log(this.searchText)
+    if (this.searchText) {
+      const searchTextLower = this.searchText.toLowerCase();
+      this.filteredEmployees = this.getFormArray()?.controls.filter((employee: any) => {
+        const name = employee?.get('name')?.value.toLowerCase();
+        const empId = employee.get('empId')?.value.toLowerCase();
+        return name.includes(searchTextLower) || empId.includes(searchTextLower);
+      });
+      console.log(this.filteredEmployees)
+    } else {
+      this.filteredEmployees = this.getFormArray()?.controls;
+    }
+  }
+
   createEmployeeFormControls(type: string) {
     const employeesFormArray = this.getFormArray();
     // Loop through the employee list and create form controls
@@ -88,7 +116,7 @@ export class EmployeeAttendanceComponent {
         employeesFormArray.push(employeeFormGroup);
       });
     }
-
+    this.filterEmployees();
   }
 
   onPreviousPage() {
@@ -120,11 +148,12 @@ export class EmployeeAttendanceComponent {
   }
 
   onSubmit() {
+    this.selectedDate.setHours(new Date().getHours()+5, new Date().getMinutes()+30, 0, 0)
     const formData = {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
       "collectionName": 'employee-attendance',
-      "collectionData": {...this.employeeForm.value, createdAt : new Date().setHours(new Date().getHours()+5, new Date().getMinutes()+30, 0, 0)}
+      "collectionData": {...this.employeeForm.value, createdAt : this.selectedDate}
     }
     if (formData.dbName == '' || formData.collectionName == '') {
       this.toastr.error("invalid DB details! contact your application provider immediately.", "Error")
@@ -143,6 +172,9 @@ export class EmployeeAttendanceComponent {
   }
 
   getAttendenceDetails(query?: any) {
+    this.employeeList = [];
+    this.employeeForm.setControl('employees', this.fb.array([]));
+    this.attendanceDetails = []
     const formData = {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
@@ -169,7 +201,7 @@ export class EmployeeAttendanceComponent {
     })
   }
 
-  getDateFormated(date = new Date()) {
+  getDateFormated(date = this.selectedDate) {
     return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
   }
 

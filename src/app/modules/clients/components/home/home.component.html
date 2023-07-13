@@ -229,18 +229,35 @@
                                         </div>
                                     </div>
                                     <div class="row">
+                                        <div class="col-12" *ngIf="listOfServices.length > 0">
+                                            <ng-container>
+                                                <div class="card p-5 mb-3">
+                                                    <div class="text-end mb-3">
+                                                        <h3 class="chart-text-color">Monthly Revenue</h3>
+                                                    </div>
+                                                    <p-chart type="line" height="300" [data]="monthyProfitdata"
+                                                        [options]="monthyProfitoptions"></p-chart>
+
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                    <div class="row">
                                         <div [ngClass]="chart.chartFieldName == 'createdAt' ? 'col-sm-12 col-md-12 col-lg-12' : 'col-sm-12 col-md-6 col-lg-4'"
                                             *ngFor="let chart of dynamicChartDetails; let i=index">
                                             <ng-container>
                                                 <div class="card p-5 mb-3" *ngIf="entities.length > 0">
-                                                    <div *ngIf="chart.chartFieldName == 'createdAt'" class="my-2 text-end">
-                                                        <p-dropdown [options]="customChartFilter" [(ngModel)]="selectedChartFilterData"
-                                                            (onChange)="onChangeChartFilterOptions($event)" optionLabel="label"
-                                                            [showClear]="true"
+                                                    <div *ngIf="chart.chartFieldName == 'createdAt'"
+                                                        class="my-2 text-end">
+                                                        <p-dropdown [options]="customChartFilter"
+                                                            [(ngModel)]="selectedChartFilterData"
+                                                            (onChange)="onChangeChartFilterOptions($event)"
+                                                            optionLabel="label" [showClear]="true"
                                                             placeholder="Select Options">
                                                         </p-dropdown>
                                                     </div>
-                                                    <div class="text-end mb-3" *ngIf="chart.chartFieldName != 'createdAt'">
+                                                    <div class="text-end mb-3"
+                                                        *ngIf="chart.chartFieldName != 'createdAt'">
                                                         <h3 class="chart-text-color">{{chart.chartName | uppercase}}
                                                         </h3>
                                                     </div>

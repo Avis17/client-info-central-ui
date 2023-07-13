@@ -58,17 +58,17 @@ export class HomeComponent implements OnInit {
   }
   weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "ThursDay", "Friday", "Saturday"]
   months = [
-    "January", 
-    "February", 
-    "March", 
-    "April", 
-    "May", 
-    "June", 
-    "July", 
-    "August", 
-    "September", 
-    "October", 
-    "November", 
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
     "December"
   ];
   selectedDates: { startDate: moment.Moment, endDate: moment.Moment };
@@ -90,6 +90,9 @@ export class HomeComponent implements OnInit {
   selectedChartFilterData = {
     label: 'Last 31 Days Records',
   };
+  employeeAggregateData: any;
+  monthyProfitdata: any;
+  monthyProfitoptions: any;
   isInvalidDate = (current: moment.Moment) => {
     const currentDate = moment();
     return current.isAfter(currentDate, 'day'); // Disable future dates
@@ -210,7 +213,7 @@ export class HomeComponent implements OnInit {
             }
           ]
         };
-        this.dynamicChartDetails = this.dynamicChartDetails.filter((data:any)=>{
+        this.dynamicChartDetails = this.dynamicChartDetails.filter((data: any) => {
           return data.chartFieldName != 'createdAt'
         })
         this.dynamicChartDetails.push(chartDetail);
@@ -227,7 +230,7 @@ export class HomeComponent implements OnInit {
             }
           ]
         };
-        this.dynamicChartDetails = this.dynamicChartDetails.filter((data:any)=>{
+        this.dynamicChartDetails = this.dynamicChartDetails.filter((data: any) => {
           return data.chartFieldName != 'createdAt'
         })
         this.dynamicChartDetails.push(chartDetail);
@@ -244,28 +247,28 @@ export class HomeComponent implements OnInit {
             }
           ]
         };
-        this.dynamicChartDetails = this.dynamicChartDetails.filter((data:any)=>{
+        this.dynamicChartDetails = this.dynamicChartDetails.filter((data: any) => {
           return data.chartFieldName != 'createdAt'
         })
         this.dynamicChartDetails.push(chartDetail);
       }
-    }else{
+    } else {
       let barDetails: any = this.getDestructuredBarChart(this.entities, 'createdAt', 'days')
-        chartDetail.chartData = {
-          labels: barDetails.labels.slice(0, 31),
-          datasets: [
-            {
-              label: 'Customers',
-              data: barDetails.data.slice(0, 31),
-              backgroundColor: this.chartBackgroundColors,
-              hoverBackgroundColor: this.chartHoverBackgroundColors
-            }
-          ]
-        };
-        this.dynamicChartDetails = this.dynamicChartDetails.filter((data:any)=>{
-          return data.chartFieldName != 'createdAt'
-        })
-        this.dynamicChartDetails.push(chartDetail);
+      chartDetail.chartData = {
+        labels: barDetails.labels.slice(0, 31),
+        datasets: [
+          {
+            label: 'Customers',
+            data: barDetails.data.slice(0, 31),
+            backgroundColor: this.chartBackgroundColors,
+            hoverBackgroundColor: this.chartHoverBackgroundColors
+          }
+        ]
+      };
+      this.dynamicChartDetails = this.dynamicChartDetails.filter((data: any) => {
+        return data.chartFieldName != 'createdAt'
+      })
+      this.dynamicChartDetails.push(chartDetail);
     }
   }
 
@@ -356,6 +359,81 @@ export class HomeComponent implements OnInit {
     return JSON.stringify(data);
   }
 
+  getAllMonthlyInvoicesData(queryData?: any) {
+    return new Promise((resolve, reject) => {
+      const formData = {
+        "schema": '',
+        "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+        "collectionName": 'invoices',
+        "queryData": queryData || {}
+      }
+      this.entityService.getAllMonthlyInvoicesData(formData).subscribe((res: any) => {
+        if (res?.data) {
+          console.log(res.data)
+          resolve(res.data);
+          if(res?.data?.length > 0){
+            this.monthyProfitdata = {
+              labels: res.data.map((labels:any)=>{
+                const key = labels.month.split(',');
+                console.log(key[0])
+                return this.months[Number(key[0])-1] + "," + key[1]
+              }),
+              datasets: [
+                {
+                  label: 'Monthly Sales',
+                  data: res.data.map((values:any)=>{
+                    return values.amount.toFixed(0);
+                  }),
+                  fill: false,
+                  // borderColor: documentStyle.getPropertyValue('--blue-500'),
+                  tension: 0.4
+                }
+              ]
+            };
+  
+            this.monthyProfitoptions = {
+              maintainAspectRatio: false,
+              aspectRatio: 0.6,
+              plugins: {
+                legend: {
+                  labels: {
+                    // color: textColor
+                  }
+                }
+              },
+              scales: {
+                x: {
+                  ticks: {
+                    // color: textColorSecondary
+                  },
+                  grid: {
+                    // color: surfaceBorder,
+                    drawBorder: false
+                  }
+                },
+                y: {
+                  ticks: {
+                    // color: textColorSecondary
+                  },
+                  grid: {
+                    // color: surfaceBorder,
+                    drawBorder: false
+                  }
+                }
+              }
+            };
+
+
+            console.log(this.monthyProfitdata);
+          }
+        }
+      }, (err: any) => {
+        this.errorHandlingService.errorAlertMsg(err);
+        reject(err);
+      })
+    });
+  }
+
   async ngModelDateChange(event: any) {
     if (this.selectedDates?.startDate && this.selectedDates?.endDate) {
       this.selectedPeriod = ''
@@ -366,17 +444,14 @@ export class HomeComponent implements OnInit {
           endDate: this.selectedDates.endDate
         }
       })
-      // this.getAllAggregateDatas(JSON.parse(this.tableQuery));
       try {
         this.isLoading = true;
+        const monthlyInvoicesDataPromise = this.getAllMonthlyInvoicesData(JSON.parse(this.tableQuery));
         const chartDataPromise = this.getAllServiceChartDatas(JSON.parse(this.tableQuery));
         const invoicesPromise = this.getCustomersInvoicesEntity(JSON.parse(this.tableQuery));
         const netProfitPromise = this.getNetProfitAndExpense(JSON.parse(this.tableQuery));
-        // Wait for all promises to resolve or reject
-        const [chartData, invoices, netProfit] = await Promise.all([chartDataPromise, invoicesPromise, netProfitPromise]);
-        // console.log("completed")
+        const [chartData, invoices, netProfit, monthlyInvoicesData] = await Promise.all([chartDataPromise, invoicesPromise, netProfitPromise, monthlyInvoicesDataPromise]);
         this.isLoading = false;
-
       } catch (error) {
         // Handle any errors that occurred during the API calls
         console.error(error);
@@ -392,12 +467,11 @@ export class HomeComponent implements OnInit {
         }
       })
       try {
+        const monthlyInvoicesDataPromise = this.getAllMonthlyInvoicesData(JSON.parse(this.tableQuery));
         const chartDataPromise = this.getAllServiceChartDatas(JSON.parse(this.tableQuery));
         const invoicesPromise = this.getCustomersInvoicesEntity();
         const netProfitPromise = this.getNetProfitAndExpense();
-        // Wait for all promises to resolve or reject
-        const [chartData, invoices, netProfit] = await Promise.all([chartDataPromise, invoicesPromise, netProfitPromise]);
-        // console.log("completed")
+        const [chartData, invoices, netProfit, monthlyInvoicesData] = await Promise.all([chartDataPromise, invoicesPromise, netProfitPromise, monthlyInvoicesDataPromise]);
         this.isLoading = false;
       } catch (error) {
         // Handle any errors that occurred during the API calls
@@ -446,6 +520,7 @@ export class HomeComponent implements OnInit {
       this.entityService.getCustomersInvoicesEntity(formData).subscribe(
         (res: any) => {
           if (res?.data) {
+            console.log(res.data);
             this.aggregatedDats = res.data;
             this.dynamicChartDetails = [];
             this.entities = [];
@@ -529,6 +604,7 @@ export class HomeComponent implements OnInit {
         (res: any) => {
           if (res) {
             this.netProfitAndExpenses = res.data;
+            this.getAllEmployeeAggregateDatas(JSON.parse(this.tableQuery))
             if (this.netProfitAndExpenses.netProfit) {
               this.netProfitAndExpenses.netProfit = this.netProfitAndExpenses?.netProfit?.toFixed(2);
             }
@@ -542,6 +618,31 @@ export class HomeComponent implements OnInit {
         }
       );
     });
+  }
+
+  getAllEmployeeAggregateDatas(queryData?: any) {
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'employees',
+      "queryData": queryData || {}
+    }
+    this.isLoading = true;
+    this.entityService.getAllAggregateEmployeeEntities(formData).subscribe((res: any) => {
+      if (res?.data) {
+        console.log(res)
+        this.isLoading = false;
+        this.employeeAggregateData = res.data;
+        if (this.employeeAggregateData?.totalNetSalaryGiven) {
+          this.netProfitAndExpenses.totalExpenses = this.netProfitAndExpenses?.totalExpenses + this.employeeAggregateData?.totalNetSalaryGiven;
+          this.netProfitAndExpenses.totalExpenses = this.netProfitAndExpenses.totalExpenses.toFixed(2);
+          this.netProfitAndExpenses.netProfit = this.netProfitAndExpenses?.netProfit - this.employeeAggregateData?.totalNetSalaryGiven;
+          this.netProfitAndExpenses.netProfit = this.netProfitAndExpenses.netProfit?.toFixed(2)
+        }
+      }
+    }, (err: any) => {
+      this.errorHandlingService.errorAlertMsg(err);
+    })
   }
 
 
@@ -621,7 +722,7 @@ export class HomeComponent implements OnInit {
   }
 
 
-  getDestructuredBarChart(dataArr: any, fieldName: string, type?:string) {
+  getDestructuredBarChart(dataArr: any, fieldName: string, type?: string) {
     const labels = dataArr.map((item: any) => item[fieldName]);
     // Counting the occurrences of each createdAt value
     const counts: any = {};
@@ -629,13 +730,13 @@ export class HomeComponent implements OnInit {
       // console.log(label)
       if (!Array.isArray(label)) {
         if (fieldName == 'createdAt') {
-          if(type == 'days'){
-            label =  new Date(label);
+          if (type == 'days') {
+            label = new Date(label);
             label = this.getDateFormated(label)
-          }else if(type == 'months'){
-            label = (new Date(label).getMonth()+1);
+          } else if (type == 'months') {
+            label = (new Date(label).getMonth() + 1);
             label = this.months[label]
-          }else if(type == 'year'){
+          } else if (type == 'year') {
             label = new Date(label).getFullYear()
           }
           counts[label] = (counts[label] || 0) + 1;
@@ -690,7 +791,7 @@ export class HomeComponent implements OnInit {
       if (Array.isArray(field_value)) {
         field_value = this.destructureArray(field_value, 'array');
         for (const value of field_value) {
-          const index = details.labels.findIndex((label:any) =>
+          const index = details.labels.findIndex((label: any) =>
             label.toLowerCase() === value.toLowerCase()
           );
           if (index === -1) {
@@ -701,7 +802,7 @@ export class HomeComponent implements OnInit {
           }
         }
       } else {
-        const index = details.labels.findIndex((label:any) =>
+        const index = details.labels.findIndex((label: any) =>
           label.toLowerCase() === field_value.toLowerCase()
         );
         if (index === -1) {
@@ -714,7 +815,7 @@ export class HomeComponent implements OnInit {
     }
     return details;
   }
-  
+
 
   destructureArray(data: any, type: any) {
     let arr = data.filter((obj: any) => {

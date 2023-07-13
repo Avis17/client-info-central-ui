@@ -22,7 +22,8 @@ export class SidenavComponent {
     "expenses" : false,
     "balance" : false,
     "followup" : false,
-    "employee":  false
+    "employee":  false,
+    "notes" : false
   }
   constructor(public authService:AuthGuardService, private sanitizer: DomSanitizer){
     this.userDetails = this.authService.getUserDetails();

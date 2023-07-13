@@ -205,6 +205,7 @@ export class DynamicFormCreationComponent {
         formData.collectionData = {
           ...formData.collectionData,
           empId:this.employeeId,
+          status : 'active',
         }
       }
       if (formData.dbName == '' || formData.collectionName == '') {

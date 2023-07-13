@@ -15,6 +15,7 @@ import { RebillComponent } from './components/rebill/rebill.component';
 import { NewBillComponent } from './components/new-bill/new-bill.component';
 import { EmployeeManagementComponent } from './components/employee-management/employee-management.component';
 import { EmployeeAttendanceComponent } from './components/employee-attendance/employee-attendance.component';
+import { NotesComponent } from './components/notes/notes.component';
 
 const routes:Routes = [
   {
@@ -69,6 +70,10 @@ const routes:Routes = [
       {
         path : 'employee-attendance',
         component : EmployeeAttendanceComponent,
+      },
+      {
+        path : 'notes',
+        component : NotesComponent,
       },      
       {
         path : 'user-details/:id',
