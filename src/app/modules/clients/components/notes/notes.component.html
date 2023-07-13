@@ -22,7 +22,7 @@
                     <li class="list-group-item cursor-pointer"
                         *ngFor="let note of notes | search:searchText | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }"
                         (click)="openNoteDetail(note)" [ngClass]="note === selectedNote ? 'active' : ''">
-                        <h4 class="title mb-1">{{ note.title | titlecase }}</h4>
+                        <h4 class="title mb-1 text-decoration-underline">{{ note.title | titlecase }}</h4>
                         <small>{{ note.dateTime | date: 'medium' }}</small>
                     </li>
                 </ul>

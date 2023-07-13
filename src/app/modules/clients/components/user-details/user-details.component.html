@@ -69,9 +69,10 @@
                         <ng-template pTemplate="header">
                             <img alt="Card" class="img-size" src="../../../../../assets/clients/png/client.png" />
                         </ng-template>
-                        <div class="text-end m-3" *ngIf="formType != 'customers'">
+                        <div class="text-end m-3 mb-3" *ngIf="formType != 'customers'">
+                            <label class="mb-2">Status</label>
                             <a *ngIf="!clientInfo.isEdit" [ngClass]="checkEMployeeStatus(clientInfo.status)">{{clientInfo.status | titlecase}}</a>
-                            <select *ngIf="clientInfo.isEdit" class="form-select" style="width: 150px;" [(ngModel)]="clientInfo.status">
+                            <select *ngIf="clientInfo.isEdit" class="form-select" [(ngModel)]="clientInfo.status">
                                 <option *ngFor="let option of statusTypes">{{option}}</option>
                             </select>
                         </div>
@@ -205,9 +206,9 @@
                           <label for="pf">PF</label>
                           <input type="number" id="pf" name="pf" [(ngModel)]="pf" required>
                         </div>
-                        <div class="form-group">
-                          <button type="submit" [disabled]="!salaryForm.valid">Show Calculation</button>
-                          <button (click)="savePayslip()" class="ml-3" [disabled]="!salaryForm.valid">Generate Payslip</button>
+                        <div class="form-group row">
+                          <button class="ml-3 col mb-2" type="submit" [disabled]="!salaryForm.valid">Show Calculation</button>
+                          <button (click)="savePayslip()" class="ml-3 col mb-2" [disabled]="!salaryForm.valid">Generate Payslip</button>
                         </div>
                       </form>
                       

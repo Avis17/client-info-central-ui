@@ -174,7 +174,7 @@
                         </div>
                     </div>
                     <div class="row mt-5 mb-7" *ngIf="!isLoading || attendanceDetails.length > 0">
-                        <div class="col-4">
+                        <div class="col-lg-4 col-md-6 col-sm-12">
                             <div class="text-xs card-text-color text-center text-uppercase mb-1">
                                 Today Working Employees
                                 <circle-progress [matTooltip]="'Count - '+todaysPresentCount.length"
@@ -184,7 +184,7 @@
                                     [animationDuration]="900"></circle-progress>
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-lg-4 col-md-6 col-sm-12">
                             <div class="text-xs card-text-color text-center text-uppercase mb-1">
                                 Today Half-Day Workers
                                 <circle-progress [matTooltip]="'Count - '+todaysHalfdayCount.length"
@@ -194,7 +194,7 @@
                                     [animationDuration]="900"></circle-progress>
                             </div>
                         </div>
-                        <div class="col-4">
+                        <div class="col-lg-4 col-md-6 col-sm-12">
                             <div class="text-xs card-text-color text-center text-uppercase mb-1"
                                 style="display: flex;flex-direction: column;">
                                 Today Absentees

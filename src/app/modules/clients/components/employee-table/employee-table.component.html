@@ -1,4 +1,5 @@
 <app-custom-loader *ngIf="isLoading"></app-custom-loader>
+
 <div class="pt-5 pl-3" *ngIf="isPrevPage">
     <mat-icon class="cursor-pointer" (click)="onPreviousPage()">arrow_back</mat-icon>
 </div>
@@ -7,24 +8,21 @@
         <input type="text" pInputText placeholder="Search Fields" (input)="applyFilterGlobal($event, 'contains')" />
     </div>
     <div class="p-toolbar-group-center">
-        <p-dropdown [options]="statusTypes" [(ngModel)]="selectedStatusType"
-            (onChange)="onStatusChange($event)" optionLabel="label" [showClear]="true" [filter]="true"
-            placeholder="Filter by Employee Status">
+        <p-dropdown [options]="statusTypes" [(ngModel)]="selectedStatusType" (onChange)="onStatusChange($event)"
+            optionLabel="label" [showClear]="true" [filter]="true" placeholder="Filter by Employee Status">
         </p-dropdown>
     </div>
-    <div class="p-toolbar-group-end">
-        <p-button label="Attendance" icon="pi pi-plus" class="mr-2" (click)="onAddAttendance()"></p-button>
-        <p-button label="Employee" icon="pi pi-plus" class="mr-2" (click)="onAddEmployee()"></p-button>
+    <div class="p-toolbar-group-end row">
+        <p-button label="Attendance" icon="pi pi-plus" class="col mr-2 mb-2" (click)="onAddAttendance()"></p-button>
+        <p-button label="Employee" icon="pi pi-plus" class="col mr-2 mb-2" (click)="onAddEmployee()"></p-button>
     </div>
 </p-toolbar>
 <div class="card mx-4 mb-8" *ngIf="entities.length > 0">
     <div class="mb-5">
         <p-table #tableref [value]="entities" [paginator]="true" [columns]="cols" [rows]="5"
-            [showCurrentPageReport]="true" [tableStyle]="{ 'min-width': '60rem' }" [reorderableColumns]="true"
-            [alwaysShowPaginator]="false"
+            [showCurrentPageReport]="true" [reorderableColumns]="true" [alwaysShowPaginator]="false"
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
             [rowsPerPageOptions]="[5, 10, 25, 50]">
-
             <ng-template pTemplate="header" let-columns>
                 <tr>
                     <th style="width:10%; text-align: center !important;">S.No</th>
@@ -57,7 +55,8 @@
                         </td>
                     </ng-container>
                     <td>
-                        <span [ngClass]="checkEMployeeStatus(rowData['status'])">{{rowData['status'] | titlecase}}</span>
+                        <span [ngClass]="checkEMployeeStatus(rowData['status'])">{{rowData['status'] |
+                            titlecase}}</span>
                     </td>
                 </tr>
             </ng-template>
@@ -70,4 +69,3 @@
             </ng-template>
         </p-table>
     </div>
-</div>

@@ -3,7 +3,7 @@
 
 .centre-container {
   display: flex;
-  justify-content: start;
+  justify-content: center;
   align-items: center;
   flex-wrap: wrap;
   background-repeat: no-repeat;
@@ -28,8 +28,8 @@
 .bg {
   background-color: $pcard;
   display: flex;
+  min-height: 100vH;
   flex-direction: column;
-  height: 100vH;
   // justify-content: center;
 }
 

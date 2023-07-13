@@ -4,69 +4,21 @@
     </div>
     <p-toolbar>
         <div style="width: 100%;">
-            <div class="row align-end">
+            <div class="row align-items-end">
                 <div class="col-lg-6 col-sm-12 col-md-6 mb-3 mt-1 text-start">
                     <label class="mb-1">Choose date for attendance</label>
                     <p-calendar class="max-w-full" (onSelect)="onDateSelected()" placeholder="Choose date for attendance" dateFormat="dd.mm.yy" [(ngModel)]="selectedDate" [showIcon]="true"></p-calendar>
                 </div>
                 <div class="col-lg-6 col-sm-12 col-md-6 mb-3 mt-3">
-                    <input type="text" placeholder="Search Employee"
-                        [(ngModel)]="searchText" (input)="filterEmployees()" class="form-control mb-3">
+                    <input type="text" placeholder="Search Employee" [(ngModel)]="searchText" (input)="filterEmployees()" class="form-control mb-3">
                 </div>
             </div>
         </div>
     </p-toolbar>
     <p-card header="Mark Attendance" [subheader]="getDateFormated()">
         <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" *ngIf="!attendenceMarked">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Employee Name</th>
-                        <th>Employee ID</th>
-                        <th>Attendance</th>
-                        <th>Comments</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <ng-container *ngFor="let employee of filteredEmployees; let i = index" [formGroup]="employee">
-                        <tr>
-                            <td>
-                                <input class="disabled form-control" [disabled]="true" type="text" formControlName="name"
-                                    readonly>
-                            </td>
-                            <td>
-                                <input class="disabled form-control" [disabled]="true" type="text" formControlName="empId"
-                                    readonly>
-                            </td>
-                            <td class="p-3">
-                                <label>
-                                    <input type="radio" value="Present" formControlName="attendance" checked>
-                                    Present
-                                </label> &nbsp;
-                                <label>
-                                    <input type="radio" value="Absent" formControlName="attendance">
-                                    Absent
-                                </label> &nbsp;
-                                <label>
-                                    <input type="radio" value="Half-day" formControlName="attendance">
-                                    Half-day
-                                </label> &nbsp;
-                            </td>
-                            <td>
-                                <textarea class="form-control" formControlName="comments">
-
-                        </textarea>
-                            </td>
-                        </tr>
-                    </ng-container>
-                </tbody>
-            </table>
-            <button *ngIf="getFormArray().length > 0" class="btn btn-primary mt-3" type="submit">Submit</button>
-        </form>
-        <div *ngIf="attendenceMarked">
-            <p class="box">Attendance has already been marked for today. You can edit the details if needed.</p>
-            <form [formGroup]="employeeForm" (ngSubmit)="onUpdate()">
-                <table>
+            <div class="table-responsive">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>Employee Name</th>
@@ -79,12 +31,10 @@
                         <ng-container *ngFor="let employee of filteredEmployees; let i = index" [formGroup]="employee">
                             <tr>
                                 <td>
-                                    <input class="disabled form-control" [disabled]="true" type="text" formControlName="name"
-                                        readonly>
+                                    <input class="disabled form-control" [disabled]="true" type="text" formControlName="name" readonly>
                                 </td>
                                 <td>
-                                    <input class="disabled form-control" [disabled]="true" type="text" formControlName="empId"
-                                        readonly>
+                                    <input class="disabled form-control" [disabled]="true" type="text" formControlName="empId" readonly>
                                 </td>
                                 <td class="p-3">
                                     <label>
@@ -101,13 +51,59 @@
                                     </label> &nbsp;
                                 </td>
                                 <td>
-                                    <textarea class="form-control" formControlName="comments">
-                            </textarea>
+                                    <textarea class="form-control" formControlName="comments"></textarea>
                                 </td>
                             </tr>
                         </ng-container>
                     </tbody>
                 </table>
+            </div>
+            <button *ngIf="getFormArray().length > 0" class="btn btn-primary mt-3" type="submit">Submit</button>
+        </form>
+        <div *ngIf="attendenceMarked">
+            <p class="box">Attendance has already been marked for today. You can edit the details if needed.</p>
+            <form [formGroup]="employeeForm" (ngSubmit)="onUpdate()">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Employee Name</th>
+                                <th>Employee ID</th>
+                                <th>Attendance</th>
+                                <th>Comments</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngFor="let employee of filteredEmployees; let i = index" [formGroup]="employee">
+                                <tr>
+                                    <td>
+                                        <input class="disabled form-control" [disabled]="true" type="text" formControlName="name" readonly>
+                                    </td>
+                                    <td>
+                                        <input class="disabled form-control" [disabled]="true" type="text" formControlName="empId" readonly>
+                                    </td>
+                                    <td class="p-3">
+                                        <label>
+                                            <input type="radio" value="Present" formControlName="attendance" checked>
+                                            Present
+                                        </label> &nbsp;
+                                        <label>
+                                            <input type="radio" value="Absent" formControlName="attendance">
+                                            Absent
+                                        </label> &nbsp;
+                                        <label>
+                                            <input type="radio" value="Half-day" formControlName="attendance">
+                                            Half-day
+                                        </label> &nbsp;
+                                    </td>
+                                    <td>
+                                        <textarea class="form-control" formControlName="comments"></textarea>
+                                    </td>
+                                </tr>
+                            </ng-container>
+                        </tbody>
+                    </table>
+                </div>
                 <button class="btn btn-primary mt-3" type="submit">Update</button>
             </form>
         </div>

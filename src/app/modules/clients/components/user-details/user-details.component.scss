@@ -10,12 +10,13 @@ label {
 }
 
 .img-size {
-    width: 300px;
-    height: 300px;
+    width: 200px;
+    height: 250px;
 }
 
 ::ng-deep .p-card-header {
-    text-align: center !important;
+    text-align: start !important;
+    margin-left: 1rem;
 }
 
 .card-3 {

@@ -1,6 +1,6 @@
 <app-custom-loader *ngIf="isLoading"></app-custom-loader>
 
-<div class="m-sm-1 m-lg-5 mb-8">
+<div class="m-sm-1 m-lg-5 mt-5 mb-8">
     <div class="row mb-5" *ngIf="expensesList.length > 0">
         <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer">
             <div class="card card-1 border-left-primary shadow h-100 py-2">
@@ -47,13 +47,13 @@
             <div class="row">
                 <div class="col-lg-8 col-sm-12 col-md-6 mb-3 mb-md-0">
                     <div class="row">
-                        <div class="col-lg-6 col-sm-12">
+                        <div class="col-lg-6 col-sm-12 mb-2">
                             <p-dropdown [options]="expenseTypes" (onChange)="onCategoryChange($event, 'type')"
                                 optionLabel="label" [showClear]="true" [filter]="true"
                                 placeholder="Filter by Expense Type">
                             </p-dropdown>
                         </div>
-                        <div class="col-lg-6 col-sm-12">
+                        <div class="col-lg-6 col-sm-12 mb-2">
                             <p-dropdown [virtualScroll]="true" [virtualScrollItemSize]="38" [options]="allCategories"
                                 (onChange)="onCategoryChange($event, 'category')" optionLabel="label" [filter]="true"
                                 [showClear]="true" placeholder="Filter by Category">
