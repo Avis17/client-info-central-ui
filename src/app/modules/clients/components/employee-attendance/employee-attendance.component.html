@@ -1,3 +1,5 @@
+<app-custom-loader *ngIf="isLoading"></app-custom-loader>
+
 <div class="container-fluid pt-2 m-5">
     <div class="pt-5 pl-1 mb-3">
         <mat-icon class="cursor-pointer" (click)="onPreviousPage()">arrow_back</mat-icon>
@@ -58,7 +60,7 @@
                     </tbody>
                 </table>
             </div>
-            <button *ngIf="getFormArray().length > 0" class="btn btn-primary mt-3" type="submit">Submit</button>
+            <button *ngIf="getFormArray().length > 0" class="btn btn-success mt-3" type="submit">Submit</button>
         </form>
         <div *ngIf="attendenceMarked">
             <p class="box">Attendance has already been marked for today. You can edit the details if needed.</p>
@@ -77,10 +79,10 @@
                             <ng-container *ngFor="let employee of filteredEmployees; let i = index" [formGroup]="employee">
                                 <tr>
                                     <td>
-                                        <input class="disabled form-control" [disabled]="true" type="text" formControlName="name" readonly>
+                                        <input class="disabled form-control" [ngClass]="attendenceMarked ? 'is-marked' : ''" [disabled]="true" type="text" formControlName="name" readonly>
                                     </td>
                                     <td>
-                                        <input class="disabled form-control" [disabled]="true" type="text" formControlName="empId" readonly>
+                                        <input class="disabled form-control" [ngClass]="attendenceMarked ? 'is-marked' : ''" [disabled]="true" type="text" formControlName="empId" readonly>
                                     </td>
                                     <td class="p-3">
                                         <label>

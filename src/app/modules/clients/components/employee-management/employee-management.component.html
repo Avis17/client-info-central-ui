@@ -3,7 +3,15 @@
 <p-tabView>
 
     <p-tabPanel header="Dashboard">
-        <div class="m-4">
+        <div class="m-4 mb-8">
+            <div class="row mt-5 mb-3" *ngIf="!attendanceDetails">
+                <div class="col">
+                    <div class="attendance-message">
+                        <h2>Oops! Attendance for today is not yet marked.</h2>
+                        <p>Please remember to mark employees attendance for today.</p>
+                    </div>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-lg-6 col-md-6 col-sm-12 mt-3">
                     <div class="input-group position-static">
@@ -173,7 +181,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row mt-5 mb-7" *ngIf="!isLoading || attendanceDetails.length > 0">
+                    <div class="row mt-5 mb-7" *ngIf="!isLoading && attendanceDetails">
                         <div class="col-lg-4 col-md-6 col-sm-12">
                             <div class="text-xs card-text-color text-center text-uppercase mb-1">
                                 Today Working Employees
@@ -203,14 +211,6 @@
                                     subtitle="Employees" [outerStrokeWidth]="16" [innerStrokeWidth]="8"
                                     [outerStrokeColor]="'#FF6347'" [innerStrokeColor]="'#FF8670'" [animation]="true"
                                     [animationDuration]="900"></circle-progress>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mt-5 mb-7" *ngIf="attendanceDetails.length == 0">
-                        <div class="col">
-                            <div class="attendance-message">
-                                <h2>Oops! Attendance for today is not yet marked.</h2>
-                                <p>Please remember to mark employees attendance for today.</p>
                             </div>
                         </div>
                     </div>

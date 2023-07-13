@@ -42,7 +42,7 @@ export class EmployeeManagementComponent {
   isLoading:boolean = true;
   tableQuery:any = {};
   userDetails: any;
-  attendanceDetails:any = []
+  attendanceDetails:any;
   todaysPresentCount:any = [];
   todaysPresentPercentage:any;
   todaysAbsentCount:any = [];
@@ -154,7 +154,7 @@ export class EmployeeManagementComponent {
           this.todaysAbsentPercentage = (this.todaysAbsentCount.length/this.attendanceDetails.employees.length)*100;
           this.todaysHalfdayPercentage = (this.todaysHalfdayCount.length/this.attendanceDetails.employees.length)*100;
         }else{
-          this.attendanceDetails = []
+          this.attendanceDetails = null
         }
       }
     }, (err: any) => {

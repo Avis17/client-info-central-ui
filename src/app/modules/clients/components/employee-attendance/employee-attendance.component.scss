@@ -15,6 +15,11 @@ th,td{
     color: $text-white;
 }
 
+.is-marked{
+    background-color: $secondary !important;
+    color: white !important;
+}
+
 ::ng-deep .p-calendar .p-datepicker {
     z-index: 1040 !important;
 }
