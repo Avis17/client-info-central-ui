@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AuthGuardService } from 'src/app/services/auth-guard.service';
-import { DialogService, DynamicDialogRef } from 'primeng/dynamicdialog';
 import { NavigationService } from 'src/app/services/navigation.service';
 import { CommonService } from 'src/app/services/common.service';
 import { EntityService } from '../../services/entity.service';

@@ -27,8 +27,10 @@ export class HomeComponent implements OnInit {
   pieChartOptions: any;
   tableQuery: string = '';
   isLoading: boolean = true;
-  chartBackgroundColors = ['#4BCBEB', '#1BCFB4', '#fa9f1b', '#cc2b5e', '#EA6A47', '#1C4E80', "#0091D5", "#A5D8DD", '#7E909A', '#202020'];
-  chartHoverBackgroundColors = ['#ffdde1', '#A7BFE8', '#BBD2C5', '#acb6e5', "#EF886C", "#256687", "#0AB1FF", "#C4E6E9", "#8D9DA5", "#3D3D3D"]
+  // chartBackgroundColors = ['#4BCBEB', '#1BCFB4', '#fa9f1b', '#cc2b5e', '#EA6A47', '#1C4E80', "#0091D5", "#A5D8DD", '#7E909A', '#202020'];
+  // chartHoverBackgroundColors = ['#ffdde1', '#A7BFE8', '#BBD2C5', '#acb6e5', "#EF886C", "#256687", "#0AB1FF", "#C4E6E9", "#8D9DA5", "#3D3D3D"]
+  chartHoverBackgroundColors = ['#D8BBFE',  '#F3BCF3', '#A0F5CE',  '#FFD3C0', "#FFD670", "#C2FCF7", '#F0F0C9', '#A3E3FE', '#BBA0B2'];
+  chartBackgroundColors =      ['#750EFB',  '#DA2FDA', '#15CB76',  '#FF540A', "#FFBA0A", "#15F4E1", "#C0C035", "#0DB5FD", "#8F6681"]
 
   // chartBackgroundColors = ['#ee9ca7', '#6190E8', '#536976', '#86fde8', '#EA6A47', '#1C4E80', "#0091D5", "#A5D8DD", '#7E909A', '#202020'];
   // chartHoverBackgroundColors = ['#ffdde1', '#A7BFE8', '#BBD2C5', '#acb6e5', "#EF886C", "#256687", "#0AB1FF", "#C4E6E9", "#8D9DA5", "#3D3D3D"]

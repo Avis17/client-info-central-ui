@@ -214,9 +214,6 @@
                       
                       <div *ngIf="totalSalary" class="salary-box">
                         <div>
-                          <p class="highlighted">Total Salary: {{ totalSalary.toFixed(2) }}</p>
-                        </div>
-                        <div>
                           <p class="text-decoration-underline">Earnings</p>
                           <p>Total Salary: <span class="p-color">Rs.{{ totalSalary.toFixed(2) }}</span>
                           <p >Allowance: <span class="p-color">Rs.{{ allowance.toFixed(2) }}</span>
@@ -230,7 +227,7 @@
                           <p class="highlighted">Total Deductions: <span>Rs.{{ totalDeductions.toFixed(2) }}</span>
                         </div>
                         <div>
-                          <p class="highlighted-imp">Net Salary: <span>Rs.{{ netSalary.toFixed(2) }}</span>
+                          <p class="highlighted">Net Salary: <span>Rs.{{ netSalary.toFixed(2) }}</span>
                         </div>
                       </div>                      
                 </p-tabPanel>

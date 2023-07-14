@@ -446,32 +446,32 @@ export class UserDetailsComponent {
                 },
                 {
                   columns: [
-                    { width: 120, text: 'Employee Name:', style: 'employeeLabel' },
-                    { width: '*', text: this.clientInfo.name, style: 'employeeValue' }
+                    { width: 120, text: 'Employee Name', style: 'employeeLabel' },
+                    { width: '*', text: ": "+this.clientInfo.name, style: 'employeeValue' }
                   ]
                 },
                 {
                   columns: [
-                    { width: 120, text: 'Employee ID:', style: 'employeeLabel' },
-                    { width: '*', text: this.clientInfo.empId || '', style: 'employeeValue' }
+                    { width: 120, text: 'Employee ID', style: 'employeeLabel' },
+                    { width: '*', text: ": "+this.clientInfo.empId || '', style: 'employeeValue' }
                   ]
                 },
                 {
                   columns: [
-                    { width: 120, text: 'Pay Date:', style: 'employeeLabel' },
-                    { width: '*', text: this.getDateFormated(new Date()), style: 'employeeValue' }
+                    { width: 120, text: 'Pay Date', style: 'employeeLabel' },
+                    { width: '*', text: ": "+this.getDateFormated(new Date()), style: 'employeeValue' }
                   ]
                 },
                 {
                   columns: [
-                    { width: 120, text: 'Pay Period:', style: 'employeeLabel' },
-                    { width: '*', text: this.months[new Date().getMonth()], style: 'employeeValue' }
+                    { width: 120, text: 'Pay Period', style: 'employeeLabel' },
+                    { width: '*', text: ": "+this.months[new Date().getMonth()], style: 'employeeValue' }
                   ]
                 },
                 {
                   columns: [
-                    { width: 120, text: 'Paid Days:', style: 'employeeLabel' },
-                    { width: '*', text: this.daysPresent, style: 'employeeValue' }
+                    { width: 120, text: 'Paid Days', style: 'employeeLabel' },
+                    { width: '*', text: ": "+this.daysPresent, style: 'employeeValue' }
                   ]
                 }
               ]
