@@ -110,6 +110,7 @@ export class HomeComponent implements OnInit {
   ) {
     this.userDetails = this.authService.getUserDetails();
     this.alwaysShowCalendars = true;
+    const previousUrl = this.navigationService.getPreviousUrl();
   }
 
   ngOnInit() {

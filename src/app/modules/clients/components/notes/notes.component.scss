@@ -4,11 +4,16 @@
     padding: 20px;
 }
 
+.list-group{
+    border: 1px solid $primary;
+}
+
 .right-panel {
     padding: 20px;
     border-radius: 8px;
     min-height: 200px;
     background-color: #f8f8f8;
+    border: 1px solid $primary;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: box-shadow 0.3s ease;
 }

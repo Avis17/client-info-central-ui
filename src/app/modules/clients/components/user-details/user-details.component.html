@@ -3,14 +3,14 @@
 <div class="pt-5 pl-3">
     <mat-icon class="cursor-pointer" (click)="onPreviousPage()">arrow_back</mat-icon>
     <div class="text-end mb-3" *ngIf="formType == 'customers'">
-        <p-button label="New Invoice" icon="pi pi-plus" class="mr-2" data-bs-toggle="modal"
+        <p-button styleClass="p-button-rounded p-button-info mr-2" label="New Invoice" icon="pi pi-plus" class="mr-2" data-bs-toggle="modal"
             data-bs-target="#exampleModal"></p-button>
     </div>
     <div>
         <div class="row" *ngIf="formType == 'customers'">
             <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer" matTooltip="export list of invoices"
                 matTooltipPosition="above" (click)="onClickCardBox('invoices')">
-                <div class="card card-1 border-left-primary shadow h-100 py-2">
+                <div class="card card-4 border-left-primary shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
@@ -28,7 +28,7 @@
             </div>
             <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer" matTooltip="export list of products"
                 matTooltipPosition="above" (click)="onClickCardBox('products')">
-                <div class="card card-5 border-left-primary shadow h-100 py-2">
+                <div class="card card-3 border-left-primary shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
@@ -53,6 +53,41 @@
                                     Total Amount
                                 </div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800">&#8377; {{totalRevenue}}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer">
+                <div class="card card-1 border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs card-text-color text-uppercase mb-1">
+                                    Credit Points
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{totalCreditPoints}}</div>
+                            </div>
+                            <div class="col-auto">
+                                <img width="40px" src="../../../../../assets/clients/png/credit-points.png">
+                                <!-- <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer">
+                <div class="card card-5 border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs card-text-color text-uppercase mb-1">
+                                    Credit Amount Earned
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">&#8377; {{totalCreditAmount}}</div>
                             </div>
                             <div class="col-auto">
                                 <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
@@ -130,7 +165,7 @@
                                 label="Save" icon="pi pi-check" styleClass="p-button-success"></p-button>
                             <p-button (click)="onCancel()" *ngIf="formType != 'customers' && clientInfo.isEdit"
                                 label="Cancel" icon="pi pi-times" [style]="{'margin-left': '5px'}"
-                                styleClass="p-button-secondary"></p-button>
+                                styleClass="p-button-info"></p-button>
                         </ng-template>
                     </p-card>
                 </p-tabPanel>

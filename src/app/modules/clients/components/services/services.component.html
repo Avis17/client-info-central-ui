@@ -6,7 +6,7 @@
             <input type="text" placeholder="Search service" [(ngModel)]="searchText" class="form-control">
         </div>
         <div class="col-sm-12 col-md-6 col-lg-6 mb-2 text-end">
-            <p-button label="Create Category" icon="pi pi-plus" class="mr-2" data-bs-toggle="modal"
+            <p-button label="Create Category" icon="pi pi-plus" class="mr-2" styleClass="p-button-rounded p-button-info" data-bs-toggle="modal"
                 data-bs-target="#exampleModal"></p-button>
         </div>
     </div>
@@ -31,8 +31,8 @@
                         <div style="text-align: end;">
                             <!-- <div class="m-3">
                             </div> -->
-                            <button class="btn btn-danger mr-3 mb-3" (click)="onRemoveCategory(category, j)">Remove Category</button>
-                            <p-button label="Add Service" icon="pi pi-plus" class="mr-2" (click)="onAddServiceOnCategory(category)"></p-button> 
+                            <button class="btn btn-danger m-2" (click)="onRemoveCategory(category, j)">Remove Category</button>
+                            <p-button label="Add Service" styleClass="p-button-rounded p-button-info" icon="pi pi-plus" styleClass="m-2" (click)="onAddServiceOnCategory(category)"></p-button> 
                         </div>
                         <!-- content goes here -->
                         <div class="table-responsive mt-3">

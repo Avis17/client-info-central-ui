@@ -7,12 +7,14 @@
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12 flex-between">
                         <h1 class="text-decoration-underline">Manage Your Notes</h1>
-                        <button *ngIf="notes.length > 0" class="btn btn-primary mb-3 add-note-button"
-                            (click)="openAddNoteModal()">Add Note</button>
+                        <p-button *ngIf="notes.length > 0"
+                            styleClass="p-button-rounded p-button-info add-note-button" [label]="'Add Note'"
+                            icon="pi pi-plus" class="mr-2" (click)="openAddNoteModal()"></p-button>
                     </div>
                     <div class="row mx-2">
                         <div class="col-md-4 mt-3">
-                            <input type="text" placeholder="Search Notes" [(ngModel)]="searchText" class="form-control mb-3">
+                            <input type="text" placeholder="Search Notes" [(ngModel)]="searchText"
+                                class="form-control mb-3">
                         </div>
                     </div>
                 </div>
@@ -24,8 +26,15 @@
                     <li class="list-group-item cursor-pointer"
                         *ngFor="let note of notes | search:searchText | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }"
                         (click)="openNoteDetail(note)" [ngClass]="note === selectedNote ? 'active' : ''">
-                        <h4 class="title mb-1 text-decoration-underline">{{ note.title | titlecase }}</h4>
-                        <small>{{ note.dateTime | date: 'medium' }}</small>
+                        <div class="row">
+                            <div class="col-4">
+                                <img src="../../../../../assets/clients/png/notes_view.png">
+                            </div>
+                            <div class="col-8">
+                                <h4 class="title mb-1 text-decoration-underline">{{ note.title | titlecase }}</h4>
+                                <small>{{ note.dateTime | date: 'medium' }}</small>
+                            </div>
+                        </div>
                     </li>
                 </ul>
                 <div class="mt-3">
@@ -33,56 +42,71 @@
                 </div>
                 <div *ngIf="notes.length === 0" class="empty-notes">
                     <p>No notes available. Add a note by clicking the button above.</p>
-                    <button class="btn btn-primary add-note-button" (click)="openAddNoteModal()">Add Note</button>
+                    <button class="btn btn-success add-note-button" (click)="openAddNoteModal()">Add Note</button>
                 </div>
             </div>
         </div>
         <div class="col-md-8 mt-3 mb-8">
             <div class="right-panel">
                 <div *ngIf="selectedNote">
-                    <div class="text-end">
-                        <small>{{ selectedNote.dateTime | date: 'medium' }}</small>
-                    </div>
-                    <form #noteForm="ngForm">
-                        <h2>
-                            <ng-container *ngIf="selectedNote.isEdit; else viewMode">
-                                <input type="text" class="form-control" [(ngModel)]="selectedNote.title" name="title"
-                                    required>
-                            </ng-container>
-                            <ng-template #viewMode>
-                                {{ selectedNote.title | titlecase}}
-                            </ng-template>
-                        </h2>
-                        <p>
-                            <ng-container *ngIf="selectedNote.isEdit; else viewDescriptionMode">
-                                <textarea class="form-control" [(ngModel)]="selectedNote.description" name="description"
-                                    required style="height: 200px;"></textarea>
-                            </ng-container>
-                            <ng-template #viewDescriptionMode>
-                                <div style="white-space: pre-line;">
-                                    {{ selectedNote.description }}
+                    <div class="row">
+                        <div class="col-lg-10">
+                            <form #noteForm="ngForm">
+                                <h2>
+                                    <ng-container *ngIf="selectedNote.isEdit; else viewMode">
+                                        <input type="text" class="form-control" [(ngModel)]="selectedNote.title"
+                                            name="title" required>
+                                    </ng-container>
+                                    <ng-template #viewMode>
+                                        {{ selectedNote.title | titlecase}}
+                                    </ng-template>
+                                </h2>
+                                <p>
+                                    <ng-container *ngIf="selectedNote.isEdit; else viewDescriptionMode">
+                                        <textarea class="form-control" [(ngModel)]="selectedNote.description"
+                                            name="description" required style="height: 200px;"></textarea>
+                                    </ng-container>
+                                    <ng-template #viewDescriptionMode>
+                                        <div style="white-space: pre-line;">
+                                            {{ selectedNote.description }}
+                                        </div>
+                                    </ng-template>
+                                </p>
+                                <div class="buttons mt-3 text-end">
+                                    <ng-container *ngIf="selectedNote.isEdit">
+                                        <button class="btn btn-warning" (click)="selectedNote.isEdit = false"
+                                            [disabled]="noteForm.invalid">
+                                            Cancel
+                                        </button>
+                                        <button (click)="onSave()" type="submit" class="btn btn-success"
+                                            [disabled]="noteForm.invalid">
+                                            Save
+                                        </button>
+                                    </ng-container>
+                                    <ng-container *ngIf="!selectedNote.isEdit">
+                                        <img matTooltip="edit" matTooltipPosition="above"
+                                            src="../../../../../assets/clients/png/edit-gif.gif" alt="Edit"
+                                            class="edit-icon cursor-pointer" (click)="selectedNote.isEdit = true"
+                                            style="width: 25px;height: 25px;" [class.disabled]="noteForm.invalid">
+                                        <img matTooltip="delete" matTooltipPosition="above"
+                                            src="../../../../../assets/clients/png/delete-icon.png" alt="Delete"
+                                            class="delete-icon ml-3 cursor-pointer" (click)="deleteNote()"
+                                            style="width: 25px;height: 25px;">
+                                    </ng-container>
                                 </div>
-                            </ng-template>
-                        </p>
-                        <div class="buttons mt-3 text-end">
-                            <ng-container *ngIf="selectedNote.isEdit">
-                                <button class="btn btn-warning" (click)="selectedNote.isEdit = false" [disabled]="noteForm.invalid">
-                                  Cancel
-                                </button>
-                                <button (click)="onSave()" type="submit" class="btn btn-success" [disabled]="noteForm.invalid">
-                                  Save
-                                </button>
-                              </ng-container>
-                              <ng-container *ngIf="!selectedNote.isEdit">
-                                <img 
-                                matTooltip="edit" matTooltipPosition="above"
-                                src="../../../../../assets/clients/png/edit.png" alt="Edit" class="edit-icon cursor-pointer" (click)="selectedNote.isEdit = true" style="width: 25px;height: 25px;" [class.disabled]="noteForm.invalid">
-                                <img 
-                                matTooltip="delete" matTooltipPosition="above"
-                                src="../../../../../assets/clients/png/delete.png" alt="Delete" class="delete-icon ml-3 cursor-pointer" (click)="deleteNote()" style="width: 25px;height: 25px;">
-                              </ng-container>
+                            </form>
                         </div>
-                    </form>
+                        <div class="col-lg-2">
+                            <div class="text-end">
+                                <small>{{ selectedNote.dateTime | date: 'medium' }}</small>
+                            </div>
+                            <div class="text-end">
+                                <img src="../../../../../assets/clients/png/selected-notes.png">
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
 
                 <div *ngIf="!selectedNote" class="no-note-selected">

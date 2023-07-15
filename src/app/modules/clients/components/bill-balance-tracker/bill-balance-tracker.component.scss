@@ -4,14 +4,14 @@
     position: relative !important;
     z-index: 9999 !important;
     cursor: pointer !important;
-  }
-  
+}
+
 ::ng-deep .custom-select .ng-dropdown-panel {
     position: relative !important;
     z-index: 10000 !important;
-  }
+}
 
-::ng-deep .ng-select{
+::ng-deep .ng-select {
     cursor: pointer !important;
 }
 
@@ -23,7 +23,7 @@
     justify-content: end;
 }
 
-.card-header{
+.card-header {
     background: $card-bg !important;
     color: $primary !important;
 }
@@ -36,13 +36,22 @@
     bottom: 0;
     z-index: 9999;
     margin: auto;
-  }
+}
 
-  ::ng-deep .cdk-overlay-container {
+::ng-deep .cdk-overlay-container {
     z-index: 1200 !important;
-  }
+}
 
-  .card-3 {
+.card-4 {
+    background: $card4;
+    /* fallback for old browsers */
+    // background: -webkit-linear-gradient(to right, #fbc7d4, #9796f0);
+    /* Chrome 10-25, Safari 5.1-6 */
+    // background: linear-gradient(to right, #fbc7d4, #9796f0);
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.card-3 {
     background: $card3;
     /* fallback for old browsers */
     // background: -webkit-linear-gradient(to right, #fbc7d4, #9796f0);
@@ -75,10 +84,11 @@
     color: $card-label !important;
     font-weight: 600;
 }
+
 .fa-2x {
     color: $primary !important;
 }
 
-.full-width{
+.full-width {
     width: 100% !important;
 }

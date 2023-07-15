@@ -175,6 +175,21 @@ export class EntityService {
     );
   }
 
+  updateEntity(data:any){
+    return this.http.put(this.URL+"update-entity", data).pipe(
+      map((response:any) => {
+       if(response.status == 200){
+        let decryptRes = {
+          ...response,
+          data : JSON.parse(this.cryptoService.decrypt(response.data))
+         }
+         return decryptRes;
+       }
+       return response
+     })
+    );
+  }
+
   deleteEntityById(id:any, data:any){
     return this.http.post(this.URL+"delete-entity-by-id/"+id, data);
   }

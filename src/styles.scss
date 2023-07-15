@@ -149,3 +149,10 @@ $fontWeights: 400 600 700 800;
     box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2), 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 1px 3px 0 rgba(0, 0, 0, 0.12) !important;
     border-radius: 6px !important;
 }
+
+::ng-deep .p-button.p-button-info,
+::ng-deep .p-buttonset.p-button-info > .p-button,
+::ng-deep .p-splitbutton.p-button-info > .p-button {
+  background-color: $primary !important;
+  color: $text-white !important;
+}

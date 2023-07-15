@@ -80,6 +80,12 @@ export class UserDetailsComponent {
   isHidden = false;
   commentSelected = "";
   isAllPayslips = false;
+  purchaseValueAmount:number = 0;
+  redemptionAmount :number = 0;
+  totalCreditPoints:any = null;
+  totalCreditAmount:number = 0;
+  isCreditPointsRequired:any = null;
+  creditPointInterval:any;
   statusTypes:any = [
     'active',
     "resigned",
@@ -117,7 +123,7 @@ export class UserDetailsComponent {
       this.userId = this.cryptoService.decrypt(this.userId);
       this.userId = JSON.parse(this.userId)
     }
-    console.log(this.formType)
+    this.getCreditDetails();
     if (this.formType == "customers") {
       this.getAllAggregateDatas();
     } else {
@@ -226,6 +232,14 @@ export class UserDetailsComponent {
         if (res.data.invoicesList[0]) {
           this.servicesList = this.flattenArray(res.data.products[0]);
           this.totalRevenue = res.data.totalRevenue;
+          if(Number(this.totalRevenue) > 0){
+            this.creditPointInterval = setInterval(()=>{
+              if(this.isCreditPointsRequired == true || this.isCreditPointsRequired == false){
+                this.calculateCreditPoints(Number(this.totalRevenue))
+                clearInterval(this.creditPointInterval);
+              }
+            }, 1000)
+          }
           this.inVoicesList = res.data.invoicesList[0].reverse();
           this.inVoicesList = this.inVoicesList.map((data: any) => {
             return {
@@ -316,7 +330,7 @@ export class UserDetailsComponent {
 
   onAddNewInvoice() {
     if (this.listOfServices.length > 0) {
-      this.entityService.setinvoiceDetails({ ...this.clientInfo, services: this.listOfServices })
+      this.entityService.setinvoiceDetails({ ...this.clientInfo, services: this.listOfServices, creditAmountEarned:this.totalCreditAmount })
       this.navigationService.navigateWithoutLocationChange(['client/billing']);
     }
   }
@@ -683,6 +697,45 @@ export class UserDetailsComponent {
       }
     };
 
+  }
+
+  getCreditDetails(query?: any) {
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'credit-details',
+      "queryData": {
+        email : this.userDetails.app_meta_details.company_email
+      }
+    }
+    this.isLoading = true;
+    this.entityService.getAllEntities(formData).subscribe((res: any) => {
+      this.isLoading = false;
+      if (res) {
+        if(res?.data?.length > 0){
+          if(res?.data[0]["isCreditPointOptionRequired"]["name"] != 'Not-Required'){
+            this.isCreditPointsRequired = true;
+            this.purchaseValueAmount = res?.data[0]['purchaseValueAmount'];
+            this.redemptionAmount = res?.data[0]['redemptionAmount']
+          }else{
+            this.isCreditPointsRequired = false;
+            clearInterval(this.creditPointInterval);
+          }
+        }else{
+          clearInterval(this.creditPointInterval);
+        }
+      }else{
+        clearInterval(this.creditPointInterval);
+      }
+    }, (err: any) => {
+      this.isLoading = false;
+      this.errorHandlingService.errorAlertMsg(err);
+    })
+  }
+
+  calculateCreditPoints(toatlBillAmount:number){
+    this.totalCreditPoints = toatlBillAmount - this.purchaseValueAmount;
+    this.totalCreditAmount = Number(this.totalCreditPoints)*Number(this.redemptionAmount);
   }
 
   savePayslip() {

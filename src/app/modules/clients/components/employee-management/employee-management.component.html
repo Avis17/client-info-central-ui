@@ -4,9 +4,12 @@
 
     <p-tabPanel header="Dashboard">
         <div class="m-4 mb-8">
-            <div class="row mt-5 mb-3" *ngIf="!attendanceDetails">
-                <div class="col">
-                    <div class="attendance-message">
+            <div class="mt-5 mb-3" *ngIf="!attendanceDetails">
+                <div class="row attendance-message">
+                    <div class="col-4 text-end mt-2 pr-3">
+                            <img src="../../../../../assets/clients/png/warning.png">
+                    </div>
+                    <div class="col-8 text-start">
                         <h2>Oops! Attendance for today is not yet marked.</h2>
                         <p>Please remember to mark employees attendance for today.</p>
                     </div>

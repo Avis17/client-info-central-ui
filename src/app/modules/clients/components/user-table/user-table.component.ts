@@ -182,4 +182,9 @@ export class UserTableComponent implements OnChanges, OnDestroy {
   exportAsXLSX(data: any, filename: any): void {
     this.excelService.exportAsExcelFile(data, filename);
   }
+
+  onCreditSytem(){
+    const commands = ['/client/credit-system'];
+    this.navigationService.navigateWithoutLocationChange(commands);
+  }
 }

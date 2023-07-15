@@ -16,6 +16,7 @@ import { NewBillComponent } from './components/new-bill/new-bill.component';
 import { EmployeeManagementComponent } from './components/employee-management/employee-management.component';
 import { EmployeeAttendanceComponent } from './components/employee-attendance/employee-attendance.component';
 import { NotesComponent } from './components/notes/notes.component';
+import { CreditPointManagementComponent } from './components/credit-point-management/credit-point-management.component';
 
 const routes:Routes = [
   {
@@ -74,6 +75,10 @@ const routes:Routes = [
       {
         path : 'notes',
         component : NotesComponent,
+      }, 
+      {
+        path : 'credit-system',
+        component : CreditPointManagementComponent,
       },      
       {
         path : 'user-details/:id',

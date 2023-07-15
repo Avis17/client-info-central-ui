@@ -57,7 +57,7 @@ export class BillingComponent implements OnDestroy {
     if (this.invoicedetails) {
       console.log(this.invoicedetails)
       if (this.invoicedetails) {
-        this.invoice = new Invoice(this.invoicedetails.name, this.invoicedetails.place, this.invoicedetails.address, this.invoicedetails.email, this.invoicedetails.phone, this.invoicedetails.services)
+        this.invoice = new Invoice(this.invoicedetails.name, this.invoicedetails.place, this.invoicedetails.address, this.invoicedetails.email, this.invoicedetails.phone, this.invoicedetails.services, this.invoicedetails.creditAmountEarned)
       } else {
         this.invoice = new Invoice();
       }
@@ -72,6 +72,14 @@ export class BillingComponent implements OnDestroy {
   currentBillNo: any;
   ngOnDestroy(): void {
     this.entityService.setinvoiceDetails({})
+  }
+
+  onCreditUseChange(event:any){
+    if(event.target.checked){
+      this.invoice.subTotal = this.invoice.subTotal - this.invoice.creditAmountEarned;
+    }else{
+      this.invoice.subTotal = this.invoice.subTotal + this.invoice.creditAmountEarned;
+    }
   }
 
   getTodaysDate(): string {
@@ -771,13 +779,15 @@ class Invoice {
   createdAt = new Date();
   additionalDetails: string;
   conditions: any = [];
+  creditAmountEarned:any = 0;
 
-  constructor(name?: any, place?: any, address?: any, email?: any, contact?: any, services?: any) {
+  constructor(name?: any, place?: any, address?: any, email?: any, contact?: any, services?: any, creditAmountEarned?:any) {
     if (services) {
       this.customerName = name;
       this.email = email;
       this.address = place ? place : address;
       this.phone = contact;
+      this.creditAmountEarned = creditAmountEarned || 0
       services.forEach((data: any) => {
         this.products.push(new Product(data.itemName, data.itemPrice, data.categoryName, 1))
       })
