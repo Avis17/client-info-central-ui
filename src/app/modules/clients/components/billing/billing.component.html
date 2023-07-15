@@ -113,6 +113,13 @@
                             <div class="col-md-6">
                                 <input class="form-control float-right no-arrow" type="number" name="subtotal" *ngIf="invoice.subTotal > 0"
                                     [(ngModel)]="invoice.subTotal">
+                                    <div class="mt-2">
+                                        <span>Credit Amount Earned</span> - <span>{{invoice.creditAmountEarned}}</span>
+                                    </div>
+                                    <div class="form-check mt-2">
+                                        <input type="checkbox" class="form-check-input" (change)="onCreditUseChange($event)" id="creditPointsUse">
+                                        <label class="form-check-label" for="creditPointsUse">Use My Credit Points Amount</label>
+                                    </div>
                             </div>
 
                         </div>
@@ -220,7 +227,7 @@
                 <div class="card border-secondary mt-2">
                     <div class="card-body">
                         <div class="text-end">
-                            <p-button label="New T&C" icon="pi pi-plus" class="mr-2" (click)="onAddTerms()"></p-button>
+                            <p-button label="New T&C" styleClass="p-button-rounded p-button-info" icon="pi pi-plus" class="mr-2" (click)="onAddTerms()"></p-button>
                         </div>
                         <div class="row m-3" *ngFor="let term of termsList;let i = index">
                             <textarea [name]="'term'+i" [(ngModel)]="term.terms" type="text"
