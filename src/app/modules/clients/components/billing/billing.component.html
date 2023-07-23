@@ -113,20 +113,41 @@
                             <div class="col-md-6">
                                 <input class="form-control float-right no-arrow" type="number" name="subtotal" *ngIf="invoice.subTotal > 0"
                                     [(ngModel)]="invoice.subTotal">
-                                    <div class="mt-2">
-                                        <span>Credit Amount Earned</span> - <span>{{invoice.creditAmountEarned}}</span>
-                                    </div>
-                                    <div class="form-check mt-2">
-                                        <input type="checkbox" class="form-check-input" (change)="onCreditUseChange($event)" id="creditPointsUse">
-                                        <label class="form-check-label" for="creditPointsUse">Use My Credit Points Amount</label>
+                                    <div *ngIf="invoice.subTotal > 0 && invoicedetails.balanceCreditAmount > 0">
+                                        <div class="mt-2">
+                                            <span>Credit Amount Balance</span> - <span>{{invoicedetails.balanceCreditAmount}}</span>
+                                        </div>
+                                        <div class="form-check mt-2">
+                                            <input type="checkbox" class="form-check-input" (change)="onCreditUseChange($event)" id="creditPointsUse">
+                                            <label class="form-check-label" for="creditPointsUse">Use My Credit Points Amount</label>
+                                        </div>
                                     </div>
                             </div>
-
                         </div>
-
+                        <div class="row mb-3">
+                            <div class="col-md-6 text-end">
+                                <span class="float-right mt-2">Discount</span>
+                            </div>
+                            <div class="col-md-6">
+                                <input class="form-control float-right no-arrow pr-3" [disabled]="true" type="number" name="discountAmount" 
+                                [(ngModel)]="discountAmount">
+                            </div>
+                        </div>
+                        <div class="row mb-3" *ngIf="invoice.subTotal > 0 && isCreditPointsRequired">
+                            <div class="col-md-6">
+                                <label>Credit Points Earned In this Purchase:-</label>
+                                <input class="form-control float-right no-arrow pr-3" [disabled]="true" type="number" name="totalCreditPoints" 
+                                [(ngModel)]="totalCreditPoints">
+                            </div>
+                            <div class="col-md-6">
+                                <label>Credit Points Worth of:-</label>
+                                <input class="form-control float-left no-arrow pl-3" [disabled]="true" type="number" name="totalCreditAmount" 
+                                [(ngModel)]="totalCreditAmount">
+                            </div>
+                        </div>
                         <div class="row mb-3" *ngIf="invoice.subTotal > 0">
                             <div class="col-md-6 text-end">
-                                <span class="float-right mt-2">Tax GST</span>
+                                <span class="float-right mt-2">Tax (GST)</span>
                             </div>
                             <div class="col-md-3">
                                 <select class="form-select" name="gstname" [(ngModel)]="invoice.cgst">
@@ -135,7 +156,7 @@
                             </div>
                             <div class="col-md-3">
                                 <input class="form-control" [attr.disabled]="true" name="cgst"
-                                    [value]="(invoice.subTotal * invoice.cgst)/100">
+                                    [value]="((invoice.subTotal-discountAmount) * invoice.cgst)/100">
                             </div>
                         </div>
                         <!-- <div class="row mb-3" *ngIf="invoice.subTotal > 0">
@@ -168,11 +189,11 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <button class="btn btn-primary" style="float: right;" (click)="onCalculateTotal()"
-                                    *ngIf="isSubTotalClicked && invoice.subTotal > 0">Calculate Total</button>
+                                    *ngIf="isSubTotalClicked && invoice.subTotal >= 0">Calculate Total</button>
                             </div>
                             <div class="col-md-6">
                                 <input class="form-control float-right" name="finaltotal"
-                                    *ngIf="isSubTotalClicked && invoice.finalTotal>0" [(ngModel)]="invoice.finalTotal">
+                                    *ngIf="isSubTotalClicked && invoice.finalTotal>=0" [(ngModel)]="invoice.finalTotal">
                             </div>
 
                         </div>

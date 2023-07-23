@@ -67,9 +67,9 @@
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
                                 <div class="text-xs card-text-color text-uppercase mb-1">
-                                    Credit Points
+                                    Total Credit Points Earned
                                 </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{totalCreditPoints}}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{clientInfo?.['totalCreditPoints'] || 0}}</div>
                             </div>
                             <div class="col-auto">
                                 <img width="40px" src="../../../../../assets/clients/png/credit-points.png">
@@ -85,9 +85,9 @@
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
                                 <div class="text-xs card-text-color text-uppercase mb-1">
-                                    Credit Amount Earned
+                                    Total Credit Amount Earned
                                 </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">&#8377; {{totalCreditAmount}}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">&#8377; {{ clientInfo?.['totalAmountEarned'] || 0}}</div>
                             </div>
                             <div class="col-auto">
                                 <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
@@ -96,6 +96,42 @@
                     </div>
                 </div>
             </div>
+            <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer">
+                <div class="card card-7 border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs card-text-color text-uppercase mb-1">
+                                    Balance Credit Points
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{clientInfo?.['balanceCreditPoints'] || 0}}</div>
+                            </div>
+                            <div class="col-auto">
+                                <img width="40px" src="../../../../../assets/clients/png/credit-points.png">
+                                <!-- <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 mt-2 col-md-4 col-sm-12 cursor-pointer">
+                <div class="card card-6 border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs card-text-color text-uppercase mb-1">
+                                    Balance Credit Amount
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">&#8377; {{ clientInfo?.['balanceCreditAmount'] || 0}}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fa-solid fa-indian-rupee-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
         <div class="card m-3 mb-8" *ngIf="clientInfo">
             <p-tabView (onChange)="switchHeaders($event);">
@@ -115,7 +151,7 @@
                             <div class="col-lg-4 col-sm-6">
                                 <div class="key">
                                     <ng-container>
-                                        <label>Employee Name</label>
+                                        <label>{{formType == 'customers' ? 'Customer' : 'Employee'}} Name</label>
                                     </ng-container>
                                 </div>
                             </div>
@@ -159,11 +195,11 @@
                             </div>
                         </div>
                         <ng-template pTemplate="footer">
-                            <p-button (click)="onEdit()" *ngIf="formType != 'customers' && !clientInfo.isEdit"
+                            <p-button (click)="onEdit()" *ngIf="!clientInfo.isEdit"
                                 label="Edit" icon="pi pi-user" styleClass="p-button-info"></p-button>
-                            <p-button (click)="onSave()" *ngIf="formType != 'customers' && clientInfo.isEdit"
+                            <p-button (click)="onSave()" *ngIf="clientInfo.isEdit"
                                 label="Save" icon="pi pi-check" styleClass="p-button-success"></p-button>
-                            <p-button (click)="onCancel()" *ngIf="formType != 'customers' && clientInfo.isEdit"
+                            <p-button (click)="onCancel()" *ngIf="clientInfo.isEdit"
                                 label="Cancel" icon="pi pi-times" [style]="{'margin-left': '5px'}"
                                 styleClass="p-button-info"></p-button>
                         </ng-template>
@@ -214,6 +250,9 @@
                         <div class="form-group">
                           <label for="calculationDays">Calculation Days</label>
                           <select [disabled]="setDefaultCalculationDays" id="calculationDays" name="calculationDays" [(ngModel)]="calculationDays" required>
+                            <option value="25">25</option>
+                            <option value="26">26</option>
+                            <option value="27">27</option>
                             <option value="28">28</option>
                             <option value="29">29</option>
                             <option value="30">30</option>

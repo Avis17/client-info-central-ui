@@ -38,6 +38,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { NgCircleProgressModule } from 'ng-circle-progress';
 import { NotesComponent } from './components/notes/notes.component';
 import { CreditPointManagementComponent } from './components/credit-point-management/credit-point-management.component';
+import { InventoryManagementComponent } from './components/inventory-management/inventory-management.component';
 
 
 
@@ -63,6 +64,7 @@ import { CreditPointManagementComponent } from './components/credit-point-manage
     EmployeePayslipsComponent,
     NotesComponent,
     CreditPointManagementComponent,
+    InventoryManagementComponent,
   ],
   imports: [
     CommonModule,

@@ -23,6 +23,7 @@ export class SidenavComponent {
     "balance" : false,
     "followup" : false,
     "employee":  false,
+    "inventory" : false,
     "notes" : false
   }
   constructor(public authService:AuthGuardService, private sanitizer: DomSanitizer){
@@ -35,6 +36,7 @@ export class SidenavComponent {
   }
 
   onClickLink(link:string){
+    window.scrollTo(0, 0); // Scroll to the top
     for(let li in this.linkActive){
       if(li == link){
         this.linkActive[li] = true;

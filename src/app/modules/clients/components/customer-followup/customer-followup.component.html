@@ -80,8 +80,8 @@
         <div style="width: 100%;">
             <div class="row">
                 <div class="col-lg-6 col-sm-12 col-md-6 mb-3 mb-md-0">
-                    <p-dropdown [options]="statusOptions" placeholder="Filter By Interest"
-                    [showClear]="true" (onChange)="filterInterest($event)"></p-dropdown>
+                    <p-dropdown [options]="statusOptions" placeholder="Filter By Interest" [showClear]="true"
+                        (onChange)="filterInterest($event)"></p-dropdown>
                 </div>
                 <div class="col-lg-6 col-sm-12 col-md-6 mb-3 mb-md-0">
                     <input type="text" placeholder="Search Followup" (input)="applyFilterGlobal($event, 'contains')"
@@ -90,9 +90,9 @@
             </div>
             <div class="row">
                 <div class="col-lg-12 col-sm-12 col-md-12 text-end mb-3">
-                    <p-button styleClass="p-button-rounded p-button-info" label="New Customer Enquiry" icon="pi pi-plus" class="mr-2 mt-2" data-bs-toggle="modal"
-                        data-bs-target="#exampleModal"></p-button>
-                        <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf()"
+                    <p-button styleClass="p-button-rounded p-button-info" label="New Customer Enquiry" icon="pi pi-plus"
+                        class="mr-2 mt-2" data-bs-toggle="modal" data-bs-target="#exampleModal"></p-button>
+                    <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="exportPdf()"
                         class="p-button-help mr-2 mt-2" pTooltip="Export data" tooltipPosition="bottom">
                     </button>
                 </div>
@@ -105,8 +105,7 @@
             <p-table #tableref [value]="customerList" [paginator]="true" [rows]="5" [showCurrentPageReport]="true"
                 [reorderableColumns]="true" [columns]="cols"
                 currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                [rowsPerPageOptions]="[5, 10, 25, 50]" [tableStyle]="{ 'width': 'auto', 'min-width' : '100%' }"
-                >
+                [rowsPerPageOptions]="[5, 10, 25, 50]" [tableStyle]="{ 'width': 'auto', 'min-width' : '100%' }">
                 <ng-template pTemplate="header">
                     <tr *ngIf="customerList.length > 0">
                         <th style="text-align: center !important;">S.No</th>
@@ -126,22 +125,23 @@
                         <td style="text-align: center;">{{ customer.name }}</td>
                         <td style="text-align: center;">{{ customer.phone }}</td>
                         <td style="text-align: center;">
-                            <span [ngClass]="getCustomerStatusClass(customer.interest)">{{customer.interest | uppercase}}</span>
+                            <span [ngClass]="getCustomerStatusClass(customer.interest)">{{customer.interest |
+                                uppercase}}</span>
                         </td>
                         <td style="text-align: center;">{{ customer.place }}</td>
                         <td style="text-align: center;">{{ customer.createdAt | dateformat}}</td>
                         <td style="text-align: start;word-wrap: break-word;">
                             <p *ngIf="!customer.isEdit">{{ customer.comments ? customer.comments : '-' }}</p>
-                            <textarea [(ngModel)]="customer.comments" *ngIf="customer.isEdit" placeholder="Enyter Comments if any..">
+                            <textarea [(ngModel)]="customer.comments" *ngIf="customer.isEdit"
+                                placeholder="Enyter Comments if any..">
 
                             </textarea>
                         </td>
                         <td style="text-align: center;">
                             <button class="btn btn-primary" *ngIf="!customer.isEdit"
-                                    (click)="customer.isEdit = true">Update</button>
+                                (click)="customer.isEdit = true">Update</button>
                             <p-dropdown [options]="statusOptions" *ngIf="customer.isEdit"
-                            [(ngModel)]="customer.interest"
-                            (onChange)="updateInterest(customer)"></p-dropdown>
+                                [(ngModel)]="customer.interest" (onChange)="updateInterest(customer)"></p-dropdown>
                         </td>
                     </tr>
                 </ng-template>
@@ -162,8 +162,8 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Add Customer</h5>
-                <button type="btn btn-primary" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                <button type="btn btn-primary" class="btn-close" data-bs-dismiss="modal">
+                    <!-- <span aria-hidden="true">&times;</span> -->
                 </button>
             </div>
             <div class="modal-body">

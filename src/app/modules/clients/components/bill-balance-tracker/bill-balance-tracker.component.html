@@ -178,17 +178,19 @@
                             </td>
                             <td>
                                 <button type="button" pButton pRipple icon="pi pi-file-pdf" (click)="onDownloadBill(balance)"
-                                    class="p-button-help mr-2" pTooltip="Download Invoice" tooltipPosition="bottom">
+                                    class="p-button-help mr-2" style="width: 40px;height: 40px;" pTooltip="Download Invoice" tooltipPosition="bottom">
                                 </button>
                             </td>
-                            <td>
-
-                                <button data-bs-toggle="modal" *ngIf="!balance.isEdit && balance.paymentStatus == 'part'"
-                                    data-bs-target="#exampleModal" (click)="onBillPayment(balance)"
-                                    class="btn btn-info mb-2 mr-3">Pay</button>
-                                
+                            <td>                 
                                     <button *ngIf="!balance.isEdit"  (click)="onEdit(balance)"
                                     class="btn btn-warning mb-2 mr-3">Edit</button>
+                                    <button *ngIf="!balance.isEdit"  (click)="onDelete(balance)"
+                                    class="btn btn-danger mb-2 mr-3">Delete</button>
+
+                                    <button data-bs-toggle="modal" *ngIf="!balance.isEdit && balance.paymentStatus == 'part' &&
+                                    balance.paidAmount != balance.finalTotal"
+                                    data-bs-target="#exampleModal" (click)="onBillPayment(balance)"
+                                    class="btn btn-info mb-2 mr-3">Pay</button>
 
                                     <button *ngIf="balance.isEdit"  (click)="onSave(balance)"
                                     class="btn btn-success mb-2 mr-3">Save</button>

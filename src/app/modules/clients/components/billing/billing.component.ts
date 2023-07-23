@@ -57,11 +57,12 @@ export class BillingComponent implements OnDestroy {
     if (this.invoicedetails) {
       console.log(this.invoicedetails)
       if (this.invoicedetails) {
-        this.invoice = new Invoice(this.invoicedetails.name, this.invoicedetails.place, this.invoicedetails.address, this.invoicedetails.email, this.invoicedetails.phone, this.invoicedetails.services, this.invoicedetails.creditAmountEarned)
+        this.invoice = new Invoice(this.invoicedetails.name, this.invoicedetails.place, this.invoicedetails.address, this.invoicedetails.email, this.invoicedetails.phone, this.invoicedetails.services)
       } else {
         this.invoice = new Invoice();
       }
     }
+    this.getCreditDetails();
   }
 
   invoice = new Invoice();
@@ -70,17 +71,45 @@ export class BillingComponent implements OnDestroy {
   isInvlidPartAmount: boolean = false;
   billNo: Number = 1;
   currentBillNo: any;
+  //credit points 
+  purchaseValueAmount:any;
+  redemptionAmount :any;
+  totalCreditPoints:any = null;
+  totalCreditAmount:any;
+  isCreditPointsRequired:any = null;
+  creditPointInterval:any;
+  discountAmount:any = 0;
+  balanceCreditAmount:any;
+  balanceCreditPoints:any;
+  todaysCreditPoints:any;
+  redemptionUsed:boolean = false;
   ngOnDestroy(): void {
     this.entityService.setinvoiceDetails({})
   }
 
-  onCreditUseChange(event:any){
-    if(event.target.checked){
-      this.invoice.subTotal = this.invoice.subTotal - this.invoice.creditAmountEarned;
-    }else{
-      this.invoice.subTotal = this.invoice.subTotal + this.invoice.creditAmountEarned;
+  onCreditUseChange(event: any) {
+    const subTotal = this.invoice.subTotal; // Replace with the actual subTotal value or retrieve dynamically if available
+    // const balanceCreditAmount = this.invoicedetails.balanceCreditAmount;
+    if (event.target.checked) {
+      this.redemptionUsed = true;
+      this.balanceCreditAmount = 0;
+      this.balanceCreditPoints = 0;
+      if(subTotal > this.invoicedetails.balanceCreditAmount){
+        this.discountAmount = this.invoicedetails.balanceCreditAmount;
+        this.balanceCreditAmount = 0;
+      }else{
+        this.discountAmount = subTotal;
+        this.balanceCreditAmount = this.invoicedetails.balanceCreditAmount - subTotal;
+        this.balanceCreditPoints = this.balanceCreditAmount/this.redemptionAmount;
+      }
+    } else {
+      this.redemptionUsed = false;
+      this.discountAmount = 0;
+      this.balanceCreditAmount = 0;
+      this.balanceCreditPoints = 0;
     }
   }
+  
 
   getTodaysDate(): string {
     const date = new Date();
@@ -293,6 +322,13 @@ export class BillingComponent implements OnDestroy {
                 { text: "Rs." + this.invoice.subTotal.toFixed(2), alignment: 'right', fillColor: '#eaeaea' }
               ],
               [
+                { text: 'Discount', colSpan: 4, alignment: 'right', bold: true, fillColor: '#eaeaea' },
+                {},
+                {},
+                {},
+                { text: "Rs." + this.discountAmount.toFixed(2), alignment: 'right', fillColor: '#eaeaea' }
+              ],
+              [
                 { text: 'GST', colSpan: 4, alignment: 'right', bold: true, fillColor: '#eaeaea' },
                 {},
                 {},
@@ -436,7 +472,7 @@ export class BillingComponent implements OnDestroy {
         this.errorHandlingService.errorAlertMsg(err);
       }
     );
-
+    this.onUpdateUserDetails();
     this.addBilNo({ billdetails: { no: this.currentBillNo } });
   }
 
@@ -611,7 +647,7 @@ export class BillingComponent implements OnDestroy {
   }
 
   checkDatas() {
-    if (this.invoice.billNo && this.invoice.customerName && this.invoice.phone && this.invoice.products.length >= 1 && this.invoice.subTotal > 0 && this.invoice.finalTotal > 0) {
+    if (this.invoice.billNo && this.invoice.customerName && this.invoice.phone && this.invoice.products.length >= 1 && this.invoice.subTotal >= 0 && this.invoice.finalTotal >= 0) {
       return false
     }
     return true
@@ -676,13 +712,29 @@ export class BillingComponent implements OnDestroy {
     this.invoice.subTotal = subtotal;
     this.isSubTotalClicked = true;
     this.invoice.finalTotal = 0;
+
+    if(this.isCreditPointsRequired &&  this.purchaseValueAmount && this.redemptionAmount){
+        this.calculateCreditPoints(subtotal);
+    }
+  }
+
+  calculateCreditPoints(toatlBillAmount:number){
+    if(toatlBillAmount > this.purchaseValueAmount){
+      this.todaysCreditPoints = toatlBillAmount - this.purchaseValueAmount;
+      this.totalCreditPoints = toatlBillAmount - this.purchaseValueAmount;
+      this.totalCreditAmount = Number(this.totalCreditPoints)*Number(this.redemptionAmount);
+    }else{
+      this.totalCreditAmount = 0;
+      this.totalCreditPoints = 0;
+    }
+    
   }
 
   onCalculateTotal() {
-    this.invoice.cgstAmount = (Number(this.invoice.cgst) * Number(this.invoice.subTotal)) / 100;
+    this.invoice.cgstAmount = (Number(this.invoice.cgst) * Number(this.invoice.subTotal-this.discountAmount)) / 100;
     // this.invoice.sgstAmount = (this.invoice.sgst * this.invoice.subTotal) / 100;
     // this.invoice.igstAmount = (this.invoice.igst * this.invoice.subTotal) / 100;
-    this.invoice.finalTotal = Number(this.invoice.subTotal) + this.invoice.cgstAmount;
+    this.invoice.finalTotal = Number(this.invoice.subTotal-this.discountAmount) + this.invoice.cgstAmount;
     this.isFinalTotalClicked = true;
 
   }
@@ -744,6 +796,79 @@ export class BillingComponent implements OnDestroy {
     })
   }
 
+  getCreditDetails(query?: any) {
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'credit-details',
+      "queryData": {
+        email : this.userDetails.app_meta_details.company_email
+      }
+    }
+    this.isLoading = true;
+    this.entityService.getAllEntities(formData).subscribe((res: any) => {
+      this.isLoading = false;
+      if (res) {
+        if(res?.data?.length > 0){
+          console.log(res.data[0]);
+          if(res?.data[0]["isCreditPointOptionRequired"]["name"] === 'Required'){
+            this.isCreditPointsRequired = true;
+            this.purchaseValueAmount = res?.data[0]['purchaseValueAmount'];
+            this.redemptionAmount = res?.data[0]['redemptionAmount']
+          }else{
+            this.isCreditPointsRequired = false;
+          }
+        }else{
+          this.isCreditPointsRequired = false;
+        }
+      }
+    }, (err: any) => {
+      this.isLoading = false;
+      this.isCreditPointsRequired = false;
+      this.errorHandlingService.errorAlertMsg(err);
+    })
+  }
+
+  onUpdateUserDetails() {
+    const _id = this.invoicedetails._id;
+    delete this.invoicedetails._id;
+    delete this.invoicedetails.services;
+    let totalCreditPoints = this.invoicedetails?.totalCreditPoints || 0;
+    totalCreditPoints = this.totalCreditPoints+totalCreditPoints;
+    let totalAmountEarned = this.invoicedetails?.totalAmountEarned || 0;
+    totalAmountEarned = this.totalCreditAmount+totalAmountEarned;
+
+    if(this.invoicedetails.balanceCreditAmount >= 0){
+      if(this.redemptionUsed){
+        this.invoicedetails.balanceCreditAmount = this.balanceCreditAmount;
+        this.invoicedetails.balanceCreditPoints = this.balanceCreditPoints;
+      }else{
+        this.invoicedetails.balanceCreditPoints = Number(this.invoicedetails.balanceCreditPoints) + Number(this.todaysCreditPoints);
+        this.invoicedetails.balanceCreditAmount = Number(this.invoicedetails.balanceCreditAmount) + (Number(this.todaysCreditPoints)*Number(this.redemptionAmount));
+      }
+      
+    }else{
+      this.invoicedetails.balanceCreditAmount = this.totalCreditAmount,
+      this.invoicedetails.balanceCreditPoints = this.totalCreditPoints
+    }
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'customers',
+      "collectionData": {...this.invoicedetails, 
+        totalCreditPoints:totalCreditPoints, 
+        totalAmountEarned:totalAmountEarned,
+      }
+    }
+    this.isLoading = true;
+    this.entityService.updateEntityById(_id, formData).subscribe((res: any) => {
+      this.isLoading = false;
+    }, (err: any) => {
+      this.isLoading = false;
+      this.errorHandlingService.errorAlertMsg(err);
+    })
+  }
+
 }
 
 class Product {
@@ -779,15 +904,13 @@ class Invoice {
   createdAt = new Date();
   additionalDetails: string;
   conditions: any = [];
-  creditAmountEarned:any = 0;
 
-  constructor(name?: any, place?: any, address?: any, email?: any, contact?: any, services?: any, creditAmountEarned?:any) {
+  constructor(name?: any, place?: any, address?: any, email?: any, contact?: any, services?: any) {
     if (services) {
       this.customerName = name;
       this.email = email;
       this.address = place ? place : address;
       this.phone = contact;
-      this.creditAmountEarned = creditAmountEarned || 0
       services.forEach((data: any) => {
         this.products.push(new Product(data.itemName, data.itemPrice, data.categoryName, 1))
       })

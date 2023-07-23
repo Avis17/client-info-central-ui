@@ -17,7 +17,7 @@
         <p-button label="Employee" icon="pi pi-plus" styleClass="p-button-rounded p-button-info" class="col mr-2 mb-2" (click)="onAddEmployee()"></p-button>
     </div>
 </p-toolbar>
-<div class="card mx-4 mb-8" *ngIf="entities.length > 0">
+<div class="card mb-8" *ngIf="entities.length > 0">
     <div class="mb-5">
         <p-table #tableref [value]="entities" [paginator]="true" [columns]="cols" [rows]="5"
             [showCurrentPageReport]="true" [reorderableColumns]="true" [alwaysShowPaginator]="false"

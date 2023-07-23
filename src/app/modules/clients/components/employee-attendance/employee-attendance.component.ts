@@ -128,7 +128,7 @@ export class EmployeeAttendanceComponent {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
       "collectionName": 'employees',
-      "queryData": query || {}
+      "queryData": query || { status : 'active'}
     }
     this.isLoading = true;
     this.entityService.getAllEntities(formData).subscribe((res: any) => {
@@ -163,7 +163,8 @@ export class EmployeeAttendanceComponent {
     this.entityService.addNewEntity(formData).subscribe((res: any) => {
       this.isLoading = false;
       if (res.status == 200) {
-        this.navigationService.navigateWithoutLocationChange(['client/employee']);
+        Swal.fire('Attendance Updated!', '', 'success');
+        // this.navigationService.navigateWithoutLocationChange(['client/employee']);
       }
     }, (err) => {
       this.isLoading = false;
@@ -221,7 +222,7 @@ export class EmployeeAttendanceComponent {
       this.isLoading = false;
       if (res.status == 200) {
         Swal.fire('Attendance Updated!', '', 'success');
-        this.navigationService.navigateWithoutLocationChange(['client/employee']);
+        // this.navigationService.navigateWithoutLocationChange(['client/employee']);
       }
     }, (err: any) => {
       this.isLoading = false;

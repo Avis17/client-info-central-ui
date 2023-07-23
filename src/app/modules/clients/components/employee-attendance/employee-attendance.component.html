@@ -33,10 +33,10 @@
                         <ng-container *ngFor="let employee of filteredEmployees; let i = index" [formGroup]="employee">
                             <tr>
                                 <td>
-                                    <input class="disabled form-control" [disabled]="true" type="text" formControlName="name" readonly>
+                                    <input class="disabled form-control" [ngClass]="'is-marked'" [disabled]="true" type="text" formControlName="name" readonly>
                                 </td>
                                 <td>
-                                    <input class="disabled form-control" [disabled]="true" type="text" formControlName="empId" readonly>
+                                    <input class="disabled form-control" [ngClass]="'is-marked'" [disabled]="true" type="text" formControlName="empId" readonly>
                                 </td>
                                 <td class="p-3">
                                     <label>
@@ -79,10 +79,10 @@
                             <ng-container *ngFor="let employee of filteredEmployees; let i = index" [formGroup]="employee">
                                 <tr>
                                     <td>
-                                        <input class="disabled form-control" [ngClass]="attendenceMarked ? 'is-marked' : ''" [disabled]="true" type="text" formControlName="name" readonly>
+                                        <input class="disabled form-control"  [disabled]="true" type="text" formControlName="name" readonly>
                                     </td>
                                     <td>
-                                        <input class="disabled form-control" [ngClass]="attendenceMarked ? 'is-marked' : ''" [disabled]="true" type="text" formControlName="empId" readonly>
+                                        <input class="disabled form-control" [disabled]="true" type="text" formControlName="empId" readonly>
                                     </td>
                                     <td class="p-3">
                                         <label>

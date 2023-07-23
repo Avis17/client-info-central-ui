@@ -156,3 +156,11 @@ $fontWeights: 400 600 700 800;
   background-color: $primary !important;
   color: $text-white !important;
 }
+
+.ellipsis {
+    white-space: nowrap; /* Prevents the text from wrapping */
+    overflow: hidden; /* Hides any content that overflows the container */
+    text-overflow: ellipsis; /* Adds ellipsis (...) to indicate content is truncated */
+    max-width: 250px; /* Set an appropriate value for the maximum width of the cell */
+    cursor: pointer; /* Change the cursor to indicate it's clickable */
+  }

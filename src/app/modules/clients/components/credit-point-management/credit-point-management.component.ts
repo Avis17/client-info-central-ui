@@ -113,7 +113,7 @@ export class CreditPointManagementComponent {
   }
 
   onPreviousPage(){
-    const commands = ['/client/employee'];
+    const commands = ['/client/clients'];
     this.navigationService.navigateWithoutLocationChange(commands)
   }
 }

@@ -1,0 +1,119 @@
+<app-custom-loader *ngIf="isLoading"></app-custom-loader>
+
+<div class="m-4">
+    <div class="row flex-wrap justify-content-center mt-4">
+        <p-card header="Inventory Dashboard" [subheader]="">
+            <ng-template pTemplate="header">
+            </ng-template>
+            <div class="col-12">
+                <div class="row">
+                    <h1>Hello</h1>
+                </div>
+            </div>
+        </p-card>
+    </div>
+    <p-toolbar>
+        <div class="p-toolbar-group-start">
+            <!-- <input type="text" pInputText placeholder="Search Fields" (input)="applyFilterGlobal($event, 'contains')" /> -->
+        </div>
+        <div class="p-toolbar-group-center">
+            
+        </div>
+        <div class="p-toolbar-group-end row">
+            <p-button label="Item" icon="pi pi-plus" styleClass="p-button-rounded p-button-info" class="col mr-2 mb-2" data-bs-toggle="modal" data-bs-target="#exampleModal"></p-button>
+        </div>
+    </p-toolbar>
+    <div class="card mx-4 mb-8" *ngIf="itemsList.length > 0">
+        <div class="mb-5">
+            <p-table #tableref [value]="itemsList" [paginator]="true" [columns]="cols" [rows]="5"
+            [showCurrentPageReport]="true" [reorderableColumns]="true" [alwaysShowPaginator]="false"
+            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+            [rowsPerPageOptions]="[5, 10, 25, 50]">
+            <ng-template pTemplate="header" let-columns>
+                <tr>
+                    <th style="width:10%; text-align: center !important;">S.No</th>
+                    <!-- <ng-container *ngFor="let col of cols">
+                        <th *ngIf="!isArrayCheck(col.field)" [pSortableColumn]="col.field"
+                            style="flex-grow: 1; text-align: center !important;">
+                            {{ col.header }}
+                            <p-sortIcon [field]="col.field"></p-sortIcon>
+                        </th>
+                    </ng-container> -->
+                    <th>Status</th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns" let-rowIndex="rowIndex">
+                <tr>
+                    <td style="text-align: center;">{{rowIndex+1}}</td>
+                    <!-- <ng-container *ngFor="let col of columns">
+                        <td style="text-align: center;" *ngIf="!isArrayCheck(col.field)">
+                            <ng-container *ngIf="isDateField(rowData[col.field], col.field)">{{
+                                rowData[col.field] | dateformat }}</ng-container>
+                            <ng-container *ngIf="!isDateField(rowData[col.field], col.field)">
+                                <ng-container *ngIf="rowData['isUniqueField'] != col.field">
+                                    {{rowData[col.field] }}
+                                </ng-container>
+                                <ng-container *ngIf="rowData['isUniqueField'] == col.field">
+                                    <a class="nav-link"
+                                        (click)="onNavClick(rowData[col.field], col.field)">{{rowData[col.field] }}</a>
+                                </ng-container>
+                            </ng-container>
+                        </td>
+                    </ng-container> -->
+                    <td>
+                        
+                    </td>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage" let-columns>
+                <tr>
+                    <td [attr.colspan]="columns.length" style="text-align: center;">
+                        No records found.
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Item</h5>
+                <button type="btn btn-primary" class="btn-close" data-bs-dismiss="modal">
+                    <!-- <span aria-hidden="true">&times;</span> -->
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- <mat-form-field class="mt-5 mb-2 full-width">
+                    <mat-label>Enter Customer Name</mat-label>
+                    <input matInput type="text" [(ngModel)]="newCustomerFollowup.name">
+                </mat-form-field>
+
+                <mat-form-field class="mt-3 mb-2 full-width">
+                    <mat-label>Enter Customer Phone</mat-label>
+                    <input matInput type="number" class="no-arrow" [(ngModel)]="newCustomerFollowup.phone">
+                </mat-form-field>
+
+                <mat-form-field class="mt-3 mb-2 full-width">
+                    <mat-label>Enter Customer Place</mat-label>
+                    <input matInput type="text" [(ngModel)]="newCustomerFollowup.place">
+                </mat-form-field>
+
+                <mat-form-field class="mt-3 full-width">
+                    <mat-label>Enquiry</mat-label>
+                    <textarea [(ngModel)]="newCustomerFollowup.comments" matInput
+                        placeholder="Enter Customer Enquiry"></textarea>
+                </mat-form-field> -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-bs-dismiss="modal" [disabled]="checkValidations()"
+                    (click)="onAddNewItem()" class="btn btn-primary">Save
+                    changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

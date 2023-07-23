@@ -17,6 +17,7 @@ import { EmployeeManagementComponent } from './components/employee-management/em
 import { EmployeeAttendanceComponent } from './components/employee-attendance/employee-attendance.component';
 import { NotesComponent } from './components/notes/notes.component';
 import { CreditPointManagementComponent } from './components/credit-point-management/credit-point-management.component';
+import { InventoryManagementComponent } from './components/inventory-management/inventory-management.component';
 
 const routes:Routes = [
   {
@@ -67,6 +68,10 @@ const routes:Routes = [
       {
         path : 'employee',
         component : EmployeeManagementComponent,
+      },
+      {
+        path : 'inventory',
+        component : InventoryManagementComponent,
       }, 
       {
         path : 'employee-attendance',

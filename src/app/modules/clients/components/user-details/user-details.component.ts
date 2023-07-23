@@ -330,7 +330,7 @@ export class UserDetailsComponent {
 
   onAddNewInvoice() {
     if (this.listOfServices.length > 0) {
-      this.entityService.setinvoiceDetails({ ...this.clientInfo, services: this.listOfServices, creditAmountEarned:this.totalCreditAmount })
+      this.entityService.setinvoiceDetails({ ...this.clientInfo, services: this.listOfServices})
       this.navigationService.navigateWithoutLocationChange(['client/billing']);
     }
   }
@@ -407,10 +407,11 @@ export class UserDetailsComponent {
     this.clientInfo.isEdit = false;
     const _id = this.clientInfo._id;
     delete this.clientInfo._id
+    delete this.clientInfo?.clone;
     const formData = {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
-      "collectionName": 'employees',
+      "collectionName": this.formType == "customers" ? 'customers' : 'employees',
       "collectionData": this.clientInfo
     }
     this.isLoading = true;
@@ -418,7 +419,11 @@ export class UserDetailsComponent {
     this.entityService.updateEntityById(_id, formData).subscribe((res: any) => {
       this.isLoading = false;
       if (res.status == 200) {
-        Swal.fire('Employee Details Updated!', '', 'success');
+        if(this.formType == "customers"){
+          Swal.fire('Customer Details Updated!', '', 'success');
+        }else{
+          Swal.fire('Employee Details Updated!', '', 'success');
+        }
       }
     }, (err: any) => {
       this.isLoading = false;

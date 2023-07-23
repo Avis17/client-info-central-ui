@@ -117,6 +117,9 @@ export class BillBalanceTrackerComponent {
       this.isLoading = false;
       if (res) {
         console.log(res)
+        this.selectedBillType = {
+          label: 'Balance Bills'
+        }
         this.allBills = res.data;
         this.balanceList = this.allBills.filter((data: any) => {
           return data.paymentStatus == 'part' && data.paidAmount != data.finalTotal
@@ -171,6 +174,41 @@ export class BillBalanceTrackerComponent {
     this.navigationService.navigateWithoutLocationChange(['client/bill-download']);
   }
 
+  onDelete(balance: any) {
+    const formData = {
+      "schema": '',
+      "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
+      "collectionName": 'invoices',
+      "queryData": {}
+    }
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.isLoading = true;
+        this.entityService.deleteEntityById(balance._id, formData).subscribe((res: any) => {
+          this.isLoading = false;
+          if (res.status == 200) {
+            Swal.fire('Bill Successfully deleted!', '', 'success').then(() => {
+              this.getBills();
+            })
+          }
+        }, (err: any) => {
+          this.isLoading = false;
+          this.errorHandlingService.errorAlertMsg(err);
+        })
+      }
+    })
+
+
+  }
+
   onEdit(balance: any) {
     balance.isEdit = true
     balance.clone = { ...balance }; // Create a clone of the balance object
@@ -180,6 +218,7 @@ export class BillBalanceTrackerComponent {
     balance.isEdit = false;
     const _id = balance._id;
     delete balance._id
+    delete balance.clone; // Remove the clone property
     const formData = {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
