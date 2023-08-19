@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EntityService } from '../../services/entity.service';
 import { AuthGuardService } from 'src/app/services/auth-guard.service';
 import { ActivatedRoute } from '@angular/router';
@@ -37,10 +37,12 @@ export class EmployeeAttendanceComponent {
   selectedMonth = this.months[new Date().getMonth()];
   selectedYear = new Date().getFullYear();
   attendenceMarked: boolean = false;
-  attendanceDetails:any;
-  searchText:string = '';
+  attendanceDetails: any;
+  searchText: string = '';
   filteredEmployees: any;
-  selectedDate:any = new Date();
+  selectedDate: any = new Date();
+  currentPage = 1;
+  itemsPerPage = 3;
 
   constructor(
     private fb: FormBuilder,
@@ -63,7 +65,7 @@ export class EmployeeAttendanceComponent {
     const startDate = new Date(now.toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata' }));
     startDate.setHours(5, 30, 0, 0);
     const endDate = new Date();
-    endDate.setHours(endDate.getHours()+5, endDate.getMinutes()+30, 0, 0);
+    endDate.setHours(endDate.getHours() + 5, endDate.getMinutes() + 30, 0, 0);
     this.getAttendenceDetails({ createdAt: { startDate, endDate } });
   }
 
@@ -75,7 +77,7 @@ export class EmployeeAttendanceComponent {
     console.log(startDate, endDate)
     this.getAttendenceDetails({ createdAt: { startDate, endDate } });
   }
-  
+
 
   filterEmployees() {
     console.log(this.searchText)
@@ -94,30 +96,102 @@ export class EmployeeAttendanceComponent {
 
   createEmployeeFormControls(type: string) {
     const employeesFormArray = this.getFormArray();
-    // Loop through the employee list and create form controls
+    // employeesFormArray.clear();
     if (type == 'today' && !this.attendenceMarked) {
       this.employeeList.forEach((employee) => {
         const employeeFormGroup = this.fb.group({
           name: [employee.name, Validators.required],
           empId: [employee.empId, Validators.required],
           attendance: ['Present'],
-          comments: ''
+          comments: '',
+          inTime: ['', [Validators.required, Validators.pattern(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/)]], // Custom validator for time format
+          outTime: ['', [Validators.required, Validators.pattern(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/), this.validateTimeOrder.bind(this)]],
+          workingHours: ''
         });
         employeesFormArray.push(employeeFormGroup);
       });
-    } else if(type == 'today' && this.attendenceMarked){
-      this.attendanceDetails?.employees.forEach((employee:any) => {
+    } else if (type == 'today' && this.attendenceMarked) {
+      this.attendanceDetails?.employees.forEach((employee: any) => {
+        console.log(employee);
         const employeeFormGroup = this.fb.group({
           name: [employee.name, Validators.required],
           empId: [employee.empId, Validators.required],
           attendance: [employee.attendance],
-          comments: employee.comments
+          comments: employee?.comments || '',
+          inTime: [employee?.inTime || '', [Validators.required, Validators.pattern(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/)]], // Custom validator for time format
+          outTime: [employee?.outTime || '', [Validators.required, Validators.pattern(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/), this.validateTimeOrder.bind(this)]],
+          workingHours: employee.workingHours || ''
         });
         employeesFormArray.push(employeeFormGroup);
       });
     }
     this.filterEmployees();
   }
+
+  getWorkingHours(index: number): string {
+    const formArray = this.getFormArray();
+    const employeeFormGroup = formArray.at(index);
+    const workingHours = employeeFormGroup.get('workingHours')?.value;
+
+    // If workingHours is not defined, return an empty string or '0'.
+    return workingHours || '0';
+  }
+
+  validateTimeOrder(control: AbstractControl): { [key: string]: any } | null {
+    const parentFormGroup = control.parent; // Get the parent FormGroup
+    if (parentFormGroup) {
+      const inTimeValue = parentFormGroup.get('inTime')?.value;
+      const outTimeValue = parentFormGroup.get('outTime')?.value;  
+      if (inTimeValue && outTimeValue) {
+        const inTime = new Date(0, 0, 0, ...inTimeValue.split(':').map(Number));
+        const outTime = new Date(0, 0, 0, ...outTimeValue.split(':').map(Number));
+  
+        if (outTime < inTime) {
+          return { timeOrderError: true };
+        }
+      }
+    }
+  
+    return null;
+  }
+  
+
+  calculateWorkingHours(index: number) {
+    const formArray = this.getFormArray();
+    const employeeFormGroup = formArray.at(index);
+
+    const inTimeValue = employeeFormGroup.get('inTime')?.value;
+    const outTimeValue = employeeFormGroup.get('outTime')?.value;
+
+    // Implement your own logic to calculate the working hours
+    const workingHours = this.calculateTimeDifference(inTimeValue, outTimeValue, index);
+
+    employeeFormGroup.get('workingHours')?.setValue(workingHours);
+  }
+
+  calculateTimeDifference(startTime: string, endTime: string, index:number): string {
+    const formArray = this.getFormArray();
+    const employeeFormGroup = formArray.at(index);
+    if (employeeFormGroup.get('inTime')?.valid && employeeFormGroup.get('outTime')?.valid) {
+      const startTimeParts = startTime.split(':').map(Number);
+      const endTimeParts = endTime.split(':').map(Number);
+
+      const startDateTime = new Date();
+      startDateTime.setHours(startTimeParts[0], startTimeParts[1], 0, 0);
+
+      const endDateTime = new Date();
+      endDateTime.setHours(endTimeParts[0], endTimeParts[1], 0, 0);
+
+      const diffMilliseconds = endDateTime.getTime() - startDateTime.getTime();
+      const hours = Math.floor(diffMilliseconds / (1000 * 60 * 60));
+      const minutes = Math.floor((diffMilliseconds % (1000 * 60 * 60)) / (1000 * 60));
+
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    }else{
+      return '0'
+    }
+  }
+
 
   onPreviousPage() {
     this.navigationService.navigateWithoutLocationChange(['client/employee']);
@@ -128,7 +202,7 @@ export class EmployeeAttendanceComponent {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
       "collectionName": 'employees',
-      "queryData": query || { status : 'active'}
+      "queryData": query || { status: 'active' }
     }
     this.isLoading = true;
     this.entityService.getAllEntities(formData).subscribe((res: any) => {
@@ -148,12 +222,12 @@ export class EmployeeAttendanceComponent {
   }
 
   onSubmit() {
-    this.selectedDate.setHours(new Date().getHours()+5, new Date().getMinutes()+30, 0, 0)
+    this.selectedDate.setHours(new Date().getHours() + 5, new Date().getMinutes() + 30, 0, 0)
     const formData = {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',
       "collectionName": 'employee-attendance',
-      "collectionData": {...this.employeeForm.value, createdAt : this.selectedDate}
+      "collectionData": { ...this.employeeForm.value, createdAt: this.selectedDate }
     }
     if (formData.dbName == '' || formData.collectionName == '') {
       this.toastr.error("invalid DB details! contact your application provider immediately.", "Error")
@@ -187,11 +261,11 @@ export class EmployeeAttendanceComponent {
       this.isLoading = false;
       if (res) {
         console.log(res)
-        if(res.data?.length > 0){
+        if (res.data?.length > 0) {
           this.attendanceDetails = res.data[0];
           this.attendenceMarked = true;
           this.createEmployeeFormControls("today");
-        }else{
+        } else {
           this.attendenceMarked = false;
           this.getAllEmployees();
         }
@@ -206,7 +280,7 @@ export class EmployeeAttendanceComponent {
     return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
   }
 
-  onUpdate(){
+  onUpdate() {
     const formData = {
       "schema": '',
       "dbName": this.commonService.toMongodbCase(this.userDetails?.app_meta_details?.application_name) || '',

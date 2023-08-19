@@ -589,9 +589,9 @@ export class HomeComponent implements OnInit {
     if (typeof value !== 'string') {
       return false; // Return false if the value is not a string
     }
-
-    const date = new Date(value);
-    return date instanceof Date && !isNaN(date.getTime());
+  
+    const dateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
+    return dateRegex.test(value);
   }
 
   getNetProfitAndExpense(queryData?: any) {

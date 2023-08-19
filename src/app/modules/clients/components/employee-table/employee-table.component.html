@@ -41,9 +41,9 @@
                     <td style="text-align: center;">{{rowIndex+1}}</td>
                     <ng-container *ngFor="let col of columns">
                         <td style="text-align: center;" *ngIf="!isArrayCheck(col.field)">
-                            <ng-container *ngIf="isDateField(rowData[col.field], col.field)">{{
+                            <ng-container *ngIf="isDateField(rowData[col.field])">{{
                                 rowData[col.field] | dateformat }}</ng-container>
-                            <ng-container *ngIf="!isDateField(rowData[col.field], col.field)">
+                            <ng-container *ngIf="!isDateField(rowData[col.field])">
                                 <ng-container *ngIf="rowData['isUniqueField'] != col.field">
                                     {{rowData[col.field] }}
                                 </ng-container>

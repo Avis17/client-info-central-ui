@@ -23,6 +23,7 @@
                 <table class="table">
                     <thead>
                         <tr>
+                            <th>S.no</th>
                             <th>Employee Name</th>
                             <th>Employee ID</th>
                             <th>Attendance</th>
@@ -30,61 +31,17 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <ng-container *ngFor="let employee of filteredEmployees; let i = index" [formGroup]="employee">
+                        <ng-container *ngFor="let employee of filteredEmployees | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; let i = index" [formGroup]="employee">
                             <tr>
+                                <td>{{i+1}}</td>
                                 <td>
                                     <input class="disabled form-control" [ngClass]="'is-marked'" [disabled]="true" type="text" formControlName="name" readonly>
                                 </td>
                                 <td>
-                                    <input class="disabled form-control" [ngClass]="'is-marked'" [disabled]="true" type="text" formControlName="empId" readonly>
+                                    <input class="w-100p disabled form-control" [ngClass]="'is-marked'" [disabled]="true" type="text" formControlName="empId" readonly>
                                 </td>
                                 <td class="p-3">
-                                    <label>
-                                        <input type="radio" value="Present" formControlName="attendance" checked>
-                                        Present
-                                    </label> &nbsp;
-                                    <label>
-                                        <input type="radio" value="Absent" formControlName="attendance">
-                                        Absent
-                                    </label> &nbsp;
-                                    <label>
-                                        <input type="radio" value="Half-day" formControlName="attendance">
-                                        Half-day
-                                    </label> &nbsp;
-                                </td>
-                                <td>
-                                    <textarea class="form-control" formControlName="comments"></textarea>
-                                </td>
-                            </tr>
-                        </ng-container>
-                    </tbody>
-                </table>
-            </div>
-            <button *ngIf="getFormArray().length > 0" class="btn btn-success mt-3" type="submit">Submit</button>
-        </form>
-        <div *ngIf="attendenceMarked">
-            <p class="box">Attendance has already been marked for today. You can edit the details if needed.</p>
-            <form [formGroup]="employeeForm" (ngSubmit)="onUpdate()">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Employee Name</th>
-                                <th>Employee ID</th>
-                                <th>Attendance</th>
-                                <th>Comments</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <ng-container *ngFor="let employee of filteredEmployees; let i = index" [formGroup]="employee">
-                                <tr>
-                                    <td>
-                                        <input class="disabled form-control"  [disabled]="true" type="text" formControlName="name" readonly>
-                                    </td>
-                                    <td>
-                                        <input class="disabled form-control" [disabled]="true" type="text" formControlName="empId" readonly>
-                                    </td>
-                                    <td class="p-3">
+                                    <div>
                                         <label>
                                             <input type="radio" value="Present" formControlName="attendance" checked>
                                             Present
@@ -97,16 +54,134 @@
                                             <input type="radio" value="Half-day" formControlName="attendance">
                                             Half-day
                                         </label> &nbsp;
+                                        <label>
+                                            <input type="radio" value="Half-day" formControlName="attendance">
+                                            Holiday
+                                        </label> &nbsp;
+                                    </div>
+
+                                    <div class="row box">
+                                        <div class="col">
+                                          <label>In-Time</label>
+                                          <input class="w-100p form-control" formControlName="inTime" type="text" placeholder="09:00">
+                                          <!-- Show validation error for In-Time -->
+                                          <div *ngIf="employee.get('inTime').invalid && (employee.get('inTime').dirty || employee.get('inTime').touched)">
+                                            <small class="text-danger" *ngIf="employee.get('inTime').errors?.required">In-Time is required.</small>
+                                            <small class="text-danger" *ngIf="employee.get('inTime').errors?.pattern">Invalid time format (HH:mm). Please use 24-hour format.</small>
+                                          </div>
+                                        </div>
+                                        <div class="col">
+                                          <label>Out-Time</label>
+                                          <input class="w-100p form-control" formControlName="outTime" type="text" placeholder="18:00" (blur)="calculateWorkingHours(i)">
+                                          <!-- Show validation error for Out-Time -->
+                                          <div *ngIf="employee.get('outTime').invalid && (employee.get('outTime').dirty || employee.get('outTime').touched)">
+                                            <small class="text-danger" *ngIf="employee.get('outTime').errors?.required">Out-Time is required.</small>
+                                            <small class="text-danger" *ngIf="employee.get('outTime').errors?.pattern">Invalid time format (HH:mm). Please use 24-hour format.</small>
+                                            <small class="text-danger" *ngIf="employee.get('outTime').errors?.timeOrderError">Out-Time cannot be less than In-Time.</small>  
+                                        </div>
+                                        </div>
+                                        <div class="col align-center">
+                                            <label>Total Hours</label>
+                                          <!-- Display working hours -->
+                                          <label>{{ getWorkingHours(i) }}</label>
+                                        </div>
+                                      </div>
+                                </td>
+                                <td>
+                                    <textarea placeholder="Enter Comments" class="min-height-150p form-control" formControlName="comments"></textarea>
+                                </td>
+                            </tr>
+                        </ng-container>
+                    </tbody>
+                </table>
+                <div class="mt-3">
+                    <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+                </div>
+            </div>
+            <button *ngIf="getFormArray().length > 0" class="btn btn-success mt-3" type="submit" [disabled]="employeeForm.invalid">Submit</button>
+        </form>
+        <div *ngIf="attendenceMarked">
+            <p class="box">Attendance has already been marked for today. You can edit the details if needed.</p>
+            <form [formGroup]="employeeForm" (ngSubmit)="onUpdate()">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>S.no</th>
+                                <th>Employee Name</th>
+                                <th>Employee ID</th>
+                                <th>Attendance</th>
+                                <th>Comments</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <ng-container *ngFor="let employee of filteredEmployees | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage }; let i = index" [formGroup]="employee">
+                                <tr>
+                                    <td>{{i+1}}</td>
+                                    <td>
+                                        <input class="disabled form-control"  [disabled]="true" type="text" formControlName="name" readonly>
                                     </td>
                                     <td>
-                                        <textarea class="form-control" formControlName="comments"></textarea>
+                                        <input class="w-100p disabled form-control" [disabled]="true" type="text" formControlName="empId" readonly>
+                                    </td>
+                                    <td class="p-3">
+                                        <div>
+                                            <label>
+                                                <input type="radio" value="Present" formControlName="attendance" checked>
+                                                Present
+                                            </label> &nbsp;
+                                            <label>
+                                                <input type="radio" value="Absent" formControlName="attendance">
+                                                Absent
+                                            </label> &nbsp;
+                                            <label>
+                                                <input type="radio" value="Half-day" formControlName="attendance">
+                                                Half-day
+                                            </label> &nbsp;  
+                                            <label>
+                                                <input type="radio" value="Half-day" formControlName="attendance">
+                                                Holiday
+                                            </label> &nbsp;  
+                                        </div>
+                                        <div class="row box">
+                                            <div class="col">
+                                              <label>In-Time</label>
+                                              <input class="w-100p form-control" formControlName="inTime" type="text" placeholder="09:00">
+                                              <!-- Show validation error for In-Time -->
+                                              <div *ngIf="employee.get('inTime').invalid && (employee.get('inTime').dirty || employee.get('inTime').touched)">
+                                                <small class="text-danger" *ngIf="employee.get('inTime').errors?.required">In-Time is required.</small>
+                                                <small class="text-danger" *ngIf="employee.get('inTime').errors?.pattern">Invalid time format (HH:mm). Please use 24-hour format.</small>
+                                              </div>
+                                            </div>
+                                            <div class="col">
+                                              <label>Out-Time</label>
+                                              <input class="w-100p form-control" formControlName="outTime" type="text" placeholder="18:00" (blur)="calculateWorkingHours(i)">
+                                              <!-- Show validation error for Out-Time -->
+                                              <div *ngIf="employee.get('outTime').invalid && (employee.get('outTime').dirty || employee.get('outTime').touched)">
+                                                <small class="text-danger" *ngIf="employee.get('outTime').errors?.required">Out-Time is required.</small>
+                                                <small class="text-danger" *ngIf="employee.get('outTime').errors?.pattern">Invalid time format (HH:mm). Please use 24-hour format.</small>
+                                                <small class="text-danger" *ngIf="employee.get('outTime').errors?.timeOrderError">Out-Time cannot be less than In-Time.</small> 
+                                            </div>
+                                            </div>
+                                            <div class="col align-center">
+                                              <!-- Display working hours -->
+                                              <label>Total Hours</label>
+                                              <label>{{ getWorkingHours(i) }}</label>
+                                            </div>
+                                          </div>
+                                    </td>
+                                    <td>
+                                        <textarea placeholder="Enter Comments" class="min-height-150p form-control" formControlName="comments"></textarea>
                                     </td>
                                 </tr>
                             </ng-container>
                         </tbody>
                     </table>
+                    <div class="mt-3">
+                        <pagination-controls (pageChange)="currentPage = $event"></pagination-controls>
+                    </div>
                 </div>
-                <button class="btn btn-primary mt-3" type="submit">Update</button>
+                <button class="btn btn-primary mt-3" type="submit" [disabled]="employeeForm.invalid">Update</button>
             </form>
         </div>
     </p-card>

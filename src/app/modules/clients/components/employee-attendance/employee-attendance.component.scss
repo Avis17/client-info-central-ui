@@ -1,7 +1,7 @@
 @import "src/_variables.scss";
 
 th,td{
-    width: 25%;
+    width: auto;
 }
 
 .disabled{
@@ -26,4 +26,23 @@ th,td{
 
 ::ng-deep .p-calendar {
     width: 80%;
+}
+
+.w-100p{
+    width: 100px;
+}
+
+.box{
+    margin-top: 1rem;
+    border: 1px solid darkseagreen;
+}
+
+.min-height-150p{
+    min-height: 150px;
+}
+
+.align-center{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
 }
